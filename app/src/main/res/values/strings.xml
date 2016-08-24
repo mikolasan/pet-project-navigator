@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Pet Project Navigator</string>
+    <string name="btn_add_project">Добавить проект</string>
+    <string name="project_lbl_name">Название</string>
+    <string name="project_lbl_task">Задачи</string>
+    <string name="project_lbl_tech">Технологии</string>
+    <string name="project_lbl_time">Время</string>
+    <string name="project_lbl_links">Ссылки</string>
+    <string name="project_lbl_desc">Описание</string>
+    <string name="project_lbl_type">Тип</string>
 </resources>
