@@ -114,4 +114,14 @@
 
     </TableRow>
 
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:text="@string/btn_save_task"
+            android:id="@+id/btn_save_task"
+            android:layout_column="1" />
+    </TableRow>
+
 </TableLayout>

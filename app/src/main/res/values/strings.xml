@@ -2,6 +2,7 @@
     <string name="app_name">Pet Project Navigator</string>
     <string name="btn_add_project">Добавить проект</string>
     <string name="btn_add_task">Добавить задачу</string>
+    <string name="btn_save_task">Commit</string>
     <string name="project_lbl_name">Название</string>
     <string name="project_lbl_task">Задачи</string>
     <string name="project_lbl_tech">Технологии</string>
