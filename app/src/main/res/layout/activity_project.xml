@@ -47,7 +47,7 @@
 
             <Button
                 style="?android:attr/buttonStyleSmall"
-                android:text="New Button"
+                android:text="@string/btn_add_task"
                 android:id="@+id/btn_add_task"
                 android:layout_column="1"
                 android:layout_width="wrap_content"
