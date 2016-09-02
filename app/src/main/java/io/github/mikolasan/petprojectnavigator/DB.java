@@ -12,7 +12,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DB {
 
-
+    private static final String DB_NAME = "petprojectdb";
+    private static final int DB_VERSION = 2;
 
     public static final String COLUMN_ID = "id";
     public static final String COLUMN_NAME = "name";
@@ -78,8 +79,7 @@ public class DB {
         mDB.delete(DB_TECH_TABLE, COLUMN_ID + " = " + id, null);
     }
 
-    private static final String DB_NAME = "petprojectdb";
-    private static final int DB_VERSION = 1;
+
     private static final String DB_TECH_TABLE = "pp_tech";
     private static final String DB_TYPES_TABLE = "pp_types";
     private static final String DB_TASKS_TABLE = "pp_tasks";
@@ -101,13 +101,13 @@ public class DB {
     private static final String DB_TASKS_CREATE =
             "create table " + DB_TASKS_TABLE + "(" +
                     COLUMN_ID + " integer primary key autoincrement, " +
-                    COLUMN_NAME + " text" +
-                    COLUMN_LINKS + " text" +
-                    COLUMN_STATEMENT + " text" +
-                    COLUMN_PROJECT_ID + " integer" +
-                    COLUMN_TECH_ID + " integer" +
-                    COLUMN_TYPE_ID + " integer" +
-                    COLUMN_TIME + " integer" +
+                    COLUMN_NAME + " text, " +
+                    COLUMN_LINKS + " text, " +
+                    COLUMN_STATEMENT + " text, " +
+                    COLUMN_PROJECT_ID + " integer, " +
+                    COLUMN_TECH_ID + " integer, " +
+                    COLUMN_TYPE_ID + " integer, " +
+                    COLUMN_TIME + " integer, " +
                     COLUMN_SAVED + " integer" +
                     ");";
 
@@ -138,6 +138,10 @@ public class DB {
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+            if (oldVersion == 1) {
+                db.execSQL("drop table " + DB_TASKS_TABLE);
+                db.execSQL(DB_TASKS_CREATE);
+            }
         }
     }
 }
