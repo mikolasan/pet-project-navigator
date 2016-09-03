@@ -5,9 +5,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class ProjectActivity extends AppCompatActivity {
 
+    private static final int STATUS_NEW = 0;
+    DB db;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,4 +25,21 @@ public class ProjectActivity extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        Intent intent = getIntent();
+        int status = intent.getIntExtra("status", STATUS_NEW);
+        if (status == STATUS_NEW) {
+            ;
+        } else {
+            ;
+            //TextView lbl = (TextView) findViewById(R.id.etTitle);
+            //lbl.setText(id);
+        }
+
+    }
+
 }

@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
         btn_add_project.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), ProjectActivity.class);
-                intent.putExtra("status", "new");
+                intent.putExtra("status", 0); // status: new
                 startActivity(intent);
             }
         });
