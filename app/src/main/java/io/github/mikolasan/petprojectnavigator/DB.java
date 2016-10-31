@@ -13,9 +13,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DB {
 
     private static final String DB_NAME = "petprojectdb";
-    private static final int DB_VERSION = 2;
+    private static final int DB_VERSION = 3;
 
-    public static final String COLUMN_ID = "id";
+    public static final String COLUMN_ID = "_id";
     public static final String COLUMN_NAME = "name";
     public static final String COLUMN_STATEMENT = "statement";
     public static final String COLUMN_PROJECT_ID = "project_id";
@@ -50,6 +50,11 @@ public class DB {
     public Cursor getAllData() {
         return mDB.query(DB_PROJECTS_TABLE, null, null, null, null, null, null);
     }
+
+    public Cursor getAllProjects() {
+        return mDB.query(DB_PROJECTS_TABLE, null, null, null, null, null, null);
+    }
+
 
     public void addTask(String name,
                         String links,
@@ -117,7 +122,6 @@ public class DB {
                     COLUMN_NAME + " text" +
                     ");";
 
-
     // класс по созданию и управлению БД
     private class DBHelper extends SQLiteOpenHelper {
 
@@ -141,6 +145,9 @@ public class DB {
             if (oldVersion == 1) {
                 db.execSQL("drop table " + DB_TASKS_TABLE);
                 db.execSQL(DB_TASKS_CREATE);
+            } else if (oldVersion == 2) {
+                db.execSQL("drop table " + DB_PROJECTS_TABLE);
+                db.execSQL(DB_PROJECTS_CREATE);
             }
         }
     }
