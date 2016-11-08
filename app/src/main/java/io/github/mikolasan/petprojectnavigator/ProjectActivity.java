@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 public class ProjectActivity extends AppCompatActivity {
@@ -24,6 +25,16 @@ public class ProjectActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), TaskActivity.class);
                 intent.putExtra("status", "new");
+                startActivity(intent);
+            }
+        });
+
+        final Button btn_add_project = (Button) findViewById(R.id.btn_add_project);
+        final EditText project_name = (EditText) findViewById(R.id.e_name);
+        btn_add_project.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                db.addProject(project_name.getText().toString());
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
             }
         });

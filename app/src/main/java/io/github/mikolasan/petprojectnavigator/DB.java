@@ -62,6 +62,11 @@ public class DB {
         return mDB.query(DB_PROJECTS_TABLE, null, null, null, null, null, null);
     }
 
+    public void addProject(String name) {
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_NAME, name);
+        mDB.insert(DB_PROJECTS_TABLE, null, cv);
+    }
 
     public void addTask(String name,
                         String links,

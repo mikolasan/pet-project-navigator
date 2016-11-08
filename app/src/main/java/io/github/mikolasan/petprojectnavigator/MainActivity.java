@@ -63,6 +63,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         getSupportLoaderManager().initLoader(0, null, this);
     }
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getSupportLoaderManager().restartLoader(0, null, this);
+    }
+
     protected void onDestroy() {
         super.onDestroy();
         // закрываем подключение при выходе
