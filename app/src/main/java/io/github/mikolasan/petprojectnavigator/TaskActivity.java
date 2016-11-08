@@ -25,18 +25,16 @@ public class TaskActivity extends AppCompatActivity {
         e_desc = (EditText) findViewById(R.id.e_desc);
         e_links = (EditText) findViewById(R.id.e_links);
 
-        db = new DB(this);
+        db = DB.getOpenedInstance();
 
         btn_save_task.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                db.open();
                 db.addTask(e_name.getText().toString(),
                         e_links.getText().toString(),
                         e_desc.getText().toString(),
                         0,
                         0,
                         0);
-                db.close();
             }
         });
     }

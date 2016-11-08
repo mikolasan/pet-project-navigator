@@ -24,14 +24,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        db = new DB(this);
-        db.open();
+        db = DB.getOpenedInstance();
 
         final Button btn_add_project = (Button) findViewById(R.id.btn_add_project);
         btn_add_project.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), ProjectActivity.class);
-                intent.putExtra("status", 0); // status: new
+                intent.putExtra("status", ProjectActivity.STATUS_NEW);
                 startActivity(intent);
             }
         });

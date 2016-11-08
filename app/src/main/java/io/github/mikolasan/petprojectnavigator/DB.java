@@ -12,6 +12,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DB {
 
+    private static DB instance = null;
     private static final String DB_NAME = "petprojectdb";
     private static final int DB_VERSION = 3;
 
@@ -25,11 +26,17 @@ public class DB {
     public static final String COLUMN_SAVED = "saved";
     public static final String COLUMN_TYPE_ID = "type_id";
 
-
-    
     private final Context mCtx;
-    private DBHelper mDBHelper;
+    private static DBHelper mDBHelper = null;
     private SQLiteDatabase mDB;
+
+    public static DB getOpenedInstance() {
+        if(instance == null) {
+            instance = new DB(MyApplication.getAppContext());
+            instance.open();
+        }
+        return instance;
+    }
 
     public DB(Context ctx) {
         mCtx = ctx;
@@ -130,7 +137,6 @@ public class DB {
             super(context, name, factory, version);
         }
 
-
         // создаем и заполняем БД
         @Override
         public void onCreate(SQLiteDatabase db) {
@@ -138,7 +144,7 @@ public class DB {
             db.execSQL(DB_TYPES_CREATE);
             db.execSQL(DB_TASKS_CREATE);
             db.execSQL(DB_PROJECTS_CREATE);
-	}       
+    	}
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {

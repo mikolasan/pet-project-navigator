@@ -9,12 +9,15 @@ import android.widget.TextView;
 
 public class ProjectActivity extends AppCompatActivity {
 
-    private static final int STATUS_NEW = 0;
+    public static final int STATUS_NEW = 0;
     DB db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project);
+
+        db = DB.getOpenedInstance();
 
         final Button btn_add_task = (Button) findViewById(R.id.btn_add_task);
         btn_add_task.setOnClickListener(new View.OnClickListener() {
