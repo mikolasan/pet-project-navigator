@@ -31,9 +31,11 @@ public class ProjectActivity extends AppCompatActivity {
 
         final Button btn_add_project = (Button) findViewById(R.id.btn_add_project);
         final EditText project_name = (EditText) findViewById(R.id.e_name);
+        final EditText project_desc = (EditText) findViewById(R.id.e_desc);
         btn_add_project.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                db.addProject(project_name.getText().toString());
+                db.addProject(project_name.getText().toString(),
+                        project_desc.getText().toString());
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
             }

@@ -35,6 +35,38 @@
 
             <TextView
                 android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/project_lbl_desc"
+                android:id="@+id/lbl_desc"
+                android:layout_column="0" />
+
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="120dp"
+                android:id="@+id/e_desc"
+                android:layout_column="1" />
+
+        </TableRow>
+    </TableLayout>
+
+    <Button
+        android:text="@string/btn_add_project"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btn_add_project" />
+
+    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:context="io.github.mikolasan.petprojectnavigator.ProjectActivity"
+        android:stretchColumns="1">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="@string/project_lbl_task"
                 android:id="@+id/lbl_task"
                 android:layout_column="0" />
@@ -50,41 +82,16 @@
                     android:layout_height="150dp"
                     android:id="@+id/listView" />
 
-                <Button
-                    style="?android:attr/buttonStyleSmall"
-                    android:text="@string/btn_add_task"
-                    android:id="@+id/btn_add_task"
-                    android:layout_column="1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
             </LinearLayout>
 
         </TableRow>
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/project_lbl_desc"
-                android:id="@+id/lbl_desc"
-                android:layout_column="0" />
-
-            <EditText
-                android:layout_width="fill_parent"
-                android:layout_height="120dp"
-                android:id="@+id/e_desc"
-                android:layout_column="1" />
-
-        </TableRow>
-
     </TableLayout>
-
     <Button
-    android:text="@string/btn_add_project"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:id="@+id/btn_add_project" />
-
+        style="?android:attr/buttonStyleSmall"
+        android:text="@string/btn_add_task"
+        android:id="@+id/btn_add_task"
+        android:layout_column="1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 </LinearLayout>

@@ -35,8 +35,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             }
         });
 
-        String[] from = new String[] { DB.COLUMN_NAME  };
-        int[] to = new int[] { R.id.lbl_title };
+        String[] from = new String[] { DB.COLUMN_NAME, DB.COLUMN_DESC  };
+        int[] to = new int[] { R.id.lbl_title, R.id.lbl_desc };
         cursorAdapter = new SimpleCursorAdapter(this, R.layout.item_project, null, from, to, 0);
         final ListView list = (ListView) findViewById(R.id.project_view);
         list.setAdapter(cursorAdapter);

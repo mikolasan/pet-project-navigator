@@ -14,10 +14,11 @@ public class DB {
 
     private static DB instance = null;
     private static final String DB_NAME = "petprojectdb";
-    private static final int DB_VERSION = 3;
+    private static final int DB_VERSION = 4;
 
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_NAME = "name";
+    public static final String COLUMN_DESC = "desc";
     public static final String COLUMN_STATEMENT = "statement";
     public static final String COLUMN_PROJECT_ID = "project_id";
     public static final String COLUMN_TECH_ID = "tech_id";
@@ -62,9 +63,10 @@ public class DB {
         return mDB.query(DB_PROJECTS_TABLE, null, null, null, null, null, null);
     }
 
-    public void addProject(String name) {
+    public void addProject(String name, String description) {
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_NAME, name);
+        cv.put(COLUMN_DESC, description);
         mDB.insert(DB_PROJECTS_TABLE, null, cv);
     }
 
@@ -131,6 +133,7 @@ public class DB {
     private static final String DB_PROJECTS_CREATE =
             "create table " + DB_PROJECTS_TABLE + "(" +
                     COLUMN_ID + " integer primary key autoincrement, " +
+                    COLUMN_DESC + " text, " +
                     COLUMN_NAME + " text" +
                     ");";
 
@@ -156,7 +159,7 @@ public class DB {
             if (oldVersion == 1) {
                 db.execSQL("drop table " + DB_TASKS_TABLE);
                 db.execSQL(DB_TASKS_CREATE);
-            } else if (oldVersion == 2) {
+            } else if (oldVersion <= 3) { // 2,3
                 db.execSQL("drop table " + DB_PROJECTS_TABLE);
                 db.execSQL(DB_PROJECTS_CREATE);
             }
