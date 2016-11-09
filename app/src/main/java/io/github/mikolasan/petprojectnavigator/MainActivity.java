@@ -41,20 +41,23 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         final ListView list = (ListView) findViewById(R.id.project_view);
         list.setAdapter(cursorAdapter);
 
-        /*
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Cursor c = (Cursor) list.getItemAtPosition(i);
-                int column = c.getColumnIndex("txt");
-                String selectedFromList = c.getString(column);
                 Intent intent = new Intent(getApplicationContext(), ProjectActivity.class);
-                intent.putExtra("id", 1);
-                intent.putExtra("title", selectedFromList);
+
+                Cursor c = (Cursor) list.getItemAtPosition(i);
+
+                int name_column = c.getColumnIndex(DB.COLUMN_NAME);
+                int desc_column = c.getColumnIndex(DB.COLUMN_DESC);
+
+                intent.putExtra("status", ProjectActivity.STATUS_EDIT);
+                intent.putExtra("id", c.getColumnIndex(DB.COLUMN_ID));
+                intent.putExtra("title", c.getString(name_column));
+                intent.putExtra("description", c.getString(desc_column));
                 startActivity(intent);
             }
         });
-        */
 
         // добавляем контекстное меню к списку
         //registerForContextMenu(list);

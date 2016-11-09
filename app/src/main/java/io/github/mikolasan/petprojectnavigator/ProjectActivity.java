@@ -11,7 +11,12 @@ import android.widget.TextView;
 public class ProjectActivity extends AppCompatActivity {
 
     public static final int STATUS_NEW = 0;
+    public static final int STATUS_EDIT = 1;
+
     DB db;
+
+    EditText project_name;
+    EditText project_desc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,8 +35,8 @@ public class ProjectActivity extends AppCompatActivity {
         });
 
         final Button btn_add_project = (Button) findViewById(R.id.btn_add_project);
-        final EditText project_name = (EditText) findViewById(R.id.e_name);
-        final EditText project_desc = (EditText) findViewById(R.id.e_desc);
+        project_name = (EditText) findViewById(R.id.e_name);
+        project_desc = (EditText) findViewById(R.id.e_desc);
         btn_add_project.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 db.addProject(project_name.getText().toString(),
@@ -48,12 +53,18 @@ public class ProjectActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         int status = intent.getIntExtra("status", STATUS_NEW);
-        if (status == STATUS_NEW) {
-            ;
-        } else {
-            ;
-            //TextView lbl = (TextView) findViewById(R.id.etTitle);
-            //lbl.setText(id);
+        switch  (status) {
+            case STATUS_NEW: {
+                break;
+            }
+            case STATUS_EDIT: {
+                project_name.setText(intent.getStringExtra("title"));
+                project_desc.setText(intent.getStringExtra("description"));
+                break;
+            }
+            default: {
+                break;
+            }
         }
 
     }
