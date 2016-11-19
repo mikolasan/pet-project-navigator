@@ -48,11 +48,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
                 Cursor c = (Cursor) list.getItemAtPosition(i);
 
+                int id_column = c.getColumnIndex(DB.COLUMN_ID);
                 int name_column = c.getColumnIndex(DB.COLUMN_NAME);
                 int desc_column = c.getColumnIndex(DB.COLUMN_DESC);
 
                 intent.putExtra("status", ProjectActivity.STATUS_EDIT);
-                intent.putExtra("id", c.getColumnIndex(DB.COLUMN_ID));
+                intent.putExtra("project_id", c.getInt(id_column));
                 intent.putExtra("title", c.getString(name_column));
                 intent.putExtra("description", c.getString(desc_column));
                 startActivity(intent);

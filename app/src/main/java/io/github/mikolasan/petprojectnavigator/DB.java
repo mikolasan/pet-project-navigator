@@ -14,7 +14,7 @@ public class DB {
 
     private static DB instance = null;
     private static final String DB_NAME = "petprojectdb";
-    private static final int DB_VERSION = 4;
+    private static final int DB_VERSION = 5;
 
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_NAME = "name";
@@ -63,6 +63,11 @@ public class DB {
         return mDB.query(DB_PROJECTS_TABLE, null, null, null, null, null, null);
     }
 
+    public Cursor getAllTasks(int projectId) {
+        String selection = COLUMN_PROJECT_ID + " = " + projectId;
+        return mDB.query(DB_TASKS_TABLE, null, selection, null, null, null, null);
+    }
+
     public void addProject(String name, String description) {
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_NAME, name);
@@ -70,18 +75,20 @@ public class DB {
         mDB.insert(DB_PROJECTS_TABLE, null, cv);
     }
 
-    public void addTask(String name,
+    public void addTask(int project_id,
+                        String name,
                         String links,
                         String statement,
                         int tech,
                         int time,
                         int type) {
         ContentValues cv = new ContentValues();
+        cv.put(COLUMN_PROJECT_ID, project_id);
+
         cv.put(COLUMN_NAME, name);
         cv.put(COLUMN_LINKS, links);
         cv.put(COLUMN_STATEMENT, statement);
 
-        cv.put(COLUMN_PROJECT_ID, 0); //!TODO
         cv.put(COLUMN_TECH_ID, tech);
         cv.put(COLUMN_TIME, time);
         cv.put(COLUMN_TYPE_ID, type);
@@ -162,6 +169,13 @@ public class DB {
             } else if (oldVersion <= 3) { // 2,3
                 db.execSQL("drop table " + DB_PROJECTS_TABLE);
                 db.execSQL(DB_PROJECTS_CREATE);
+            } else if (oldVersion == 4) {
+                db.execSQL("drop table " + DB_TECH_TABLE);
+                db.execSQL("drop table " + DB_TYPES_TABLE);
+                db.execSQL("drop table " + DB_TASKS_TABLE);
+                db.execSQL(DB_TECH_CREATE);
+                db.execSQL(DB_TYPES_CREATE);
+                db.execSQL(DB_TASKS_CREATE);
             }
         }
     }

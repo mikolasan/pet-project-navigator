@@ -80,7 +80,7 @@
                 <ListView
                     android:layout_width="match_parent"
                     android:layout_height="150dp"
-                    android:id="@+id/listView" />
+                    android:id="@+id/task_view" />
 
             </LinearLayout>
 
