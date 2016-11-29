@@ -83,9 +83,6 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
 
         // добавляем контекстное меню к списку
         //registerForContextMenu(list);
-
-        // создаем лоадер для чтения данных
-        getSupportLoaderManager().initLoader(0, null, this);
     }
 
     @Override
@@ -102,7 +99,6 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
                 project_name.setText(intent.getStringExtra("title"));
                 project_desc.setText(intent.getStringExtra("description"));
                 project_id = intent.getIntExtra("project_id", 0);
-                mCursorLoader.setProjectId(project_id);
                 break;
             }
             default: {
@@ -115,13 +111,13 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
     @Override
     protected void onResume() {
         super.onResume();
-        mCursorLoader.setProjectId(project_id);
-        getSupportLoaderManager().restartLoader(0, null, this);
+        getSupportLoaderManager().restartLoader(project_id, null, this);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         mCursorLoader = new ProjectActivity.MyCursorLoader(this, db);
+        mCursorLoader.setProjectId(id);
         return mCursorLoader;
     }
 
