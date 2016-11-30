@@ -3,6 +3,8 @@ package io.github.mikolasan.petprojectnavigator;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.MatrixCursor;
+import android.database.MergeCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -39,7 +41,16 @@ public class DB {
         return instance;
     }
 
+    private MatrixCursor new_tech;
+    public static final int TECH_UNDEFINED_ID = -2;
+    public static final int TECH_NEW_ID = -1;
+    public static final String TECH_UNDEFINED_NAME = "Undefined";
+    public static final String TECH_NEW_NAME = "New technology";
+
     public DB(Context ctx) {
+        new_tech = new MatrixCursor(new String[]{ COLUMN_ID, COLUMN_NAME});
+        new_tech.addRow(new Object[]{TECH_UNDEFINED_ID, TECH_UNDEFINED_NAME});
+        new_tech.addRow(new Object[]{TECH_NEW_ID, TECH_NEW_NAME});
         mCtx = ctx;
     }
 
@@ -66,6 +77,14 @@ public class DB {
     public Cursor getAllTasks(int projectId) {
         String selection = COLUMN_PROJECT_ID + " = " + projectId;
         return mDB.query(DB_TASKS_TABLE, null, selection, null, null, null, null);
+    }
+
+    public Cursor getAllTech() {
+        Cursor[] cursors = {
+                new_tech,
+                mDB.query(DB_TECH_TABLE, null,  null, null, null, null, null)
+        };
+        return new MergeCursor(cursors);
     }
 
     public void addProject(String name, String description) {
