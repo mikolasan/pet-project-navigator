@@ -11,4 +11,8 @@
     <string name="project_lbl_desc">Описание</string>
     <string name="project_lbl_type">Тип</string>
     <string name="task_edit_time">Нужно оценить время</string>
+    <string name="new_tech_title">Задайте имя технологии</string>
+    <string name="new_tech_sample">Парусные аномалии Фуко</string>
+    <string name="new_tech_ok">Создать технологию</string>
+    <string name="new_tech_cancel">Отмена</string>
 </resources>
