@@ -32,34 +32,60 @@ public class TaskActivity extends FragmentActivity implements MyListener {
     EditText e_name;
     EditText e_desc;
     EditText e_links;
+    EditText e_time;
 
     SimpleCursorAdapter spinnerAdapter;
+    SimpleCursorAdapter typeAdapter;
     private Spinner s_tech;
+    private Spinner s_type;
 
     FragmentTransaction ft;
 
-    private void removeTechDialog() {
+    private void hideTechDialog() {
+        hideDialog("TechNameDialogFragment");
+    }
+
+    private void hideTypeDialog() {
+        hideDialog("TypeNameDialogFragment");
+    }
+
+    private void hideDialog(String tag) {
         ft = getFragmentManager().beginTransaction();
-        Fragment prev = getFragmentManager().findFragmentByTag("TechNameDialogFragment");
+        Fragment prev = getFragmentManager().findFragmentByTag(tag);
         if (prev != null) {
             ((DialogFragment)prev).dismiss();
             ft.remove(prev);
         }
         ft.addToBackStack(null);
     }
+
     private void openTechDialog() {
-        TechNameDialogFragment dialog = TechNameDialogFragment.newInstance(TaskActivity.this);
-        dialog.show(ft,"TechNameDialogFragment");
+        openDialog("TechNameDialogFragment");
     }
 
-    private void updateSpinner() {
+    private void openTypeDialog() {
+        openDialog("TypeNameDialogFragment");
+    }
+
+    private void openDialog(String tag) {
+        TechNameDialogFragment dialog = TechNameDialogFragment.newInstance(TaskActivity.this);
+        dialog.show(ft, tag);
+    }
+
+    private void updateTechList() {
         if (spinnerAdapter != null) {
             spinnerAdapter.swapCursor(db.getAllTech());
         }
     }
 
-    private void selectItem(String result) {
-        Cursor c = spinnerAdapter.getCursor();
+    private void updateTypeList() {
+        if (typeAdapter != null) {
+            typeAdapter.swapCursor(db.getAllTypes());
+        }
+    }
+
+    private void selectItem(String result, Spinner spinner, SimpleCursorAdapter adapter) {
+        Cursor c = adapter.getCursor();
         int id = 0;
         if (c.moveToLast()) {
             id = c.getPosition();
@@ -67,8 +93,32 @@ public class TaskActivity extends FragmentActivity implements MyListener {
         int name_id = c.getColumnIndex(DB.COLUMN_NAME);
         String label = c.getString(name_id);
         if(label.equals(result)) {
-            s_tech.setSelection(id);
+            spinner.setSelection(id);
         }
+    }
+
+    private SimpleCursorAdapter fillList(Spinner spinner, Cursor cursor) {
+        String[] from = new String[] { DB.COLUMN_NAME };
+        int[] to = new int[] { android.R.id.text1 };
+        int flags = 0;
+        SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,
+                android.R.layout.simple_spinner_item,
+                cursor,
+                from,
+                to,
+                flags);
+        spinner.setAdapter(adapter);
+        return adapter;
+    }
+
+    private int getSelectedItemDBId(Spinner spinner, SimpleCursorAdapter adapter) {
+        Cursor cursor = adapter.getCursor();
+        if (cursor.getCount() > 0 && spinner.getCount() > 0) {
+            cursor.moveToPosition(spinner.getSelectedItemPosition());
+            int id = cursor.getColumnIndex(DB.COLUMN_ID);
+            return cursor.getInt(id);
+        }
+        return 0;
     }
 
     @Override
@@ -78,25 +128,16 @@ public class TaskActivity extends FragmentActivity implements MyListener {
 
         db = DB.getOpenedInstance();
 
-        String[] from = new String[] { DB.COLUMN_NAME };
-        int[] to = new int[] { android.R.id.text1 };
-        int flags = 0;
-        Cursor techCursor = db.getAllTech();
-        spinnerAdapter = new SimpleCursorAdapter(this,
-                android.R.layout.simple_spinner_item,
-                techCursor,
-                from,
-                to,
-                flags);
         s_tech = (Spinner) findViewById(R.id.s_tech);
-        s_tech.setAdapter(spinnerAdapter);
+        s_type = (Spinner) findViewById(R.id.s_type);
+        spinnerAdapter = fillList(s_tech, db.getAllTech());
+        typeAdapter = fillList(s_type, db.getAllTypes());
 
         btn_save_task = (Button) findViewById(R.id.btn_save_task);
         e_name = (EditText) findViewById(R.id.e_name);
         e_desc = (EditText) findViewById(R.id.e_desc);
         e_links = (EditText) findViewById(R.id.e_links);
-
-
+        e_time = (EditText) findViewById(R.id.e_time);
 
         btn_save_task.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -104,9 +145,9 @@ public class TaskActivity extends FragmentActivity implements MyListener {
                         e_name.getText().toString(),
                         e_links.getText().toString(),
                         e_desc.getText().toString(),
-                        0,
-                        0,
-                        0);
+                        getSelectedItemDBId(s_tech, spinnerAdapter),
+                        Integer.parseInt(e_time.getText().toString()),
+                        getSelectedItemDBId(s_type, typeAdapter));
             }
         });
     }
@@ -127,7 +168,34 @@ public class TaskActivity extends FragmentActivity implements MyListener {
                         break;
                     }
                     case DB.TECH_NEW_ID: {
-                        removeTechDialog();
+                        hideTechDialog();
+                        openTechDialog();
+                        break;
+                    }
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // your code here
+            }
+
+        });
+
+        s_tech.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView,
+                                       int position, long id) {
+                Cursor cursor = (Cursor) parentView.getItemAtPosition(position);
+                int index = cursor.getColumnIndex(DB.COLUMN_ID);
+                int tech_id = cursor.getInt(index);
+                switch (tech_id) {
+                    case DB.TECH_UNDEFINED_ID: {
+                        break;
+                    }
+                    case DB.TECH_NEW_ID: {
+                        hideTechDialog();
                         openTechDialog();
                         break;
                     }
@@ -163,9 +231,9 @@ public class TaskActivity extends FragmentActivity implements MyListener {
     @Override
     public void callback(View view, String result) {
         db.addTech(result);
-        removeTechDialog();
-        updateSpinner();
-        selectItem(result);
+        hideTechDialog();
+        updateTechList();
+        selectItem(result, s_tech, spinnerAdapter);
     }
 
 

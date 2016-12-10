@@ -51,7 +51,8 @@
             android:id="@+id/lbl_time"
             android:layout_column="0" />
 
-        <AutoCompleteTextView
+        <EditText
+            android:inputType="numberDecimal"
             android:text="@string/task_edit_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

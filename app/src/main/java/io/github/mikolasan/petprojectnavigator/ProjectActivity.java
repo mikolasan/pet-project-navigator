@@ -72,10 +72,12 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
 
                 Cursor c = (Cursor) list.getItemAtPosition(i);
 
+                int id_column = c.getColumnIndex(DB.COLUMN_ID);
                 int name_column = c.getColumnIndex(DB.COLUMN_NAME);
+                int desc_column = c.getColumnIndex(DB.COLUMN_DESC);
 
                 intent.putExtra("status", ProjectActivity.STATUS_EDIT);
-                intent.putExtra("task_id", c.getColumnIndex(DB.COLUMN_ID));
+                intent.putExtra("task_id", c.getInt(c.getColumnIndex(DB.COLUMN_ID)));
                 intent.putExtra("title", c.getString(name_column));
                 startActivity(intent);
             }

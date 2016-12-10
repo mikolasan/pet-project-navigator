@@ -87,6 +87,10 @@ public class DB {
         return new MergeCursor(cursors);
     }
 
+    public Cursor getAllTypes() {
+        return mDB.query(DB_TYPES_TABLE, null,  null, null, null, null, null);
+    }
+
     public void addProject(String name, String description) {
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_NAME, name);
@@ -124,6 +128,11 @@ public class DB {
         mDB.delete(DB_TECH_TABLE, COLUMN_ID + " = " + id, null);
     }
 
+    public void addType(String name) {
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_NAME, name);
+        mDB.insert(DB_TYPES_TABLE, null, cv);
+    }
 
     private static final String DB_TECH_TABLE = "pp_tech";
     private static final String DB_TYPES_TABLE = "pp_types";
@@ -195,6 +204,11 @@ public class DB {
                 db.execSQL(DB_TECH_CREATE);
                 db.execSQL(DB_TYPES_CREATE);
                 db.execSQL(DB_TASKS_CREATE);
+            } else if (oldVersion == 5) {
+                db.execSQL("drop table " + DB_TYPES_TABLE);
+                db.execSQL(DB_TYPES_CREATE);
+                db.execSQL("insert into " + DB_TYPES_TABLE + " values (\"type 1\");" +
+                        "insert into " + DB_TYPES_TABLE + " values (\"type 2\");");
             }
         }
     }
