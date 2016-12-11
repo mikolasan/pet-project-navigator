@@ -183,33 +183,6 @@ public class TaskActivity extends FragmentActivity implements MyListener {
 
         });
 
-        s_tech.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView,
-                                       int position, long id) {
-                Cursor cursor = (Cursor) parentView.getItemAtPosition(position);
-                int index = cursor.getColumnIndex(DB.COLUMN_ID);
-                int tech_id = cursor.getInt(index);
-                switch (tech_id) {
-                    case DB.TECH_UNDEFINED_ID: {
-                        break;
-                    }
-                    case DB.TECH_NEW_ID: {
-                        hideTechDialog();
-                        openTechDialog();
-                        break;
-                    }
-                }
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-                // your code here
-            }
-
-        });
-
         Intent intent = getIntent();
         int status = intent.getIntExtra("status", STATUS_NEW);
         switch  (status) {
