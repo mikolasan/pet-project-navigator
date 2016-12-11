@@ -98,13 +98,23 @@ public class DB {
         mDB.insert(DB_PROJECTS_TABLE, null, cv);
     }
 
-    public void addTask(int project_id,
+    public boolean hasObject(String table, String id, String value) {
+        String selectString = "SELECT * FROM " + table + " WHERE " + id + " =?";
+        Cursor cursor = mDB.rawQuery(selectString, new String[] {value});
+        boolean hasObject = cursor.getCount() > 0;
+        cursor.close();
+        return hasObject;
+    }
+
+    public void addTask(int task_id,
+                        int project_id,
                         String name,
                         String links,
                         String statement,
                         int tech,
                         int time,
                         int type) {
+        String id = String.valueOf(task_id);
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_PROJECT_ID, project_id);
 
@@ -115,7 +125,12 @@ public class DB {
         cv.put(COLUMN_TECH_ID, tech);
         cv.put(COLUMN_TIME, time);
         cv.put(COLUMN_TYPE_ID, type);
-        mDB.insert(DB_TASKS_TABLE, null, cv);
+
+        if (hasObject(DB_TASKS_TABLE, DB.COLUMN_ID, id)) {
+            mDB.update(DB_TASKS_TABLE, cv, DB.COLUMN_ID + " = ?", new String[] {id});
+        } else {
+            mDB.insert(DB_TASKS_TABLE, null, cv);
+        }
     }
 
     public void addTech(String name) {

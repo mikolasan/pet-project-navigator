@@ -27,6 +27,8 @@ public class TaskActivity extends FragmentActivity implements MyListener {
     public static final int STATUS_EDIT = 1;
 
     private int project_id;
+    private int task_id;
+
     DB db;
     Button btn_save_task;
     EditText e_name;
@@ -141,7 +143,8 @@ public class TaskActivity extends FragmentActivity implements MyListener {
 
         btn_save_task.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                db.addTask(project_id,
+                db.addTask(task_id,
+                        project_id,
                         e_name.getText().toString(),
                         e_links.getText().toString(),
                         e_desc.getText().toString(),
@@ -185,14 +188,22 @@ public class TaskActivity extends FragmentActivity implements MyListener {
 
         Intent intent = getIntent();
         int status = intent.getIntExtra("status", STATUS_NEW);
+        project_id = intent.getIntExtra("project_id", 0);
+        task_id = intent.getIntExtra("task_id", 0);
         switch  (status) {
             case STATUS_NEW: {
-                project_id = intent.getIntExtra("project_id", 0);
                 break;
             }
             case STATUS_EDIT: {
+                e_name.setText(intent.getStringExtra("title"));
+                e_links.setText(intent.getStringExtra("links"));
+                e_desc.setText(intent.getStringExtra("statement"));
 
-
+                int tech_id = intent.getIntExtra("tech_id", 0);
+                if (tech_id + 2 <= s_tech.getCount())
+                    s_tech.setSelection(tech_id + 2);
+                s_type.setSelection(intent.getIntExtra("type_id", 0));
+                e_time.setText(Integer.toString(intent.getIntExtra("time", 0)));
                 break;
             }
             default: {

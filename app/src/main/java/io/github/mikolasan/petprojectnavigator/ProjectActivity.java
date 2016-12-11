@@ -27,8 +27,38 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
 
     EditText project_name;
     EditText project_desc;
+    ListView taskView;
 
     private int project_id;
+
+    private int getNumber(Cursor cursor, String column) {
+        int id = cursor.getColumnIndex(column);
+        if (id < 0) {
+            return 0;
+        }
+        return cursor.getInt(id);
+    }
+
+    private String getString(Cursor cursor, String column) {
+        int id = cursor.getColumnIndex(column);
+        if (id < 0) {
+            return "";
+        }
+        return cursor.getString(id);
+    }
+
+    private Intent createIntent(int selectedItem) {
+        Intent intent = new Intent(getApplicationContext(), TaskActivity.class);
+        Cursor c = (Cursor) taskView.getItemAtPosition(selectedItem);
+        intent.putExtra("task_id", getNumber(c, DB.COLUMN_ID));
+        intent.putExtra("title", getString(c, DB.COLUMN_NAME));
+        intent.putExtra("time", getNumber(c, DB.COLUMN_TIME));
+        intent.putExtra("tech_id", getNumber(c, DB.COLUMN_TECH_ID));
+        intent.putExtra("statement", getString(c, DB.COLUMN_STATEMENT));
+        intent.putExtra("links", getString(c, DB.COLUMN_LINKS));
+        intent.putExtra("type_id", getNumber(c, DB.COLUMN_TYPE_ID));
+        return intent;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,23 +92,15 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
         String[] from = new String[] { DB.COLUMN_NAME };
         int[] to = new int[] { R.id.lbl_title };
         cursorAdapter = new SimpleCursorAdapter(this, R.layout.item_task, null, from, to, 0);
-        final ListView list = (ListView) findViewById(R.id.task_view);
-        list.setAdapter(cursorAdapter);
+        taskView = (ListView) findViewById(R.id.task_view);
+        taskView.setAdapter(cursorAdapter);
 
-        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        taskView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(getApplicationContext(), TaskActivity.class);
-
-                Cursor c = (Cursor) list.getItemAtPosition(i);
-
-                int id_column = c.getColumnIndex(DB.COLUMN_ID);
-                int name_column = c.getColumnIndex(DB.COLUMN_NAME);
-                int desc_column = c.getColumnIndex(DB.COLUMN_DESC);
-
+                Intent intent = createIntent(i);
                 intent.putExtra("status", ProjectActivity.STATUS_EDIT);
-                intent.putExtra("task_id", c.getInt(c.getColumnIndex(DB.COLUMN_ID)));
-                intent.putExtra("title", c.getString(name_column));
+                intent.putExtra("project_id", project_id);
                 startActivity(intent);
             }
         });
