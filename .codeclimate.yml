@@ -1,0 +1,17 @@
+engines:
+  checkstyle:
+    enabled: true
+    channel: "beta"
+  pmd:
+    enabled: true
+    channel: "beta"
+  fixme:
+    enabled: true
+
+ratings:
+  paths:
+  - "app/src/**"
+  - "**.java"  
+exclude_paths:
+- gradle/**
+- .idea/**
