@@ -2,11 +2,18 @@ package io.github.mikolasan.petprojectnavigator;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.database.MergeCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import org.apache.commons.codec.binary.Hex;
 
 /**
  * Created by neupo on 8/24/2016.
@@ -149,10 +156,10 @@ public class DB {
         mDB.insert(DB_TYPES_TABLE, null, cv);
     }
 
-    private static final String DB_TECH_TABLE = "pp_tech";
-    private static final String DB_TYPES_TABLE = "pp_types";
-    private static final String DB_TASKS_TABLE = "pp_tasks";
-    private static final String DB_PROJECTS_TABLE = "pp_project";
+    public static final String DB_TECH_TABLE = "pp_tech";
+    public static final String DB_TYPES_TABLE = "pp_types";
+    public static final String DB_TASKS_TABLE = "pp_tasks";
+    public static final String DB_PROJECTS_TABLE = "pp_project";
 
     private static final String DB_TECH_CREATE =
             "create table " + DB_TECH_TABLE + "(" +
@@ -186,6 +193,49 @@ public class DB {
                     COLUMN_DESC + " text, " +
                     COLUMN_NAME + " text" +
                     ");";
+
+
+    private static final String LOG_TAG_NAME = "DB LOG";
+
+    private JSONObject cursorToJson(Cursor c) {
+        JSONObject retVal = new JSONObject();
+        for(int i=0; i<c.getColumnCount(); i++) {
+            String cName = c.getColumnName(i);
+            try {
+                switch (c.getType(i)) {
+                    case Cursor.FIELD_TYPE_INTEGER:
+                        retVal.put(cName, c.getInt(i));
+                        break;
+                    case Cursor.FIELD_TYPE_FLOAT:
+                        retVal.put(cName, c.getFloat(i));
+                        break;
+                    case Cursor.FIELD_TYPE_STRING:
+                        retVal.put(cName, c.getString(i));
+                        break;
+                    case Cursor.FIELD_TYPE_BLOB:
+                        retVal.put(cName, Hex.encodeHexString(c.getBlob(i)));
+                        break;
+                }
+            }
+            catch(Exception ex) {
+                Log.e(LOG_TAG_NAME, "Exception converting cursor column to json field: " + cName);
+            }
+        }
+        return retVal;
+    }
+
+    public JSONArray toJSON(String tableName) {
+        Cursor cursor = mDB.query(tableName, null,  null, null, null, null, null);
+        JSONArray result = new JSONArray();
+        cursor.moveToFirst();
+        while (cursor.isAfterLast() == false) {
+            result.put(cursorToJson(cursor));
+            cursor.moveToNext();
+        }
+        cursor.close();
+        Log.d("TAG_NAME", result.toString());
+        return result;
+    }
 
     // класс по созданию и управлению БД
     private class DBHelper extends SQLiteOpenHelper {

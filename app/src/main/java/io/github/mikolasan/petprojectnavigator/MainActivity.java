@@ -2,6 +2,7 @@ package io.github.mikolasan.petprojectnavigator;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -14,6 +15,8 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
+import org.json.JSONArray;
+
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     DB db;
@@ -22,9 +25,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
         db = DB.getOpenedInstance();
+
+        final Button btn_backup = (Button) findViewById(R.id.btn_backup_project);
+        btn_backup.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                backup();
+            }
+        });
 
         final Button btn_add_project = (Button) findViewById(R.id.btn_add_project);
         btn_add_project.setOnClickListener(new View.OnClickListener() {
@@ -66,7 +77,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         // создаем лоадер для чтения данных
         getSupportLoaderManager().initLoader(0, null, this);
     }
-
 
     @Override
     protected void onResume() {
@@ -110,5 +120,20 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             return cursor;
         }
 
+    }
+
+    public void backup() {
+        JSONArray json = db.toJSON(DB.DB_TECH_TABLE);
+        String str = json.toString();
+        json = db.toJSON(DB.DB_TYPES_TABLE);
+        str += json.toString();
+        json = db.toJSON(DB.DB_TASKS_TABLE);
+        str += json.toString();
+        json = db.toJSON(DB.DB_PROJECTS_TABLE);
+        str += json.toString();
+        SharedPreferences sharedPref = getSharedPreferences("appData", Context.MODE_PRIVATE);
+        SharedPreferences.Editor prefEditor = sharedPref.edit();
+        prefEditor.putString("json", str);
+        prefEditor.commit();
     }
 }
