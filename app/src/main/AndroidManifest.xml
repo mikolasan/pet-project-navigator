@@ -3,7 +3,7 @@
     package="io.github.mikolasan.petprojectnavigator">
 
     <application
-        android:name="io.github.mikolasan.petprojectnavigator.MyApplication"
+        android:name="io.github.mikolasan.petprojectnavigator.AndroidClient"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"

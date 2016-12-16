@@ -6,16 +6,16 @@ import android.content.Context;
 /**
  * Created by neupo on 11/7/2016.
  */
-public class MyApplication extends Application {
+public class AndroidClient extends Application {
     private static Context context;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        MyApplication.context = getApplicationContext();
+        AndroidClient.context = getApplicationContext();
     }
 
     public static Context getAppContext() {
-        return MyApplication.context;
+        return AndroidClient.context;
     }
 }
