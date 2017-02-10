@@ -20,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:weightSum="2">
+        android:weightSum="3">
 
         <Button
             android:layout_width="0dp"
@@ -36,6 +36,13 @@
             android:text="@string/btn_backup_project"
             android:id="@+id/btn_backup_project"
              />
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:text="@string/btn_to_cloud"
+            android:id="@+id/btn_to_cloud" />
     </LinearLayout>
 
 </LinearLayout>

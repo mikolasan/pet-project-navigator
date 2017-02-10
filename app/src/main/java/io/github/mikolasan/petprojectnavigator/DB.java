@@ -42,7 +42,7 @@ public class DB {
 
     public static DB getOpenedInstance() {
         if(instance == null) {
-            instance = new DB(MyApplication.getAppContext());
+            instance = new DB(AndroidClient.getAppContext());
             instance.open();
         }
         return instance;

@@ -1,26 +1,49 @@
 package io.github.mikolasan.petprojectnavigator;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.drive.Drive;
+import com.google.android.gms.drive.DriveApi;
+import com.google.android.gms.drive.MetadataChangeSet;
+
 import org.json.JSONArray;
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
+
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
 
     DB db;
     SimpleCursorAdapter cursorAdapter;
+    private static final String TAG = "drive-quickstart";
+    private static final int REQUEST_CODE_CAPTURE_IMAGE = 1;
+    private static final int REQUEST_CODE_CREATOR = 2;
+    private static final int REQUEST_CODE_RESOLUTION = 3;
+    private GoogleApiClient mGoogleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +107,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         getSupportLoaderManager().restartLoader(0, null, this);
     }
 
+    @Override
+    protected void onPause() {
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.disconnect();
+        }
+        super.onPause();
+    }
+
     protected void onDestroy() {
         super.onDestroy();
         // закрываем подключение при выходе
@@ -105,6 +136,37 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     }
 
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        Log.i(TAG, "API client connected.");
+        saveFileToDrive();
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        Log.i(TAG, "GoogleApiClient connection suspended");
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult result) {
+        // Called whenever the API client fails to connect.
+        Log.i(TAG, "GoogleApiClient connection failed: " + result.toString());
+        if (!result.hasResolution()) {
+            // show the localized error dialog.
+            GoogleApiAvailability.getInstance().getErrorDialog(this, result.getErrorCode(), 0).show();
+            return;
+        }
+        // The failure has a resolution. Resolve it.
+        // Called typically when the app is not yet authorized, and an
+        // authorization
+        // dialog is displayed to the user.
+        try {
+            result.startResolutionForResult(this, REQUEST_CODE_RESOLUTION);
+        } catch (IntentSender.SendIntentException e) {
+            Log.e(TAG, "Exception while starting resolution activity", e);
+        }
+    }
+
     static class MyCursorLoader extends CursorLoader {
 
         DB db;
@@ -120,9 +182,85 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             return cursor;
         }
 
+        
+    }
+
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        switch (requestCode) {
+            case REQUEST_CODE_CREATOR:
+                // Called after a file is saved to Drive.
+                if (resultCode == RESULT_OK) {
+                    Log.i(TAG, "Image successfully saved.");
+                }
+                break;
+        }
     }
 
     public void backup() {
+        if (mGoogleApiClient == null) {
+            // Create the API client and bind it to an instance variable.
+            // We use this instance as the callback for connection and connection
+            // failures.
+            // Since no account name is passed, the user is prompted to choose.
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addApi(Drive.API)
+                    .addScope(Drive.SCOPE_FILE)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .build();
+        }
+        // Connect the client. Once connected, the camera is launched.
+        mGoogleApiClient.connect();
+    }
+
+    private void saveFileToDrive() {
+        // Start by creating a new contents, and setting a callback.
+        Log.i(TAG, "Creating new contents.");
+        String str = prepare_json();
+        Drive.DriveApi.newDriveContents(mGoogleApiClient)
+                .setResultCallback(new ResultCallback<DriveApi.DriveContentsResult>() {
+
+                    @Override
+                    public void onResult(DriveApi.DriveContentsResult result) {
+                        // If the operation was not successful, we cannot do anything
+                        // and must
+                        // fail.
+                        if (!result.getStatus().isSuccess()) {
+                            Log.i(TAG, "Failed to create new contents.");
+                            return;
+                        }
+                        // Otherwise, we can write our data to the new contents.
+                        Log.i(TAG, "New contents created.");
+                        // Get an output stream for the contents.
+                        OutputStream outputStream = result.getDriveContents().getOutputStream();
+                        try {
+                            outputStream.write(str.getBytes(Charset.forName("UTF-8")));
+                        } catch (IOException e1) {
+                            Log.i(TAG, "Unable to write file contents.");
+                        }
+                        // Create the initial metadata - MIME type and title.
+                        // Note that the user will be able to change the title later.
+                        String date = ""; // !TODO
+                        MetadataChangeSet metadataChangeSet = new MetadataChangeSet.Builder()
+                                .setMimeType("application/json").setTitle("pet-project-navigator-backup" + date + ".json").build();
+                        // Create an intent for the file chooser, and start it.
+                        IntentSender intentSender = Drive.DriveApi
+                                .newCreateFileActivityBuilder()
+                                .setInitialMetadata(metadataChangeSet)
+                                .setInitialDriveContents(result.getDriveContents())
+                                .build(mGoogleApiClient);
+                        try {
+                            startIntentSenderForResult(
+                                    intentSender, REQUEST_CODE_CREATOR, null, 0, 0, 0);
+                        } catch (IntentSender.SendIntentException e) {
+                            Log.i(TAG, "Failed to launch file chooser.");
+                        }
+                    }
+                });
+    }
+
+    private String prepare_json() {
         JSONArray json = db.toJSON(DB.DB_TECH_TABLE);
         String str = json.toString();
         json = db.toJSON(DB.DB_TYPES_TABLE);
@@ -131,6 +269,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         str += json.toString();
         json = db.toJSON(DB.DB_PROJECTS_TABLE);
         str += json.toString();
+        return str;
+    }
+
+    private void save_local_copy(String str) {
         SharedPreferences sharedPref = getSharedPreferences("appData", Context.MODE_PRIVATE);
         SharedPreferences.Editor prefEditor = sharedPref.edit();
         prefEditor.putString("json", str);
