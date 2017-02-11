@@ -23,9 +23,11 @@ import android.widget.ListView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
+import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.drive.Drive;
-import com.google.android.gms.drive.DriveApi;
+import com.google.android.gms.drive.DriveApi.DriveContentsResult;
 import com.google.android.gms.drive.MetadataChangeSet;
 
 import org.json.JSONArray;
@@ -34,8 +36,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener {
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, ConnectionCallbacks,
+        OnConnectionFailedListener {
 
     DB db;
     SimpleCursorAdapter cursorAdapter;
@@ -57,6 +59,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         btn_backup.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 backup();
+            }
+        });
+
+        final Button btn_to_cloud = (Button) findViewById(R.id.btn_to_cloud);
+        btn_to_cloud.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                toCloud();
             }
         });
 
@@ -198,6 +207,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     public void backup() {
+        save_local_copy(prepare_json());
+    }
+
+    public void toCloud() {
         if (mGoogleApiClient == null) {
             // Create the API client and bind it to an instance variable.
             // We use this instance as the callback for connection and connection
@@ -219,10 +232,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         Log.i(TAG, "Creating new contents.");
         String str = prepare_json();
         Drive.DriveApi.newDriveContents(mGoogleApiClient)
-                .setResultCallback(new ResultCallback<DriveApi.DriveContentsResult>() {
+                .setResultCallback(new ResultCallback<DriveContentsResult>() {
 
                     @Override
-                    public void onResult(DriveApi.DriveContentsResult result) {
+                    public void onResult(DriveContentsResult result) {
                         // If the operation was not successful, we cannot do anything
                         // and must
                         // fail.

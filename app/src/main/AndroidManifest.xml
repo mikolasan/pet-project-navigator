@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="io.github.mikolasan.petprojectnavigator">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <application
         android:name="io.github.mikolasan.petprojectnavigator.AndroidClient"
         android:allowBackup="true"
