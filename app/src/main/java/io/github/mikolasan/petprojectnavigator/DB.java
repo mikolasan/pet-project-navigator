@@ -2,12 +2,13 @@ package io.github.mikolasan.petprojectnavigator;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.MatrixCursor;
 import android.database.MergeCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.ArraySet;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -15,17 +16,15 @@ import org.json.JSONObject;
 
 import org.apache.commons.codec.binary.Hex;
 
-/**
- * Created by neupo on 8/24/2016.
- */
+import java.util.ArrayList;
 
-public class DB {
+class DB {
 
     private static DB instance = null;
     private static final String DB_NAME = "petprojectdb";
     private static final int DB_VERSION = 5;
 
-    public static final String COLUMN_ID = "_id";
+    static final String COLUMN_ID = "_id";
     public static final String COLUMN_NAME = "name";
     public static final String COLUMN_DESC = "desc";
     public static final String COLUMN_STATEMENT = "statement";
@@ -72,39 +71,6 @@ public class DB {
         if (mDBHelper!=null) mDBHelper.close();
     }
 
-    // получить все данные из таблицы DB_TABLE
-    public Cursor getAllData() {
-        return mDB.query(DB_PROJECTS_TABLE, null, null, null, null, null, null);
-    }
-
-    public Cursor getAllProjects() {
-        return mDB.query(DB_PROJECTS_TABLE, null, null, null, null, null, null);
-    }
-
-    public Cursor getAllTasks(int projectId) {
-        String selection = COLUMN_PROJECT_ID + " = " + projectId;
-        return mDB.query(DB_TASKS_TABLE, null, selection, null, null, null, null);
-    }
-
-    public Cursor getAllTech() {
-        Cursor[] cursors = {
-                new_tech,
-                mDB.query(DB_TECH_TABLE, null,  null, null, null, null, null)
-        };
-        return new MergeCursor(cursors);
-    }
-
-    public Cursor getAllTypes() {
-        return mDB.query(DB_TYPES_TABLE, null,  null, null, null, null, null);
-    }
-
-    public void addProject(String name, String description) {
-        ContentValues cv = new ContentValues();
-        cv.put(COLUMN_NAME, name);
-        cv.put(COLUMN_DESC, description);
-        mDB.insert(DB_PROJECTS_TABLE, null, cv);
-    }
-
     public boolean hasObject(String table, String id, String value) {
         String selectString = "SELECT * FROM " + table + " WHERE " + id + " =?";
         Cursor cursor = mDB.rawQuery(selectString, new String[] {value});
@@ -113,7 +79,38 @@ public class DB {
         return hasObject;
     }
 
-    public void addTask(int task_id,
+    /*
+    *
+    * Projects
+    *
+     */
+    // получить все данные из таблицы DB_TABLE
+    Cursor getAllProjects() {
+        return mDB.query(DB_PROJECTS_TABLE, null, null, null, null, null, null);
+    }
+
+    void addProject(String name, String description) {
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_NAME, name);
+        cv.put(COLUMN_DESC, description);
+        mDB.insert(DB_PROJECTS_TABLE, null, cv);
+    }
+
+    void deleteProject(int projectId) {
+        mDB.delete(DB_PROJECTS_TABLE, COLUMN_ID + " = " + projectId, null);
+    }
+
+    /*
+    *
+    * Tasks
+    *
+     */
+    Cursor getAllTasks(int projectId) {
+        String selection = COLUMN_PROJECT_ID + " = " + projectId;
+        return mDB.query(DB_TASKS_TABLE, null, selection, null, null, null, null);
+    }
+
+    void addTask(int task_id,
                         int project_id,
                         String name,
                         String links,
@@ -140,14 +137,72 @@ public class DB {
         }
     }
 
+    void copyTask(int taskId, int projectId) {
+        Cursor c = mDB.query(DB_TASKS_TABLE, new String[] {COLUMN_PROJECT_ID, COLUMN_NAME, COLUMN_LINKS, COLUMN_LINKS, COLUMN_TECH_ID, COLUMN_TIME, COLUMN_TYPE_ID},
+                COLUMN_ID + " = " + taskId, null, null, null, null);
+        ContentValues cv = new ContentValues();
+        DatabaseUtils.cursorRowToContentValues(c, cv);
+        cv.put(COLUMN_PROJECT_ID, projectId);
+        mDB.insert(DB_TASKS_TABLE, null, cv);
+    }
+
+    void deleteTask(int taskId) {
+        mDB.delete(DB_TASKS_TABLE, COLUMN_ID + " = " + taskId, null);
+    }
+
+    void moveTask(int taskId, int projectId) {
+        copyTask(taskId, projectId);
+        deleteTask(taskId);
+    }
+
+    /*
+    *
+    * Technologies
+    *
+     */
+    public Cursor getAllTech() {
+        Cursor[] cursors = {
+                new_tech,
+                mDB.query(DB_TECH_TABLE, null,  null, null, null, null, null)
+        };
+        return new MergeCursor(cursors);
+    }
+
     public void addTech(String name) {
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_NAME, name);
         mDB.insert(DB_TECH_TABLE, null, cv);
     }
 
-    public void delTech(long id) {
-        mDB.delete(DB_TECH_TABLE, COLUMN_ID + " = " + id, null);
+    public void deleteTech(String techId) {
+        mDB.delete(DB_TECH_TABLE, COLUMN_ID + " = ?", new String[] {techId});
+    }
+
+    Cursor getAllTasksByTech(String techId) {
+        return mDB.query(DB_TASKS_TABLE, null, COLUMN_ID + " = ?", new String[] {techId}, null, null, null);
+    }
+
+    Cursor getAllProjectByTech(String techId) {
+        Cursor c = getAllTasksByTech(techId);
+        ArraySet<String> projects = new ArraySet<>();
+        if (c.moveToFirst()) {
+            int columnIndex =  c.getColumnIndex(COLUMN_PROJECT_ID);
+            do {
+                projects.add(c.getString(columnIndex));
+            } while (c.moveToNext());
+        }
+        String[] selection = new String[projects.size()];
+        projects.toArray(selection);
+        return mDB.query(DB_PROJECTS_TABLE, null, COLUMN_ID + " = ?", selection, null, null, null);
+    }
+
+    /*
+    *
+    * Types
+    *
+     */
+    public Cursor getAllTypes() {
+        return mDB.query(DB_TYPES_TABLE, null,  null, null, null, null, null);
     }
 
     public void addType(String name) {
