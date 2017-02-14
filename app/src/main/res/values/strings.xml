@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Pet Project Navigator</string>
     <string name="btn_add_project">Ещё проект</string>
+    <string name="btn_delete_project">Удалить</string>
     <string name="btn_backup_project">Забэкапить</string>
     <string name="btn_to_cloud">Заоблачить</string>
     <string name="btn_add_task">Добавить задачу</string>
@@ -17,4 +18,6 @@
     <string name="new_tech_sample">Парусные аномалии Фуко</string>
     <string name="new_tech_ok">Создать технологию</string>
     <string name="new_tech_cancel">Отмена</string>
+    <string name="sample_project">Пример длинного названия проекта</string>
+    <string name="sample_project_desc">Небольшое описание. Буквально в несколько строк</string>
 </resources>

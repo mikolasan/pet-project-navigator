@@ -87,16 +87,22 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(getApplicationContext(), ProjectActivity.class);
-
                 Cursor c = (Cursor) list.getItemAtPosition(i);
 
                 int id_column = c.getColumnIndex(DB.COLUMN_ID);
+                int projectId = c.getInt(id_column);
+
+                if (view.getId() == R.id.btn_delete_project) {
+                    db.deleteProject(projectId);
+                    return;
+                }
+
                 int name_column = c.getColumnIndex(DB.COLUMN_NAME);
                 int desc_column = c.getColumnIndex(DB.COLUMN_DESC);
 
+                Intent intent = new Intent(getApplicationContext(), ProjectActivity.class);
                 intent.putExtra("status", ProjectActivity.STATUS_EDIT);
-                intent.putExtra("project_id", c.getInt(id_column));
+                intent.putExtra("project_id", projectId);
                 intent.putExtra("title", c.getString(name_column));
                 intent.putExtra("description", c.getString(desc_column));
                 startActivity(intent);
