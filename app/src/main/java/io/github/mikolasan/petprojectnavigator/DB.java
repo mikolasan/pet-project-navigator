@@ -34,6 +34,7 @@ class DB {
     public static final String COLUMN_LINKS = "links";
     public static final String COLUMN_SAVED = "saved";
     public static final String COLUMN_TYPE_ID = "type_id";
+    private final int BUFFER_ID = 0;
 
     private final Context mCtx;
     private static DBHelper mDBHelper = null;
@@ -89,15 +90,23 @@ class DB {
         return mDB.query(DB_PROJECTS_TABLE, null, null, null, null, null, null);
     }
 
-    void addProject(String name, String description) {
+    long addProject(String name, String description) {
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_NAME, name);
         cv.put(COLUMN_DESC, description);
-        mDB.insert(DB_PROJECTS_TABLE, null, cv);
+        return mDB.insert(DB_PROJECTS_TABLE, null, cv);
+    }
+
+    void createProjectFromBuffer(String name, String description) {
+        long projectId = addProject(name, description);
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_PROJECT_ID, projectId);
+        mDB.update(DB_TASKS_TABLE, cv, COLUMN_PROJECT_ID + " = ?", new String[] {Integer.toString(BUFFER_ID)});
     }
 
     void deleteProject(int projectId) {
         mDB.delete(DB_PROJECTS_TABLE, COLUMN_ID + " = " + projectId, null);
+        deleteTasksOfProject(projectId);
     }
 
     /*
@@ -150,9 +159,17 @@ class DB {
         mDB.delete(DB_TASKS_TABLE, COLUMN_ID + " = " + taskId, null);
     }
 
+    void deleteTasksOfProject(int projectId) {
+        mDB.delete(DB_TASKS_TABLE, COLUMN_PROJECT_ID + " = ?", new String[] {Integer.toString(projectId)});
+    }
+
     void moveTask(int taskId, int projectId) {
         copyTask(taskId, projectId);
         deleteTask(taskId);
+    }
+
+    void moveTaskToBuffer(int taskId) {
+        moveTask(taskId, BUFFER_ID);
     }
 
     /*
