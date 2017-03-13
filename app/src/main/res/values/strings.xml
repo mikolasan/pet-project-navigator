@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Pet Project Navigator</string>
     <string name="btn_add_project">Ещё проект</string>
+    <string name="btn_save_project">Сохранить</string>
     <string name="btn_delete_project">Удалить</string>
     <string name="btn_backup_project">Забэкапить</string>
     <string name="btn_to_cloud">Заоблачить</string>

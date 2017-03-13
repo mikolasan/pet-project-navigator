@@ -91,12 +91,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
                 int id_column = c.getColumnIndex(DB.COLUMN_ID);
                 int projectId = c.getInt(id_column);
-
-                if (view.getId() == R.id.btn_delete_project) {
-                    db.deleteProject(projectId);
-                    return;
-                }
-
                 int name_column = c.getColumnIndex(DB.COLUMN_NAME);
                 int desc_column = c.getColumnIndex(DB.COLUMN_DESC);
 

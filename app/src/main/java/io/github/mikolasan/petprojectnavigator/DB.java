@@ -97,6 +97,13 @@ class DB {
         return mDB.insert(DB_PROJECTS_TABLE, null, cv);
     }
 
+    void saveProjectDetails(int projectId, String name, String description) {
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_NAME, name);
+        cv.put(COLUMN_DESC, description);
+        mDB.update(DB_PROJECTS_TABLE, cv, COLUMN_ID + " = ?", new String[] {Integer.toString(projectId)});
+    }
+
     void createProjectFromBuffer(String name, String description) {
         long projectId = addProject(name, description);
         ContentValues cv = new ContentValues();

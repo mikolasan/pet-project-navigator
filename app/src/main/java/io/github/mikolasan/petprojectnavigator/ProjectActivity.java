@@ -27,8 +27,10 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
 
     EditText project_name;
     EditText project_desc;
+    Button btn_delete_project;
     ListView taskView;
 
+    private int status;
     private int project_id;
 
     private int getNumber(Cursor cursor, String column) {
@@ -82,8 +84,29 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
         project_desc = (EditText) findViewById(R.id.e_desc);
         btn_add_project.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                db.addProject(project_name.getText().toString(),
-                        project_desc.getText().toString());
+                String name = project_name.getText().toString();
+                String description = project_desc.getText().toString();
+                switch (status) {
+                    case STATUS_NEW:
+                    {
+                        db.addProject(name, description);
+                        break;
+                    }
+                    case STATUS_EDIT:
+                    {
+                        db.saveProjectDetails(project_id, name, description);
+                        break;
+                    }
+                }
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        btn_delete_project = (Button) findViewById(R.id.btn_delete_project);
+        btn_delete_project.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                db.deleteProject(project_id);
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
             }
@@ -114,12 +137,14 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
         super.onStart();
 
         Intent intent = getIntent();
-        int status = intent.getIntExtra("status", STATUS_NEW);
+        status = intent.getIntExtra("status", STATUS_NEW);
         switch  (status) {
             case STATUS_NEW: {
+                btn_delete_project.setVisibility(View.INVISIBLE);
                 break;
             }
             case STATUS_EDIT: {
+                btn_delete_project.setVisibility(View.VISIBLE);
                 project_name.setText(intent.getStringExtra("title"));
                 project_desc.setText(intent.getStringExtra("description"));
                 project_id = intent.getIntExtra("project_id", 0);
