@@ -49,15 +49,18 @@ class DB {
     }
 
     private MatrixCursor new_tech;
-    public static final int TECH_UNDEFINED_ID = -2;
-    public static final int TECH_NEW_ID = -1;
+    public static final int TECH_UNDEFINED_ID = -1;
     public static final String TECH_UNDEFINED_NAME = "Undefined";
-    public static final String TECH_NEW_NAME = "New technology";
+
+    private MatrixCursor new_type;
+    public static final int TYPE_UNDEFINED_ID = -1;
+    public static final String TYPE_UNDEFINED_NAME = "Undefined";
 
     public DB(Context ctx) {
         new_tech = new MatrixCursor(new String[]{ COLUMN_ID, COLUMN_NAME});
         new_tech.addRow(new Object[]{TECH_UNDEFINED_ID, TECH_UNDEFINED_NAME});
-        new_tech.addRow(new Object[]{TECH_NEW_ID, TECH_NEW_NAME});
+        new_type = new MatrixCursor(new String[]{ COLUMN_ID, COLUMN_NAME});
+        new_type.addRow(new Object[]{TYPE_UNDEFINED_ID, TYPE_UNDEFINED_NAME});
         mCtx = ctx;
     }
 
@@ -226,7 +229,11 @@ class DB {
     *
      */
     public Cursor getAllTypes() {
-        return mDB.query(DB_TYPES_TABLE, null,  null, null, null, null, null);
+        Cursor[] cursors = {
+                new_type,
+                mDB.query(DB_TYPES_TABLE, null, null, null, null, null, null)
+        };
+        return new MergeCursor(cursors);
     }
 
     public void addType(String name) {

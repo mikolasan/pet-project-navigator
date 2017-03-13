@@ -19,6 +19,13 @@
     <string name="new_tech_sample">Парусные аномалии Фуко</string>
     <string name="new_tech_ok">Создать технологию</string>
     <string name="new_tech_cancel">Отмена</string>
+    <string name="btn_add_tech">Новый</string>
+    <string name="btn_delete_tech">Дел</string>
+    <string name="new_type_title">Назовите тип</string>
+    <string name="new_type_sample">Таска делается лежа не диване</string>
+    <string name="new_type_ok">Создать тип</string>
+    <string name="btn_add_type">Новый</string>
+    <string name="btn_delete_type">Дел</string>
     <string name="sample_project">Пример длинного названия проекта</string>
     <string name="sample_project_desc">Небольшое описание. Буквально в несколько строк</string>
 </resources>

@@ -25,7 +25,9 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/e_name"
-                android:layout_column="1" />
+                android:layout_column="1"
+                android:inputType="text|textMultiLine"
+                android:hint="@string/sample_project" />
 
         </TableRow>
 
@@ -43,7 +45,9 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/e_desc"
-                android:layout_column="1" />
+                android:layout_column="1"
+                android:inputType="text|textMultiLine"
+                android:hint="@string/sample_project_desc" />
 
         </TableRow>
     </TableLayout>
@@ -83,7 +87,6 @@
         style="@android:style/Widget.Material.Button"
         android:text="@string/btn_add_task"
         android:id="@+id/btn_add_task"
-        android:layout_column="1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="@android:style/TextAppearance.Material.Button" />

@@ -18,7 +18,8 @@ import android.widget.Spinner;
 
 interface MyListener {
     // you can define any parameter as per your requirement
-    public void callback(View view, String result);
+    void techCallback(View view, String result);
+    void typeCallback(View view, String result);
 }
 
 public class TaskActivity extends FragmentActivity implements MyListener {
@@ -70,8 +71,13 @@ public class TaskActivity extends FragmentActivity implements MyListener {
     }
 
     private void openDialog(String tag) {
-        TechNameDialogFragment dialog = TechNameDialogFragment.newInstance(TaskActivity.this);
-        dialog.show(ft, tag);
+        if (tag == "TechNameDialogFragment"){
+            TechNameDialogFragment dialog = TechNameDialogFragment.newInstance(TaskActivity.this);
+            dialog.show(ft, tag);
+        } else {
+            TypeNameDialogFragment dialog = TypeNameDialogFragment.newInstance(TaskActivity.this);
+            dialog.show(ft, tag);
+        }
     }
 
     private void updateTechList() {
@@ -135,6 +141,36 @@ public class TaskActivity extends FragmentActivity implements MyListener {
         spinnerAdapter = fillList(s_tech, db.getAllTech());
         typeAdapter = fillList(s_type, db.getAllTypes());
 
+        final Button btn_add_tech = (Button) findViewById(R.id.btn_add_tech);
+        btn_add_tech.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                hideTechDialog();
+                openTechDialog();
+            }
+        });
+
+        final Button btn_delete_tech = (Button) findViewById(R.id.btn_delete_tech);
+        btn_delete_tech.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                //TODO
+            }
+        });
+
+        final Button btn_add_type = (Button) findViewById(R.id.btn_add_type);
+        btn_add_type.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                hideTypeDialog();
+                openTypeDialog();
+            }
+        });
+
+        final Button btn_delete_type = (Button) findViewById(R.id.btn_delete_type);
+        btn_delete_type.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                //TODO
+            }
+        });
+
         btn_save_task = (Button) findViewById(R.id.btn_save_task);
         e_name = (EditText) findViewById(R.id.e_name);
         e_desc = (EditText) findViewById(R.id.e_desc);
@@ -170,13 +206,28 @@ public class TaskActivity extends FragmentActivity implements MyListener {
                     case DB.TECH_UNDEFINED_ID: {
                         break;
                     }
-                    case DB.TECH_NEW_ID: {
-                        hideTechDialog();
-                        openTechDialog();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // your code here
+            }
+
+        });
+
+        s_type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView,
+                                       int position, long id) {
+                Cursor cursor = (Cursor) parentView.getItemAtPosition(position);
+                int index = cursor.getColumnIndex(DB.COLUMN_ID);
+                int type_id = cursor.getInt(index);
+                switch (type_id) {
+                    case DB.TYPE_UNDEFINED_ID: {
                         break;
                     }
                 }
-
             }
 
             @Override
@@ -200,9 +251,9 @@ public class TaskActivity extends FragmentActivity implements MyListener {
                 e_desc.setText(intent.getStringExtra("statement"));
 
                 int tech_id = intent.getIntExtra("tech_id", 0);
-                if (tech_id + 2 <= s_tech.getCount())
-                    s_tech.setSelection(tech_id + 2);
-                s_type.setSelection(intent.getIntExtra("type_id", 0));
+                s_tech.setSelection(tech_id);
+                int type_id = intent.getIntExtra("type_id", 0);
+                s_type.setSelection(type_id);
                 e_time.setText(Integer.toString(intent.getIntExtra("time", 0)));
                 break;
             }
@@ -213,11 +264,18 @@ public class TaskActivity extends FragmentActivity implements MyListener {
     }
 
     @Override
-    public void callback(View view, String result) {
+    public void techCallback(View view, String result) {
         db.addTech(result);
         hideTechDialog();
         updateTechList();
         selectItem(result, s_tech, spinnerAdapter);
+    }
+
+    public void typeCallback(View view, String result) {
+        db.addType(result);
+        hideTypeDialog();
+        updateTypeList();
+        selectItem(result, s_type, typeAdapter);
     }
 
 
@@ -239,12 +297,35 @@ public class TaskActivity extends FragmentActivity implements MyListener {
             Button button = (Button)v.findViewById(R.id.btn_add_tech);
             button.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    ml.callback(e, e.getText().toString());
-
+                    ml.techCallback(e, e.getText().toString());
                 }
             });
             return v;
         }
     }
 
+    public static class TypeNameDialogFragment extends DialogFragment {
+        MyListener ml;
+
+        static TypeNameDialogFragment newInstance(MyListener ml) {
+            TypeNameDialogFragment f = new TypeNameDialogFragment();
+            f.ml = ml;
+            return f;
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            View v = inflater.inflate(R.layout.dialog_type, container, false);
+            final EditText e = (EditText)v.findViewById(R.id.e_type_name);
+            // Watch for button clicks.
+            Button button = (Button)v.findViewById(R.id.btn_add_type);
+            button.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    ml.typeCallback(e, e.getText().toString());
+                }
+            });
+            return v;
+        }
+    }
 }

@@ -14,13 +14,16 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/project_lbl_name"
             android:id="@+id/lbl_name"
-            android:layout_column="0" />
+            android:layout_column="0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
         <EditText
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:id="@+id/e_name"
-            android:layout_column="1" />
+            android:layout_column="1"
+            android:inputType="text|textMultiLine" />
 
     </TableRow>
 
@@ -32,13 +35,41 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/project_lbl_tech"
             android:id="@+id/lbl_tech"
-            android:layout_column="0" />
-
-        <Spinner
+            android:layout_column="0"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/s_tech"
-            android:layout_column="1" />
+            android:layout_height="match_parent" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Spinner
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/s_tech"
+                android:layout_weight="1" />
+
+            <Button
+                android:text="@string/btn_add_tech"
+                android:id="@+id/btn_add_tech"
+                android:textAppearance="@android:style/TextAppearance.Material.Small"
+                style="@android:style/Widget.Material.Button.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <Button
+                android:text="@string/btn_delete_tech"
+                android:id="@+id/btn_delete_tech"
+                android:textAppearance="@android:style/TextAppearance.Material.Small"
+                style="@android:style/Widget.Material.Button.Small"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
     </TableRow>
 
     <TableRow
@@ -74,7 +105,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/e_links"
-            android:layout_column="1" />
+            android:layout_column="1"
+            android:inputType="text|textMultiLine" />
 
     </TableRow>
 
@@ -92,7 +124,8 @@
             android:layout_width="fill_parent"
             android:layout_height="120dp"
             android:id="@+id/e_desc"
-            android:layout_column="1" />
+            android:layout_column="1"
+            android:inputType="text|textMultiLine" />
 
     </TableRow>
 
@@ -104,13 +137,40 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/project_lbl_type"
             android:id="@+id/lbl_type"
-            android:layout_column="0" />
-
-        <Spinner
+            android:layout_column="0"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/s_type"
-            android:layout_column="1" />
+            android:layout_height="match_parent" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Spinner
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/s_type"
+                android:layout_weight="1" />
+
+            <Button
+                android:text="@string/btn_add_type"
+                android:id="@+id/btn_add_type"
+                android:textAppearance="@android:style/TextAppearance.Material.Small"
+                style="@android:style/Widget.Material.Button.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <Button
+                android:text="@string/btn_delete_type"
+                android:id="@+id/btn_delete_type"
+                android:textAppearance="@android:style/TextAppearance.Material.Small"
+                style="@android:style/Widget.Material.Button.Small"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
 
     </TableRow>
 
@@ -121,7 +181,9 @@
         <Button
             android:text="@string/btn_save_task"
             android:id="@+id/btn_save_task"
-            android:layout_column="1" />
+            android:layout_column="1"
+            android:textAppearance="@android:style/TextAppearance.Material.Button"
+            style="@android:style/Widget.Material.Button" />
     </TableRow>
 
 </TableLayout>
