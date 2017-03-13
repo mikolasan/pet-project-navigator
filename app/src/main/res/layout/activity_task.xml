@@ -84,10 +84,10 @@
 
         <EditText
             android:inputType="numberDecimal"
-            android:text="@string/task_edit_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/e_time" />
+            android:id="@+id/e_time"
+            android:hint="@string/task_edit_time" />
 
     </TableRow>
 
