@@ -289,6 +289,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         SharedPreferences sharedPref = getSharedPreferences("appData", Context.MODE_PRIVATE);
         SharedPreferences.Editor prefEditor = sharedPref.edit();
         prefEditor.putString("json", str);
-        prefEditor.commit();
+        prefEditor.apply(); // apply() is more efficient, it starts an asynchronous commit
     }
 }
