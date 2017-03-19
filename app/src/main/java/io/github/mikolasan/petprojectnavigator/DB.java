@@ -323,6 +323,24 @@ class DB {
         return result;
     }
 
+    void clearAll(SQLiteDatabase db){
+        db.execSQL("drop table ?", new String[] {DB_TECH_TABLE});
+        db.execSQL("drop table ?", new String[] {DB_TYPES_TABLE});
+        db.execSQL("drop table ?", new String[] {DB_TASKS_TABLE});
+        db.execSQL("drop table ?", new String[] {DB_PROJECTS_TABLE});
+    }
+
+    void createNew(SQLiteDatabase db){
+        db.execSQL(DB_TECH_CREATE);
+        db.execSQL(DB_TYPES_CREATE);
+        db.execSQL(DB_TASKS_CREATE);
+        db.execSQL(DB_PROJECTS_CREATE);
+    }
+
+    boolean restore(String json) {
+        return false;
+    }
+
     // класс по созданию и управлению БД
     private class DBHelper extends SQLiteOpenHelper {
 
@@ -334,10 +352,7 @@ class DB {
         // создаем и заполняем БД
         @Override
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL(DB_TECH_CREATE);
-            db.execSQL(DB_TYPES_CREATE);
-            db.execSQL(DB_TASKS_CREATE);
-            db.execSQL(DB_PROJECTS_CREATE);
+            createNew(db);
     	}
 
         @Override

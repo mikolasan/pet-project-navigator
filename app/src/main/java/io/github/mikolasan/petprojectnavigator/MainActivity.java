@@ -1,11 +1,11 @@
 package io.github.mikolasan.petprojectnavigator;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -32,6 +33,10 @@ import com.google.android.gms.drive.MetadataChangeSet;
 
 import org.json.JSONArray;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
@@ -42,9 +47,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     DB db;
     SimpleCursorAdapter cursorAdapter;
     private static final String TAG = "drive-quickstart";
+    private static final String OPEN_FILE_TAG = "open-file-dialog";
     private static final int REQUEST_CODE_CAPTURE_IMAGE = 1;
     private static final int REQUEST_CODE_CREATOR = 2;
     private static final int REQUEST_CODE_RESOLUTION = 3;
+    private static final int REQUEST_CODE_RESTORE_FILE = 4;
     private GoogleApiClient mGoogleApiClient;
 
     @Override
@@ -66,6 +73,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         btn_to_cloud.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 toCloud();
+            }
+        });
+
+        final Button btn_restore = (Button) findViewById(R.id.btn_restore);
+        btn_restore.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                restoreDB();
             }
         });
 
@@ -203,11 +217,51 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     Log.i(TAG, "Image successfully saved.");
                 }
                 break;
+            case REQUEST_CODE_RESTORE_FILE:
+                if(resultCode == RESULT_OK) {
+                    Uri fileUri = data.getData();
+                    File selectedfile = new File(fileUri.getPath());
+                    Context context = getApplicationContext();
+                    if(selectedfile.exists()) {
+                        FileInputStream inputStream = null;
+                        try {
+                            inputStream = new FileInputStream(selectedfile);
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
+                        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                        int i;
+                        try {
+                            i = inputStream.read();
+                            while (i != -1) {
+                                byteArrayOutputStream.write(i);
+                                i = inputStream.read();
+                            }
+                            inputStream.close();
+                        } catch (IOException e) {
+                            Toast.makeText(context, "IO exception", Toast.LENGTH_SHORT).show();
+                            e.printStackTrace();
+                        }
+                        String json = byteArrayOutputStream.toString();
+                        if(db.restore(json)){
+                            Toast.makeText(context, "DB restored", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(context, "Failed to restore", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        CharSequence status = "File " + fileUri.getPath() + " doesn't exist";
+                        Log.i(OPEN_FILE_TAG, status.toString());
+                        Toast.makeText(context, status, Toast.LENGTH_SHORT).show();
+                    }
+
+                }else if(resultCode == RESULT_CANCELED) {
+                    //
+                }
         }
     }
 
     public void backup() {
-        save_local_copy(prepare_json());
+        saveLocalCopy(prepare_json());
     }
 
     public void toCloud() {
@@ -285,10 +339,23 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         return str;
     }
 
-    private void save_local_copy(String str) {
+    private void saveLocalCopy(String str) {
         SharedPreferences sharedPref = getSharedPreferences("appData", Context.MODE_PRIVATE);
         SharedPreferences.Editor prefEditor = sharedPref.edit();
         prefEditor.putString("json", str);
         prefEditor.apply(); // apply() is more efficient, it starts an asynchronous commit
+    }
+
+    private String loadLocalCopy() {
+        SharedPreferences sharedPref = getSharedPreferences("appData", Context.MODE_PRIVATE);
+        return sharedPref.getString("json", "");
+    }
+
+    private void restoreDB() {
+        Intent intent = new Intent()
+                .setType("*/*")
+                .setAction(Intent.ACTION_GET_CONTENT)
+                .addCategory(Intent.CATEGORY_OPENABLE);
+        startActivityForResult(Intent.createChooser(intent, "Select a DB backup file"), REQUEST_CODE_RESTORE_FILE);
     }
 }

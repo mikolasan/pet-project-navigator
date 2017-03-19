@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     tools:context="io.github.mikolasan.petprojectnavigator.MainActivity"
     android:orientation="vertical"
     android:weightSum="8">
@@ -49,5 +49,13 @@
             style="@android:style/Widget.Material.Button.Colored"
             android:background="@android:color/holo_green_light" />
     </LinearLayout>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/btn_restore"
+        android:id="@+id/btn_restore"
+        style="@android:style/Widget.Material.Button.Colored"
+        android:background="@android:color/holo_blue_dark" />
 
 </LinearLayout>
