@@ -29,4 +29,5 @@
     <string name="btn_delete_type">Дел</string>
     <string name="sample_project">Пример длинного названия проекта</string>
     <string name="sample_project_desc">Небольшое описание. Буквально в несколько строк</string>
+    <string name="chooser_title">Select a DB backup file"</string>
 </resources>

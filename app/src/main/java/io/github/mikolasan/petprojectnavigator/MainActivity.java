@@ -1,21 +1,26 @@
 package io.github.mikolasan.petprojectnavigator;
 
+import android.Manifest;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
@@ -30,6 +35,7 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.DriveApi.DriveContentsResult;
 import com.google.android.gms.drive.MetadataChangeSet;
+import com.ipaulpro.afilechooser.utils.FileUtils;
 
 import org.json.JSONArray;
 
@@ -52,7 +58,25 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private static final int REQUEST_CODE_CREATOR = 2;
     private static final int REQUEST_CODE_RESOLUTION = 3;
     private static final int REQUEST_CODE_RESTORE_FILE = 4;
+    private static final int REQUEST_EXTERNAL_STORAGE = 5;
     private GoogleApiClient mGoogleApiClient;
+
+
+    /**
+     * Checks if the app has permission to write to device storage
+     *
+     * If the app does not has permission then the user will be prompted to grant permissions
+     *
+     * @param activity
+     */
+    public static void verifyStoragePermissions(AppCompatActivity activity, String permission) {
+        // Check if we have write permission
+        int status = ActivityCompat.checkSelfPermission(activity, permission);
+        if (status != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(activity, new String[] {permission}, REQUEST_EXTERNAL_STORAGE);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +87,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         db = DB.getOpenedInstance();
 
         final Button btn_backup = (Button) findViewById(R.id.btn_backup_project);
-        btn_backup.setOnClickListener(new View.OnClickListener() {
+        btn_backup.setOnClickListener(new OnClickListener() {
+            @Override
             public void onClick(View v) {
                 backup();
             }
@@ -122,6 +147,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         // создаем лоадер для чтения данных
         getSupportLoaderManager().initLoader(0, null, this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        verifyStoragePermissions(this, Manifest.permission.READ_EXTERNAL_STORAGE);
     }
 
     @Override
@@ -219,41 +250,57 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 break;
             case REQUEST_CODE_RESTORE_FILE:
                 if(resultCode == RESULT_OK) {
-                    Uri fileUri = data.getData();
-                    File selectedfile = new File(fileUri.getPath());
                     Context context = getApplicationContext();
-                    if(selectedfile.exists()) {
-                        FileInputStream inputStream = null;
+                    if (data != null) {
+                        // Get the URI of the selected file
+                        final Uri uri = data.getData();
+                        Log.i(OPEN_FILE_TAG, "Uri = " + uri.toString());
                         try {
-                            inputStream = new FileInputStream(selectedfile);
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        }
-                        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                        int i;
-                        try {
-                            i = inputStream.read();
-                            while (i != -1) {
-                                byteArrayOutputStream.write(i);
-                                i = inputStream.read();
+                            // Get the file path from the URI
+                            final String path = FileUtils.getPath(this, uri);
+                            Toast.makeText(context,
+                                    "File Selected: " + path, Toast.LENGTH_LONG).show();
+                            Log.i(OPEN_FILE_TAG, "File Selected: " + path);
+                            File selectedfile = new File(path);
+                            if(selectedfile.exists()) {
+                                FileInputStream inputStream = null;
+                                try {
+                                    inputStream = new FileInputStream(selectedfile);
+                                } catch (FileNotFoundException e) {
+                                    e.printStackTrace();
+                                    return;
+                                }
+                                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                                int i;
+                                try {
+                                    i = inputStream.read();
+                                    while (i != -1) {
+                                        byteArrayOutputStream.write(i);
+                                        i = inputStream.read();
+                                    }
+                                    inputStream.close();
+                                } catch (IOException e) {
+                                    Toast.makeText(context, "IO exception", Toast.LENGTH_SHORT).show();
+                                    e.printStackTrace();
+                                    return;
+                                }
+                                String json = byteArrayOutputStream.toString();
+                                if(db.restore(json)){
+                                    Toast.makeText(context, "DB restored", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(context, "Failed to restore", Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                CharSequence status = "File " + path + " doesn't exist";
+                                Log.i(OPEN_FILE_TAG, status.toString());
+                                Toast.makeText(context, status, Toast.LENGTH_SHORT).show();
                             }
-                            inputStream.close();
-                        } catch (IOException e) {
-                            Toast.makeText(context, "IO exception", Toast.LENGTH_SHORT).show();
-                            e.printStackTrace();
-                        }
-                        String json = byteArrayOutputStream.toString();
-                        if(db.restore(json)){
-                            Toast.makeText(context, "DB restored", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(context, "Failed to restore", Toast.LENGTH_SHORT).show();
+                        } catch (Exception e) {
+                            Log.e(OPEN_FILE_TAG, "File select error", e);
                         }
                     } else {
-                        CharSequence status = "File " + fileUri.getPath() + " doesn't exist";
-                        Log.i(OPEN_FILE_TAG, status.toString());
-                        Toast.makeText(context, status, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Bad data", Toast.LENGTH_SHORT).show();
                     }
-
                 }else if(resultCode == RESULT_CANCELED) {
                     //
                 }
@@ -352,10 +399,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     private void restoreDB() {
-        Intent intent = new Intent()
-                .setType("*/*")
-                .setAction(Intent.ACTION_GET_CONTENT)
-                .addCategory(Intent.CATEGORY_OPENABLE);
-        startActivityForResult(Intent.createChooser(intent, "Select a DB backup file"), REQUEST_CODE_RESTORE_FILE);
+        Intent target = FileUtils.createGetContentIntent();
+        // Create the chooser Intent
+        Intent intent = Intent.createChooser(
+                target, getString(R.string.chooser_title));
+        try {
+            startActivityForResult(intent, REQUEST_CODE_RESTORE_FILE);
+        } catch (ActivityNotFoundException e) {
+            // The reason for the existence of aFileChooser
+        }
     }
 }
