@@ -261,11 +261,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                             Toast.makeText(context,
                                     "File Selected: " + path, Toast.LENGTH_LONG).show();
                             Log.i(OPEN_FILE_TAG, "File Selected: " + path);
-                            File selectedfile = new File(path);
-                            if(selectedfile.exists()) {
-                                FileInputStream inputStream = null;
+                            File selectedFile = new File(path);
+                            if(selectedFile.exists()) {
+                                FileInputStream inputStream;
                                 try {
-                                    inputStream = new FileInputStream(selectedfile);
+                                    inputStream = new FileInputStream(selectedFile);
                                 } catch (FileNotFoundException e) {
                                     e.printStackTrace();
                                     return;
@@ -308,7 +308,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     public void backup() {
-        saveLocalCopy(prepare_json());
+        saveLocalCopy(db.prepareJson());
     }
 
     public void toCloud() {
@@ -331,7 +331,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private void saveFileToDrive() {
         // Start by creating a new contents, and setting a callback.
         Log.i(TAG, "Creating new contents.");
-        String str = prepare_json();
+        String str = db.prepareJson();
         Drive.DriveApi.newDriveContents(mGoogleApiClient)
                 .setResultCallback(new ResultCallback<DriveContentsResult>() {
 
@@ -372,18 +372,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                         }
                     }
                 });
-    }
-
-    private String prepare_json() {
-        JSONArray json = db.toJSON(DB.DB_TECH_TABLE);
-        String str = json.toString();
-        json = db.toJSON(DB.DB_TYPES_TABLE);
-        str += json.toString();
-        json = db.toJSON(DB.DB_TASKS_TABLE);
-        str += json.toString();
-        json = db.toJSON(DB.DB_PROJECTS_TABLE);
-        str += json.toString();
-        return str;
     }
 
     private void saveLocalCopy(String str) {

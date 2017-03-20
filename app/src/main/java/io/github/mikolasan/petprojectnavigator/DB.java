@@ -12,11 +12,12 @@ import android.util.ArraySet;
 import android.util.Log;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import org.apache.commons.codec.binary.Hex;
 
-import java.util.ArrayList;
+import java.util.Iterator;
 
 class DB {
 
@@ -283,6 +284,20 @@ class DB {
 
     private static final String LOG_TAG_NAME = "DB LOG";
 
+    void clearAll(SQLiteDatabase db){
+        db.execSQL("drop table " + DB_TECH_TABLE);
+        db.execSQL("drop table " + DB_TYPES_TABLE);
+        db.execSQL("drop table " + DB_TASKS_TABLE);
+        db.execSQL("drop table " + DB_PROJECTS_TABLE);
+    }
+
+    void createNew(SQLiteDatabase db){
+        db.execSQL(DB_TECH_CREATE);
+        db.execSQL(DB_TYPES_CREATE);
+        db.execSQL(DB_TASKS_CREATE);
+        db.execSQL(DB_PROJECTS_CREATE);
+    }
+
     private JSONObject cursorToJson(Cursor c) {
         JSONObject retVal = new JSONObject();
         for(int i=0; i<c.getColumnCount(); i++) {
@@ -310,7 +325,7 @@ class DB {
         return retVal;
     }
 
-    public JSONArray toJSON(String tableName) {
+    private JSONArray tableToJson(String tableName) {
         Cursor cursor = mDB.query(tableName, null,  null, null, null, null, null);
         JSONArray result = new JSONArray();
         cursor.moveToFirst();
@@ -323,21 +338,70 @@ class DB {
         return result;
     }
 
-    void clearAll(SQLiteDatabase db){
-        db.execSQL("drop table ?", new String[] {DB_TECH_TABLE});
-        db.execSQL("drop table ?", new String[] {DB_TYPES_TABLE});
-        db.execSQL("drop table ?", new String[] {DB_TASKS_TABLE});
-        db.execSQL("drop table ?", new String[] {DB_PROJECTS_TABLE});
+    public String prepareJson() {
+        String[] tables = {DB.DB_TECH_TABLE,
+                DB.DB_TYPES_TABLE,
+                DB.DB_TASKS_TABLE,
+                DB.DB_PROJECTS_TABLE
+        };
+        JSONObject obj = new JSONObject();
+        for (String tableName : tables) {
+            JSONArray json = tableToJson(tableName);
+            try {
+                obj.put(tableName, json);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return obj.toString();
     }
 
-    void createNew(SQLiteDatabase db){
-        db.execSQL(DB_TECH_CREATE);
-        db.execSQL(DB_TYPES_CREATE);
-        db.execSQL(DB_TASKS_CREATE);
-        db.execSQL(DB_PROJECTS_CREATE);
+    JSONObject parseJson(String json){
+        try {
+            JSONObject mainObject = new JSONObject(json);
+            return mainObject;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    void insertData(JSONObject tableObject, String tableName) throws JSONException {
+        JSONArray jsonArray = tableObject.getJSONArray(tableName);
+        for (int i = 0; i < jsonArray.length(); ++i) {
+            JSONObject jsonObject = jsonArray.getJSONObject(i);
+            Iterator<String> keys = jsonObject.keys();
+            ContentValues cv = new ContentValues();
+            while (keys.hasNext()) {
+                String key = keys.next();
+                if (jsonObject.get(key) instanceof Integer) {
+                    cv.put(key, jsonObject.getInt(key));
+                } else if (jsonObject.get(key) instanceof String) {
+                    cv.put(key, jsonObject.getString(key));
+                } else {
+                    Log.i(LOG_TAG_NAME, "insertData: bad type in JSON");
+                }
+            }
+            mDB.insert(tableName, null, cv);
+        }
     }
 
     boolean restore(String json) {
+        clearAll(mDB);
+        createNew(mDB);
+        JSONObject mainObject = parseJson(json);
+        if (mainObject != null) {
+            Iterator<String> tables = mainObject.keys();
+            while (tables.hasNext()) {
+                try {
+                    insertData(mainObject, tables.next());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return false;
+                }
+            }
+            return true;
+        }
         return false;
     }
 
