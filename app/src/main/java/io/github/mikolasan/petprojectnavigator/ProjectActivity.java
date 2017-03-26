@@ -195,7 +195,7 @@ public class ProjectActivity extends FragmentActivity implements LoaderManager.L
 
         @Override
         public Cursor loadInBackground() {
-            return db.getAllTasks(project_id);
+            return db.dbTask.getAll(project_id);
         }
 
     }

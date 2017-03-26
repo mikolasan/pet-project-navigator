@@ -188,7 +188,7 @@ public class TaskActivity extends FragmentActivity implements MyListener {
                 petTask.setTech(getSelectedItemDBId(s_tech, spinnerAdapter));
                 petTask.setTime(Integer.parseInt(e_time.getText().toString()));
                 petTask.setType(getSelectedItemDBId(s_type, typeAdapter));
-                db.addTask(petTask);
+                db.dbTask.add(petTask);
                 TaskActivity.this.finish();
             }
         });

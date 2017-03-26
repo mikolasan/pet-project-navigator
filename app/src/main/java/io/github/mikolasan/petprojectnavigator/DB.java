@@ -3,7 +3,6 @@ package io.github.mikolasan.petprojectnavigator;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.MatrixCursor;
 import android.database.MergeCursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -19,91 +18,6 @@ import org.apache.commons.codec.binary.Hex;
 
 import java.util.Iterator;
 
-class  PetTask {
-    public PetTask() {
-        this.taskId = 0;
-        this.projectId = 0;
-        this.name = "";
-        this.links = "";
-        this.statement = "";
-        this.tech = 0;
-        this.time = 0;
-        this.type = 0;
-    }
-
-    public int getTaskId() {
-        return taskId;
-    }
-
-    public void setTaskId(int taskId) {
-        this.taskId = taskId;
-    }
-
-    public int getProjectId() {
-        return projectId;
-    }
-
-    public void setProjectId(int projectId) {
-        this.projectId = projectId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getLinks() {
-        return links;
-    }
-
-    public void setLinks(String links) {
-        this.links = links;
-    }
-
-    public String getStatement() {
-        return statement;
-    }
-
-    public void setStatement(String statement) {
-        this.statement = statement;
-    }
-
-    public int getTech() {
-        return tech;
-    }
-
-    public void setTech(int tech) {
-        this.tech = tech;
-    }
-
-    public int getTime() {
-        return time;
-    }
-
-    public void setTime(int time) {
-        this.time = time;
-    }
-
-    public int getType() {
-        return type;
-    }
-
-    public void setType(int type) {
-        this.type = type;
-    }
-
-    int taskId;
-    int projectId;
-    String name;
-    String links;
-    String statement;
-    int tech;
-    int time;
-    int type;
-}
 
 class DB {
 
@@ -115,7 +29,7 @@ class DB {
     public static final String COLUMN_NAME = "name";
     public static final String COLUMN_DESC = "desc";
     public static final String COLUMN_STATEMENT = "statement";
-    public static final String COLUMN_PROJECT_ID = "projectId";
+    public static final String COLUMN_PROJECT_ID = "project_id";
     public static final String COLUMN_TECH_ID = "tech_id";
     public static final String COLUMN_TIME = "time";
     public static final String COLUMN_LINKS = "links";
@@ -126,6 +40,7 @@ class DB {
     private final Context mCtx;
     private static DBHelper mDBHelper = null;
     private SQLiteDatabase mDB;
+    DBTask dbTask;
 
     public static DB getOpenedInstance() {
         if(instance == null) {
@@ -155,6 +70,7 @@ class DB {
     public void open() {
         mDBHelper = new DBHelper(mCtx, DB_NAME, null, DB_VERSION);
         mDB = mDBHelper.getWritableDatabase();
+        dbTask = new DBTask(mDB);
     }
 
     // закрыть подключение
@@ -203,63 +119,7 @@ class DB {
 
     void deleteProject(int projectId) {
         mDB.delete(DB_PROJECTS_TABLE, COLUMN_ID + " = " + projectId, null);
-        deleteTasksOfProject(projectId);
-    }
-
-    /*
-    *
-    * Tasks
-    *
-     */
-    Cursor getAllTasks(int projectId) {
-        String selection = COLUMN_PROJECT_ID + " = " + projectId;
-        return mDB.query(DB_TASKS_TABLE, null, selection, null, null, null, null);
-    }
-
-    void addTask(PetTask petTask) {
-        String id = String.valueOf(petTask.getTaskId());
-        ContentValues cv = new ContentValues();
-        cv.put(COLUMN_PROJECT_ID, petTask.getProjectId());
-
-        cv.put(COLUMN_NAME, petTask.getName());
-        cv.put(COLUMN_LINKS, petTask.getLinks());
-        cv.put(COLUMN_STATEMENT, petTask.getStatement());
-
-        cv.put(COLUMN_TECH_ID, petTask.getTech());
-        cv.put(COLUMN_TIME, petTask.getTime());
-        cv.put(COLUMN_TYPE_ID, petTask.getType());
-
-        if (hasObject(DB_TASKS_TABLE, DB.COLUMN_ID, id)) {
-            mDB.update(DB_TASKS_TABLE, cv, DB.COLUMN_ID + " = ?", new String[] {id});
-        } else {
-            mDB.insert(DB_TASKS_TABLE, null, cv);
-        }
-    }
-
-    void copyTask(int taskId, int projectId) {
-        Cursor c = mDB.query(DB_TASKS_TABLE, new String[] {COLUMN_PROJECT_ID, COLUMN_NAME, COLUMN_LINKS, COLUMN_LINKS, COLUMN_TECH_ID, COLUMN_TIME, COLUMN_TYPE_ID},
-                COLUMN_ID + " = " + taskId, null, null, null, null);
-        ContentValues cv = new ContentValues();
-        DatabaseUtils.cursorRowToContentValues(c, cv);
-        cv.put(COLUMN_PROJECT_ID, projectId);
-        mDB.insert(DB_TASKS_TABLE, null, cv);
-    }
-
-    void deleteTask(int taskId) {
-        mDB.delete(DB_TASKS_TABLE, COLUMN_ID + " = " + taskId, null);
-    }
-
-    void deleteTasksOfProject(int projectId) {
-        mDB.delete(DB_TASKS_TABLE, COLUMN_PROJECT_ID + " = ?", new String[] {Integer.toString(projectId)});
-    }
-
-    void moveTask(int taskId, int projectId) {
-        copyTask(taskId, projectId);
-        deleteTask(taskId);
-    }
-
-    void moveTaskToBuffer(int taskId) {
-        moveTask(taskId, BUFFER_ID);
+        dbTask.deleteTasksOfProject(projectId);
     }
 
     /*
