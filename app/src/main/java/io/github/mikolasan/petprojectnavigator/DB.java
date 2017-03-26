@@ -19,6 +19,92 @@ import org.apache.commons.codec.binary.Hex;
 
 import java.util.Iterator;
 
+class  PetTask {
+    public PetTask() {
+        this.taskId = 0;
+        this.projectId = 0;
+        this.name = "";
+        this.links = "";
+        this.statement = "";
+        this.tech = 0;
+        this.time = 0;
+        this.type = 0;
+    }
+
+    public int getTaskId() {
+        return taskId;
+    }
+
+    public void setTaskId(int taskId) {
+        this.taskId = taskId;
+    }
+
+    public int getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(int projectId) {
+        this.projectId = projectId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getLinks() {
+        return links;
+    }
+
+    public void setLinks(String links) {
+        this.links = links;
+    }
+
+    public String getStatement() {
+        return statement;
+    }
+
+    public void setStatement(String statement) {
+        this.statement = statement;
+    }
+
+    public int getTech() {
+        return tech;
+    }
+
+    public void setTech(int tech) {
+        this.tech = tech;
+    }
+
+    public int getTime() {
+        return time;
+    }
+
+    public void setTime(int time) {
+        this.time = time;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    int taskId;
+    int projectId;
+    String name;
+    String links;
+    String statement;
+    int tech;
+    int time;
+    int type;
+}
+
 class DB {
 
     private static DB instance = null;
@@ -130,25 +216,18 @@ class DB {
         return mDB.query(DB_TASKS_TABLE, null, selection, null, null, null, null);
     }
 
-    void addTask(int task_id,
-                        int project_id,
-                        String name,
-                        String links,
-                        String statement,
-                        int tech,
-                        int time,
-                        int type) {
-        String id = String.valueOf(task_id);
+    void addTask(PetTask petTask) {
+        String id = String.valueOf(petTask.getTaskId());
         ContentValues cv = new ContentValues();
-        cv.put(COLUMN_PROJECT_ID, project_id);
+        cv.put(COLUMN_PROJECT_ID, petTask.getProjectId());
 
-        cv.put(COLUMN_NAME, name);
-        cv.put(COLUMN_LINKS, links);
-        cv.put(COLUMN_STATEMENT, statement);
+        cv.put(COLUMN_NAME, petTask.getName());
+        cv.put(COLUMN_LINKS, petTask.getLinks());
+        cv.put(COLUMN_STATEMENT, petTask.getStatement());
 
-        cv.put(COLUMN_TECH_ID, tech);
-        cv.put(COLUMN_TIME, time);
-        cv.put(COLUMN_TYPE_ID, type);
+        cv.put(COLUMN_TECH_ID, petTask.getTech());
+        cv.put(COLUMN_TIME, petTask.getTime());
+        cv.put(COLUMN_TYPE_ID, petTask.getType());
 
         if (hasObject(DB_TASKS_TABLE, DB.COLUMN_ID, id)) {
             mDB.update(DB_TASKS_TABLE, cv, DB.COLUMN_ID + " = ?", new String[] {id});

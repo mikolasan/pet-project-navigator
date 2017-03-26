@@ -179,14 +179,16 @@ public class TaskActivity extends FragmentActivity implements MyListener {
 
         btn_save_task.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                db.addTask(task_id,
-                        project_id,
-                        e_name.getText().toString(),
-                        e_links.getText().toString(),
-                        e_desc.getText().toString(),
-                        getSelectedItemDBId(s_tech, spinnerAdapter),
-                        Integer.parseInt(e_time.getText().toString()),
-                        getSelectedItemDBId(s_type, typeAdapter));
+                PetTask petTask = new PetTask();
+                petTask.setProjectId(project_id);
+                petTask.setTaskId(task_id);
+                petTask.setName(e_name.getText().toString());
+                petTask.setLinks(e_links.getText().toString());
+                petTask.setStatement(e_desc.getText().toString());
+                petTask.setTech(getSelectedItemDBId(s_tech, spinnerAdapter));
+                petTask.setTime(Integer.parseInt(e_time.getText().toString()));
+                petTask.setType(getSelectedItemDBId(s_type, typeAdapter));
+                db.addTask(petTask);
                 TaskActivity.this.finish();
             }
         });
