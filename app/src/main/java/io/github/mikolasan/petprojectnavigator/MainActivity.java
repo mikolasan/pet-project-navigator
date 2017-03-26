@@ -37,8 +37,6 @@ import com.google.android.gms.drive.DriveApi.DriveContentsResult;
 import com.google.android.gms.drive.MetadataChangeSet;
 import com.ipaulpro.afilechooser.utils.FileUtils;
 
-import org.json.JSONArray;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -134,6 +132,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 int desc_column = c.getColumnIndex(DB.COLUMN_DESC);
 
                 Intent intent = new Intent(getApplicationContext(), ProjectActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.putExtra("status", ProjectActivity.STATUS_EDIT);
                 intent.putExtra("project_id", projectId);
                 intent.putExtra("title", c.getString(name_column));

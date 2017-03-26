@@ -187,6 +187,7 @@ public class TaskActivity extends FragmentActivity implements MyListener {
                         getSelectedItemDBId(s_tech, spinnerAdapter),
                         Integer.parseInt(e_time.getText().toString()),
                         getSelectedItemDBId(s_type, typeAdapter));
+                TaskActivity.this.finish();
             }
         });
     }

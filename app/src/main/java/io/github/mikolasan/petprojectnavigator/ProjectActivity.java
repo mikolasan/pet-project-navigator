@@ -98,8 +98,7 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
                         break;
                     }
                 }
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
+                ProjectActivity.this.finish();
             }
         });
 
@@ -107,8 +106,7 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
         btn_delete_project.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 db.deleteProject(project_id);
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
+                ProjectActivity.this.finish();
             }
         });
 
@@ -122,6 +120,7 @@ public class ProjectActivity extends AppCompatActivity implements LoaderManager.
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = createIntent(i);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.putExtra("status", ProjectActivity.STATUS_EDIT);
                 intent.putExtra("project_id", project_id);
                 startActivity(intent);
