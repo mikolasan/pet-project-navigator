@@ -3,20 +3,19 @@ package io.github.mikolasan.petprojectnavigator;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 
-public class ProjectActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class ProjectActivity extends FragmentActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final int STATUS_NEW = 0;
     public static final int STATUS_EDIT = 1;

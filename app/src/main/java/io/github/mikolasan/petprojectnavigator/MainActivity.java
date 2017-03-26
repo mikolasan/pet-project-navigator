@@ -13,11 +13,12 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -45,7 +46,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, ConnectionCallbacks,
+public class MainActivity extends FragmentActivity implements LoaderManager.LoaderCallbacks<Cursor>, ConnectionCallbacks,
         OnConnectionFailedListener {
 
     DB db;
@@ -67,9 +68,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
      *
      * @param activity
      */
-    public static void verifyStoragePermissions(AppCompatActivity activity, String permission) {
+    public static void verifyStoragePermissions(FragmentActivity activity, String permission) {
         // Check if we have write permission
-        int status = ActivityCompat.checkSelfPermission(activity, permission);
+        int status = ContextCompat.checkSelfPermission(activity, permission);
         if (status != PackageManager.PERMISSION_GRANTED) {
             // We don't have permission so prompt the user
             ActivityCompat.requestPermissions(activity, new String[] {permission}, REQUEST_EXTERNAL_STORAGE);

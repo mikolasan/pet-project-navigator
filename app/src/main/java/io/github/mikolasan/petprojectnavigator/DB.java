@@ -115,7 +115,7 @@ class DB {
     public static final String COLUMN_NAME = "name";
     public static final String COLUMN_DESC = "desc";
     public static final String COLUMN_STATEMENT = "statement";
-    public static final String COLUMN_PROJECT_ID = "project_id";
+    public static final String COLUMN_PROJECT_ID = "projectId";
     public static final String COLUMN_TECH_ID = "tech_id";
     public static final String COLUMN_TIME = "time";
     public static final String COLUMN_LINKS = "links";
