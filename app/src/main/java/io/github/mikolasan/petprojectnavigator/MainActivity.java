@@ -36,7 +36,6 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.DriveApi.DriveContentsResult;
 import com.google.android.gms.drive.MetadataChangeSet;
-import com.ipaulpro.afilechooser.utils.FileUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -257,7 +256,7 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
                         Log.i(OPEN_FILE_TAG, "Uri = " + uri.toString());
                         try {
                             // Get the file path from the URI
-                            final String path = FileUtils.getPath(this, uri);
+                            final String path = "";//FileUtils.getPath(this, uri);
                             Toast.makeText(context,
                                     "File Selected: " + path, Toast.LENGTH_LONG).show();
                             Log.i(OPEN_FILE_TAG, "File Selected: " + path);
@@ -387,6 +386,13 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
     }
 
     private void restoreDB() {
+        Intent intent = new Intent()
+                .setType("*/*")
+                .setAction(Intent.ACTION_GET_CONTENT)
+                .addCategory(Intent.CATEGORY_OPENABLE);
+        startActivityForResult(Intent.createChooser(intent, "Select a DB backup file"), REQUEST_CODE_RESTORE_FILE);
+    }
+    /*
         Intent target = FileUtils.createGetContentIntent();
         // Create the chooser Intent
         Intent intent = Intent.createChooser(
@@ -396,5 +402,5 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
         } catch (ActivityNotFoundException e) {
             // The reason for the existence of aFileChooser
         }
-    }
+    */
 }

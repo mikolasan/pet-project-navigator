@@ -55,5 +55,4 @@ dependencies {
     compile group: 'commons-codec', name: 'commons-codec', version: '1.5'
 
     compile 'com.google.android.gms:play-services-drive:9.6.0'
-    compile project(path: ':aFileChooser')
 }
