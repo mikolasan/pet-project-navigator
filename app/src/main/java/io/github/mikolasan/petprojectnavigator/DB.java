@@ -360,25 +360,7 @@ class DB {
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            if (oldVersion == 1) {
-                db.execSQL("drop table " + DB_TASKS_TABLE);
-                db.execSQL(DB_TASKS_CREATE);
-            } else if (oldVersion <= 3) { // 2,3
-                db.execSQL("drop table " + DB_PROJECTS_TABLE);
-                db.execSQL(DB_PROJECTS_CREATE);
-            } else if (oldVersion == 4) {
-                db.execSQL("drop table " + DB_TECH_TABLE);
-                db.execSQL("drop table " + DB_TYPES_TABLE);
-                db.execSQL("drop table " + DB_TASKS_TABLE);
-                db.execSQL(DB_TECH_CREATE);
-                db.execSQL(DB_TYPES_CREATE);
-                db.execSQL(DB_TASKS_CREATE);
-            } else if (oldVersion == 5) {
-                db.execSQL("drop table " + DB_TYPES_TABLE);
-                db.execSQL(DB_TYPES_CREATE);
-                db.execSQL("insert into " + DB_TYPES_TABLE + " values (\"type 1\");" +
-                        "insert into " + DB_TYPES_TABLE + " values (\"type 2\");");
-            }
+            clearAll(db);
         }
     }
 }

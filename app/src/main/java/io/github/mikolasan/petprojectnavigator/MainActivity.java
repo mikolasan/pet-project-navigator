@@ -251,56 +251,11 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
                 break;
             case REQUEST_CODE_RESTORE_FILE:
                 if(resultCode == RESULT_OK) {
-                    Context context = getApplicationContext();
                     if (data != null) {
                         // Get the URI of the selected file
-                        final Uri uri = data.getData();
-                        Log.i(OPEN_FILE_TAG, "Uri = " + uri.toString());
-                        try {
-                            // Get the file path from the URI
-                            final String path = "";//FileUtils.getPath(this, uri);
-                            Toast.makeText(context,
-                                    "File Selected: " + path, Toast.LENGTH_LONG).show();
-                            Log.i(OPEN_FILE_TAG, "File Selected: " + path);
-                            File selectedFile = new File(path);
-                            if(selectedFile.exists()) {
-                                FileInputStream inputStream;
-                                try {
-                                    inputStream = new FileInputStream(selectedFile);
-                                } catch (FileNotFoundException e) {
-                                    e.printStackTrace();
-                                    return;
-                                }
-                                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                                int i;
-                                try {
-                                    i = inputStream.read();
-                                    while (i != -1) {
-                                        byteArrayOutputStream.write(i);
-                                        i = inputStream.read();
-                                    }
-                                    inputStream.close();
-                                } catch (IOException e) {
-                                    Toast.makeText(context, "IO exception", Toast.LENGTH_SHORT).show();
-                                    e.printStackTrace();
-                                    return;
-                                }
-                                String json = byteArrayOutputStream.toString();
-                                if(db.restore(json)){
-                                    Toast.makeText(context, "DB restored", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    Toast.makeText(context, "Failed to restore", Toast.LENGTH_SHORT).show();
-                                }
-                            } else {
-                                CharSequence status = "File " + path + " doesn't exist";
-                                Log.i(OPEN_FILE_TAG, status.toString());
-                                Toast.makeText(context, status, Toast.LENGTH_SHORT).show();
-                            }
-                        } catch (Exception e) {
-                            Log.e(OPEN_FILE_TAG, "File select error", e);
-                        }
+                        readBackupFile(data.getData());
                     } else {
-                        Toast.makeText(context, "Bad data", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Bad data", Toast.LENGTH_SHORT).show();
                     }
                 }else if(resultCode == RESULT_CANCELED) {
                     //
@@ -308,6 +263,57 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
         }
     }
 
+    private String inputToString(FileInputStream inputStream) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        int i;
+        try {
+            i = inputStream.read();
+            while (i != -1) {
+                byteArrayOutputStream.write(i);
+                i = inputStream.read();
+            }
+            inputStream.close();
+        } catch (IOException e) {
+            Toast.makeText(getApplicationContext(), "IO exception", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
+            return "";
+        }
+        return byteArrayOutputStream.toString();
+    }
+
+    private void readBackupFile(Uri uri) {
+        Log.i(OPEN_FILE_TAG, "Uri = " + uri.toString());
+        try {
+            Context context = getApplicationContext();
+            // Get the file path from the URI
+            final String path = "";//FileUtils.getPath(this, uri);
+            Toast.makeText(context,
+                    "File Selected: " + path, Toast.LENGTH_LONG).show();
+            Log.i(OPEN_FILE_TAG, "File Selected: " + path);
+            File selectedFile = new File(path);
+            if(selectedFile.exists()) {
+                FileInputStream inputStream;
+                try {
+                    inputStream = new FileInputStream(selectedFile);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                    return;
+                }
+                String json = inputToString(inputStream);
+                if(db.restore(json)){
+                    Toast.makeText(context, "DB restored", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(context, "Failed to restore", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                CharSequence status = "File " + path + " doesn't exist";
+                Log.i(OPEN_FILE_TAG, status.toString());
+                Toast.makeText(context, status, Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            Log.e(OPEN_FILE_TAG, "File select error", e);
+        }
+    }
     public void backup() {
         saveLocalCopy(db.prepareJson());
     }

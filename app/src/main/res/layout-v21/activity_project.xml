@@ -14,6 +14,7 @@
 
 
             <TextView
+                android:textAppearance="@android:style/TextAppearance.Material.Headline"
                 android:text="@string/project_lbl_name"
                 android:id="@+id/lbl_name"
                 android:layout_width="match_parent"
@@ -28,6 +29,7 @@
                 android:hint="@string/sample_project" />
 
             <TextView
+                android:textAppearance="@android:style/TextAppearance.Material.Headline"
                 android:text="@string/project_lbl_desc"
                 android:id="@+id/lbl_desc"
                 android:layout_width="match_parent"
@@ -50,18 +52,23 @@
                     android:text="@string/btn_save_project"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/btn_add_project" />
+                    android:id="@+id/btn_add_project"
+                    style="@android:style/Widget.Material.Button"
+                    android:textAppearance="@android:style/TextAppearance.Material.Button" />
 
                 <Button
                     android:text="@string/btn_delete_project"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/btn_delete_project" />
+                    android:id="@+id/btn_delete_project"
+                    style="@android:style/Widget.Material.Light.Button.Borderless"
+                    android:textAppearance="@android:style/TextAppearance.Material.Button" />
 
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
     <TextView
+        android:textAppearance="@android:style/TextAppearance.Material.Headline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/project_lbl_task"
@@ -77,11 +84,13 @@
             android:id="@+id/task_view" />
 
         <Button
+            style="@android:style/Widget.Material.Button.Colored"
             android:text="@string/btn_add_task"
             android:id="@+id/btn_add_task"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"/>
+            android:layout_alignParentRight="true"
+            android:textAppearance="@android:style/TextAppearance.Material.Button" />
     </RelativeLayout>
 </LinearLayout>
