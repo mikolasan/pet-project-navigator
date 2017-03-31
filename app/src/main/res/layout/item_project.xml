@@ -3,22 +3,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" >
+    android:layout_height="wrap_content"
+    android:weightSum="3">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/lbl_title"
         android:text="@string/sample_project"
-        android:textAppearance="@android:style/TextAppearance.Material.Menu"
-        android:layout_weight="1" />
+        android:textAppearance="@android:style/TextAppearance.Material.Large"
+        android:layout_weight="2"
+        android:maxLines="1"
+        android:textAlignment="center" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/lbl_desc"
         android:text="@string/sample_project_desc"
-        android:textAppearance="@android:style/TextAppearance.Material.Caption"
-        android:layout_weight="1" />
+        android:textAppearance="@android:style/TextAppearance.Material.Body1"
+        android:layout_weight="1"
+        android:maxLines="1" />
 
 </LinearLayout>

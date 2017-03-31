@@ -4,78 +4,69 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:context="io.github.mikolasan.petprojectnavigator.ProjectActivity"
-        android:stretchColumns="1">
-
-        <TableRow
+        android:layout_height="wrap_content">
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
 
             <TextView
-                android:textAppearance="@android:style/TextAppearance.Material.Body1"
+                android:textAppearance="@android:style/TextAppearance.Material.Headline"
                 android:text="@string/project_lbl_name"
                 android:id="@+id/lbl_name"
-                android:layout_column="0" />
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
             <EditText
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/e_name"
-                android:layout_column="1"
                 android:inputType="text|textMultiLine"
+                android:maxLines="2"
                 android:hint="@string/sample_project" />
 
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
             <TextView
-                android:textAppearance="@android:style/TextAppearance.Material.Body1"
+                android:textAppearance="@android:style/TextAppearance.Material.Headline"
                 android:text="@string/project_lbl_desc"
                 android:id="@+id/lbl_desc"
-                android:layout_column="0" />
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
             <EditText
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/e_desc"
-                android:layout_column="1"
                 android:inputType="text|textMultiLine"
+                android:maxLines="5"
                 android:hint="@string/sample_project_desc" />
 
-        </TableRow>
-    </TableLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+                <Button
+                    android:text="@string/btn_save_project"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/btn_add_project"
+                    style="@android:style/Widget.Material.Button"
+                    android:textAppearance="@android:style/TextAppearance.Material.Button" />
 
-        <Button
-            android:text="@string/btn_save_project"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/btn_add_project"
-            style="@android:style/Widget.Material.Button"
-            android:textAppearance="@android:style/TextAppearance.Material.Button" />
+                <Button
+                    android:text="@string/btn_delete_project"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/btn_delete_project"
+                    style="@android:style/Widget.Material.Button.Colored"
+                    android:textAppearance="@android:style/TextAppearance.Material.Button" />
 
-        <Button
-            android:text="@string/btn_delete_project"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/btn_delete_project"
-            style="@android:style/Widget.Material.Button.Colored"
-            android:textAppearance="@android:style/TextAppearance.Material.Button" />
-
-    </LinearLayout>
-
-
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
     <TextView
         android:textAppearance="@android:style/TextAppearance.Material.Headline"
         android:layout_width="wrap_content"
@@ -83,17 +74,23 @@
         android:text="@string/project_lbl_task"
         android:id="@+id/lbl_task"/>
 
-    <Button
-        style="@android:style/Widget.Material.Button"
-        android:text="@string/btn_add_task"
-        android:id="@+id/btn_add_task"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="@android:style/TextAppearance.Material.Button" />
-
-    <ListView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/task_view" />
+        android:layout_height="wrap_content">
 
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/task_view" />
+
+        <Button
+            style="@android:style/Widget.Material.Button"
+            android:text="@string/btn_add_task"
+            android:id="@+id/btn_add_task"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:textAppearance="@android:style/TextAppearance.Material.Button" />
+    </RelativeLayout>
 </LinearLayout>

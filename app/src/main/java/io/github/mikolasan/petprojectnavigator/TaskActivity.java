@@ -186,7 +186,10 @@ public class TaskActivity extends FragmentActivity implements MyListener {
                 petTask.setLinks(e_links.getText().toString());
                 petTask.setStatement(e_desc.getText().toString());
                 petTask.setTech(getSelectedItemDBId(s_tech, spinnerAdapter));
-                petTask.setTime(Integer.parseInt(e_time.getText().toString()));
+                String timeStr = e_time.getText().toString();
+                int time = 0;
+                if (!timeStr.isEmpty()) time = Integer.parseInt(timeStr);
+                petTask.setTime(time);
                 petTask.setType(getSelectedItemDBId(s_type, typeAdapter));
                 db.dbTask.add(petTask);
                 TaskActivity.this.finish();

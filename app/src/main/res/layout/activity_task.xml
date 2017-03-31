@@ -1,54 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     tools:context="io.github.mikolasan.petprojectnavigator.TaskActivity"
-    android:stretchColumns="1">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <TableRow
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <TextView
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/project_lbl_name"
             android:id="@+id/lbl_name"
-            android:layout_column="0"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <EditText
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/e_name"
-            android:layout_column="1"
             android:inputType="text|textMultiLine" />
-
-    </TableRow>
-
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
         <TextView
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/project_lbl_tech"
             android:id="@+id/lbl_tech"
-            android:layout_column="0"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/s_tech"
+            android:layout_weight="1" />
 
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <Spinner
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:id="@+id/s_tech"
-                android:layout_weight="1" />
+            android:layout_height="wrap_content">
 
             <Button
                 android:text="@string/btn_add_tech"
@@ -70,87 +61,64 @@
 
         </LinearLayout>
 
-    </TableRow>
-
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
         <TextView
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/project_lbl_time"
             android:id="@+id/lbl_time"
-            android:layout_column="0" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
         <EditText
             android:inputType="numberDecimal"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/e_time"
             android:hint="@string/task_edit_time" />
-
-    </TableRow>
-
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
         <TextView
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/project_lbl_links"
             android:id="@+id/lbl_links"
-            android:layout_column="0" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <EditText
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/e_links"
-            android:layout_column="1"
             android:inputType="text|textMultiLine" />
-
-    </TableRow>
-
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
         <TextView
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/project_lbl_desc"
             android:id="@+id/lbl_desc"
-            android:layout_column="0" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <EditText
             android:layout_width="fill_parent"
             android:layout_height="120dp"
             android:id="@+id/e_desc"
-            android:layout_column="1"
             android:inputType="text|textMultiLine" />
-
-    </TableRow>
-
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
         <TextView
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/project_lbl_type"
             android:id="@+id/lbl_type"
-            android:layout_column="0"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/s_type"
+            android:layout_weight="1" />
 
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <Spinner
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:id="@+id/s_type"
-                android:layout_weight="1" />
+            android:layout_height="wrap_content">
 
             <Button
                 android:text="@string/btn_add_type"
@@ -172,18 +140,14 @@
 
         </LinearLayout>
 
-    </TableRow>
-
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
         <Button
             android:text="@string/btn_save_task"
             android:id="@+id/btn_save_task"
             android:layout_column="1"
             android:textAppearance="@android:style/TextAppearance.Material.Button"
-            style="@android:style/Widget.Material.Button" />
-    </TableRow>
+                style="@android:style/Widget.Material.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
-</TableLayout>
+    </LinearLayout>
+</ScrollView>

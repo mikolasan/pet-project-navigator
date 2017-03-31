@@ -99,12 +99,14 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
             }
         });
 
+        /*
         final Button btn_restore = (Button) findViewById(R.id.btn_restore);
         btn_restore.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 restoreDB();
             }
         });
+        */
 
         final Button btn_add_project = (Button) findViewById(R.id.btn_add_project);
         btn_add_project.setOnClickListener(new View.OnClickListener() {
