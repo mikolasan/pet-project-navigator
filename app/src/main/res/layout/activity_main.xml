@@ -30,26 +30,21 @@
                 android:layout_height="wrap_content"
                 android:text="@string/btn_add_project"
                 android:id="@+id/btn_add_project"
-                style="@android:style/Widget.Material.Button.Colored"
-                android:background="@android:color/holo_orange_light" />
+                style="@android:style/Widget.Material.Button.Colored" />
 
             <Button
                 android:layout_width="match_parent"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="@string/btn_backup_project"
-                android:id="@+id/btn_backup_project"
-                style="@android:style/Widget.Material.Button.Colored"
-                android:background="@android:color/holo_green_dark" />
+                android:id="@+id/btn_backup_project"/>
 
             <Button
                 android:layout_width="match_parent"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="@string/btn_to_cloud"
-                android:id="@+id/btn_to_cloud"
-                style="@android:style/Widget.Material.Button.Colored"
-                android:background="@android:color/holo_green_light" />
+                android:id="@+id/btn_to_cloud"/>
         </LinearLayout>
 
     </RelativeLayout>

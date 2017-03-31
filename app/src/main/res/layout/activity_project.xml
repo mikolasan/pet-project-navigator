@@ -61,7 +61,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/btn_delete_project"
-                    style="@android:style/Widget.Material.Button.Colored"
+                    style="@android:style/Widget.Material.Light.Button.Borderless"
                     android:textAppearance="@android:style/TextAppearance.Material.Button" />
 
             </LinearLayout>
@@ -84,7 +84,7 @@
             android:id="@+id/task_view" />
 
         <Button
-            style="@android:style/Widget.Material.Button"
+            style="@android:style/Widget.Material.Button.Colored"
             android:text="@string/btn_add_task"
             android:id="@+id/btn_add_task"
             android:layout_width="wrap_content"
