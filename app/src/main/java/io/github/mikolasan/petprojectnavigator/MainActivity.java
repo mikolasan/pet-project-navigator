@@ -76,14 +76,7 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
         }
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.activity_main);
-
-        db = DB.getOpenedInstance();
-
+    private void setButtonListeners() {
         final Button btn_backup = (Button) findViewById(R.id.btn_backup_project);
         btn_backup.setOnClickListener(new OnClickListener() {
             @Override
@@ -116,13 +109,11 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
                 startActivity(intent);
             }
         });
+    }
 
-        String[] from = new String[] { DB.COLUMN_NAME, DB.COLUMN_DESC  };
-        int[] to = new int[] { R.id.lbl_title, R.id.lbl_desc };
-        cursorAdapter = new SimpleCursorAdapter(this, R.layout.item_project, null, from, to, 0);
+    private void initProjectView() {
         final ListView list = (ListView) findViewById(R.id.project_view);
         list.setAdapter(cursorAdapter);
-
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -142,9 +133,20 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
                 startActivity(intent);
             }
         });
+    }
 
-        // добавляем контекстное меню к списку
-        //registerForContextMenu(list);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        db = DB.getOpenedInstance();
+        String[] from = new String[] { DB.COLUMN_NAME, DB.COLUMN_DESC  };
+        int[] to = new int[] { R.id.lbl_title, R.id.lbl_desc };
+        cursorAdapter = new SimpleCursorAdapter(this, R.layout.item_project, null, from, to, 0);
+
+        setContentView(R.layout.activity_main);
+        setButtonListeners();
+        initProjectView();
 
         // создаем лоадер для чтения данных
         getSupportLoaderManager().initLoader(0, null, this);
