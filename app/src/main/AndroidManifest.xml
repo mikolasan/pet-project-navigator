@@ -15,7 +15,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+                android:configChanges="orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,8 +24,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".ProjectActivity"
+            android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="stateUnchanged"/>
         <activity android:name=".TaskActivity"
+            android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="stateUnchanged"/>
     </application>
 
