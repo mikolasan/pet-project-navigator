@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
@@ -20,6 +21,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -77,6 +79,7 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
     }
 
     private void setButtonListeners() {
+        /*
         final Button btn_backup = (Button) findViewById(R.id.btn_backup_project);
         btn_backup.setOnClickListener(new OnClickListener() {
             @Override
@@ -91,16 +94,7 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
                 toCloud();
             }
         });
-
-        /*
-        final Button btn_restore = (Button) findViewById(R.id.btn_restore);
-        btn_restore.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                restoreDB();
-            }
-        });
         */
-
         final Button btn_add_project = (Button) findViewById(R.id.btn_add_project);
         btn_add_project.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -109,6 +103,28 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
                 startActivity(intent);
             }
         });
+
+        BottomNavigationView bottomNavigationView = (BottomNavigationView)
+                findViewById(R.id.bottom_navigation);
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(
+                new BottomNavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.action_projects:
+
+                                break;
+                            case R.id.action_tasks:
+                                Intent intent = new Intent(getApplicationContext(), TaskListActivity.class);
+                                startActivity(intent);
+                                break;
+                            case R.id.action_buffer:
+
+                        }
+                        return true;
+                    }
+                });
     }
 
     private void initProjectView() {

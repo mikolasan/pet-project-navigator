@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">Pet Project Navigator</string>
+    <string name="bottom_menu_projects">Проекты</string>
+    <string name="bottom_menu_tasks">Задачи</string>
+    <string name="bottom_menu_buffer">Буфер</string>
     <string name="btn_add_project">Ещё проект</string>
     <string name="btn_save_project">Сохранить</string>
     <string name="btn_delete_project">Удалить</string>
@@ -30,4 +33,5 @@
     <string name="sample_project">Пример длинного названия проекта</string>
     <string name="sample_project_desc">Небольшое описание. Буквально в несколько строк</string>
     <string name="chooser_title">Select a DB backup file"</string>
+    <string name="title_activity_task_list">TaskListActivity</string>
 </resources>

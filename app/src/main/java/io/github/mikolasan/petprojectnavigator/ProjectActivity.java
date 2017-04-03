@@ -12,8 +12,11 @@ import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+
+import static io.github.mikolasan.petprojectnavigator.Tools.createIntent;
 
 public class ProjectActivity extends FragmentActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -32,42 +35,7 @@ public class ProjectActivity extends FragmentActivity implements LoaderManager.L
     private int status;
     private int project_id;
 
-    private int getNumber(Cursor cursor, String column) {
-        int id = cursor.getColumnIndex(column);
-        if (id < 0) {
-            return 0;
-        }
-        return cursor.getInt(id);
-    }
-
-    private String getString(Cursor cursor, String column) {
-        int id = cursor.getColumnIndex(column);
-        if (id < 0) {
-            return "";
-        }
-        return cursor.getString(id);
-    }
-
-    private Intent createIntent(int selectedItem) {
-        Intent intent = new Intent(getApplicationContext(), TaskActivity.class);
-        Cursor c = (Cursor) taskView.getItemAtPosition(selectedItem);
-        intent.putExtra("task_id", getNumber(c, DB.COLUMN_ID));
-        intent.putExtra("title", getString(c, DB.COLUMN_NAME));
-        intent.putExtra("time", getNumber(c, DB.COLUMN_TIME));
-        intent.putExtra("tech_id", getNumber(c, DB.COLUMN_TECH_ID));
-        intent.putExtra("statement", getString(c, DB.COLUMN_STATEMENT));
-        intent.putExtra("links", getString(c, DB.COLUMN_LINKS));
-        intent.putExtra("type_id", getNumber(c, DB.COLUMN_TYPE_ID));
-        return intent;
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_project);
-
-        db = DB.getOpenedInstance();
-
+    private void setButtonListeners() {
         final Button btn_add_task = (Button) findViewById(R.id.btn_add_task);
         btn_add_task.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -109,16 +77,15 @@ public class ProjectActivity extends FragmentActivity implements LoaderManager.L
             }
         });
 
-        String[] from = new String[] { DB.COLUMN_NAME };
-        int[] to = new int[] { R.id.lbl_title };
-        cursorAdapter = new SimpleCursorAdapter(this, R.layout.item_task, null, from, to, 0);
+    }
+
+    private void initTaskView(SimpleCursorAdapter cursorAdapter) {
         taskView = (ListView) findViewById(R.id.task_view);
         taskView.setAdapter(cursorAdapter);
-
         taskView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = createIntent(i);
+                Intent intent = createIntent(getApplicationContext(), taskView, i);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.putExtra("status", ProjectActivity.STATUS_EDIT);
                 intent.putExtra("project_id", project_id);
@@ -126,8 +93,18 @@ public class ProjectActivity extends FragmentActivity implements LoaderManager.L
             }
         });
 
-        // добавляем контекстное меню к списку
-        //registerForContextMenu(list);
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_project);
+        db = DB.getOpenedInstance();
+        setButtonListeners();
+        String[] from = new String[] { DB.COLUMN_NAME };
+        int[] to = new int[] { R.id.lbl_title };
+        cursorAdapter = new SimpleCursorAdapter(this, R.layout.item_task, null, from, to, 0);
+        initTaskView(cursorAdapter);
     }
 
     @Override

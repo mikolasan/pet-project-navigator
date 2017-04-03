@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_projects"
+        android:enabled="true"
+        android:icon="@drawable/ic_projects"
+        android:title="@string/bottom_menu_projects"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_tasks"
+        android:enabled="true"
+        android:icon="@drawable/ic_tasks"
+        android:title="@string/bottom_menu_tasks"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_buffer"
+        android:enabled="true"
+        android:icon="@drawable/ic_buffer"
+        android:title="@string/bottom_menu_buffer"
+        app:showAsAction="ifRoom" />
+</menu>
