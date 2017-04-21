@@ -16,13 +16,7 @@ import android.widget.EditText;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 
-interface MyListener {
-    // you can define any parameter as per your requirement
-    void techCallback(View view, String result);
-    void typeCallback(View view, String result);
-}
-
-public class TaskActivity extends FragmentActivity implements MyListener {
+public class TaskActivity extends FragmentActivity implements PetDialogListener {
 
     public static final int STATUS_NEW = 0;
     public static final int STATUS_EDIT = 1;
@@ -286,9 +280,9 @@ public class TaskActivity extends FragmentActivity implements MyListener {
 
 
     public static class TechNameDialogFragment extends DialogFragment {
-        MyListener ml;
+        PetDialogListener ml;
 
-        static TechNameDialogFragment newInstance(MyListener ml) {
+        static TechNameDialogFragment newInstance(PetDialogListener ml) {
             TechNameDialogFragment f = new TechNameDialogFragment();
             f.ml = ml;
             return f;
@@ -311,9 +305,9 @@ public class TaskActivity extends FragmentActivity implements MyListener {
     }
 
     public static class TypeNameDialogFragment extends DialogFragment {
-        MyListener ml;
+        PetDialogListener ml;
 
-        static TypeNameDialogFragment newInstance(MyListener ml) {
+        static TypeNameDialogFragment newInstance(PetDialogListener ml) {
             TypeNameDialogFragment f = new TypeNameDialogFragment();
             f.ml = ml;
             return f;

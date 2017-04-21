@@ -2,30 +2,23 @@ package io.github.mikolasan.petprojectnavigator;
 
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 
 import static io.github.mikolasan.petprojectnavigator.Tools.createIntent;
 
-public class ProjectActivity extends FragmentActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class ProjectActivity extends FragmentActivity {
 
     public static final int STATUS_NEW = 0;
     public static final int STATUS_EDIT = 1;
 
     DB db;
-    SimpleCursorAdapter cursorAdapter;
-    ProjectActivity.MyCursorLoader mCursorLoader;
+    private PetDataLoader<PetTaskLoader> petDataLoader;
 
     EditText project_name;
     EditText project_desc;
@@ -79,9 +72,8 @@ public class ProjectActivity extends FragmentActivity implements LoaderManager.L
 
     }
 
-    private void initTaskView(SimpleCursorAdapter cursorAdapter) {
+    private void initTaskView() {
         taskView = (ListView) findViewById(R.id.task_view);
-        taskView.setAdapter(cursorAdapter);
         taskView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -92,7 +84,9 @@ public class ProjectActivity extends FragmentActivity implements LoaderManager.L
                 startActivity(intent);
             }
         });
-
+        Context context = getApplicationContext();
+        petDataLoader = new PetDataLoader<>(context, new PetTaskLoader(context, db), taskView);
+        getLoaderManager().initLoader(0, null, petDataLoader);
     }
 
     @Override
@@ -101,10 +95,7 @@ public class ProjectActivity extends FragmentActivity implements LoaderManager.L
         setContentView(R.layout.activity_project);
         db = DB.getOpenedInstance();
         setButtonListeners();
-        String[] from = new String[] { DB.COLUMN_NAME };
-        int[] to = new int[] { R.id.lbl_title };
-        cursorAdapter = new SimpleCursorAdapter(this, R.layout.item_task, null, from, to, 0);
-        initTaskView(cursorAdapter);
+        initTaskView();
     }
 
     @Override
@@ -135,45 +126,6 @@ public class ProjectActivity extends FragmentActivity implements LoaderManager.L
     @Override
     protected void onResume() {
         super.onResume();
-        getSupportLoaderManager().restartLoader(project_id, null, this);
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        mCursorLoader = new ProjectActivity.MyCursorLoader(this, db);
-        mCursorLoader.setProjectId(id);
-        return mCursorLoader;
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        cursorAdapter.swapCursor(data);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        cursorAdapter.changeCursor(null);
-    }
-
-    static class MyCursorLoader extends CursorLoader {
-
-        DB db;
-        int project_id;
-
-        public MyCursorLoader(Context context, DB db) {
-            super(context);
-            this.db = db;
-            this.project_id = 0;
-        }
-
-        public void setProjectId(int id) {
-            project_id = id;
-        }
-
-        @Override
-        public Cursor loadInBackground() {
-            return db.dbTask.getAll(project_id);
-        }
-
+        //getLoaderManager().restartLoader(project_id, null, petDataLoader);
     }
 }
