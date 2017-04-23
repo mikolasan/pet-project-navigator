@@ -35,6 +35,10 @@ class PetAnyLoader extends CursorLoader {
         return layoutId;
     }
 
+    public Bundle getArgs() {
+        return args;
+    }
+
     void setColumnNames(String[] columnNames) {
         this.columnNames = columnNames;
     }
@@ -47,11 +51,11 @@ class PetAnyLoader extends CursorLoader {
         this.layoutId = layoutId;
     }
 
-    void setId(int id) {
+    private void setId(int id) {
         this.id = id;
     }
 
-    void setArgs(Bundle args) {
+    private void setArgs(Bundle args) {
         this.args = args;
     }
 }

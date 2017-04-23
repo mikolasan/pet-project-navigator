@@ -45,7 +45,7 @@ public class MainActivity extends FragmentActivity implements ConnectionCallback
         OnConnectionFailedListener {
 
     DB db;
-    private PetDataLoader<PetProjectLoader> petDataLoader;
+    private PetDataLoader<PetProjectLoader> activityDataLoader;
     private static final String TAG = "drive-quickstart";
     private static final String OPEN_FILE_TAG = "open-file-dialog";
     private static final int REQUEST_CODE_CAPTURE_IMAGE = 1;
@@ -143,8 +143,12 @@ public class MainActivity extends FragmentActivity implements ConnectionCallback
             }
         });
         Context context = getApplicationContext();
-        petDataLoader = new PetDataLoader<>(context, new PetProjectLoader(context, db), list);
-        getLoaderManager().initLoader(0, null, petDataLoader);
+        try {
+            activityDataLoader = new PetDataLoader<>(context, PetProjectLoader.class, new PetProjectLoader(context, db), list);
+            getLoaderManager().initLoader(activityDataLoader.mainActivityId, null, activityDataLoader);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -166,7 +170,8 @@ public class MainActivity extends FragmentActivity implements ConnectionCallback
     @Override
     protected void onResume() {
         super.onResume();
-        //getLoaderManager().restartLoader(0, null, petDataLoader);
+        getLoaderManager().restartLoader(activityDataLoader.mainActivityId, null, activityDataLoader);
+        //activityDataLoader.notifyAdapter();
     }
 
     @Override

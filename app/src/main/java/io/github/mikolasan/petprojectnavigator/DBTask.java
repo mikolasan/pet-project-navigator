@@ -35,7 +35,11 @@ public class DBTask {
         return hasObject;
     }
 
-    Cursor getAll(int projectId) {
+    Cursor getAll() {
+        return mDB.query(DB_TASKS_TABLE, null, null, null, null, null, null);
+    }
+
+    Cursor getAllByProject(int projectId) {
         String selection = COLUMN_PROJECT_ID + " = " + projectId;
         return mDB.query(DB_TASKS_TABLE, null, selection, null, null, null, null);
     }

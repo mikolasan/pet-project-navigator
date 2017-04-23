@@ -8,29 +8,34 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import static io.github.mikolasan.petprojectnavigator.Tools.createIntent;
+import static io.github.mikolasan.petprojectnavigator.Tools.createTaskIntent;
 
 public class TaskListActivity extends FragmentActivity {
 
     DB db;
-    private PetDataLoader<PetTaskLoader> petDataLoader;
-    private int projectId;
+    private PetDataLoader<PetTaskLoader> activityDataLoader;
 
     private void initView() {
         final ListView list = (ListView) findViewById(R.id.task_full_view);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = createIntent(getApplicationContext(), list, i);
+                Intent intent = createTaskIntent(getApplicationContext(), list, i);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.putExtra("status", ProjectActivity.STATUS_EDIT);
-                intent.putExtra("project_id", projectId);
+                intent.putExtra("status", TaskActivity.STATUS_EDIT);
                 startActivity(intent);
             }
         });
         Context context = getApplicationContext();
-        petDataLoader = new PetDataLoader<>(context, new PetTaskLoader(context, db), list);
-        getLoaderManager().initLoader(0, null, petDataLoader);
+        try {
+            activityDataLoader = new PetDataLoader<>(context, PetTaskLoader.class, new PetTaskLoader(context, db), list);
+            Bundle args = new Bundle();
+            args.putBoolean("all_projects", true);
+            getLoaderManager().initLoader(activityDataLoader.tasksActivityId, args, activityDataLoader);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+        
     }
 
     @Override
@@ -38,14 +43,14 @@ public class TaskListActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_list);
         db = DB.getOpenedInstance();
-        projectId = 0;
         initView();
-        getLoaderManager().initLoader(0, null, petDataLoader);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        //getLoaderManager().restartLoader(projectId, null, petDataLoader);
+        Bundle args = new Bundle();
+        args.putBoolean("all_projects", true);
+        getLoaderManager().restartLoader(activityDataLoader.tasksActivityId, args, activityDataLoader);
     }
 }

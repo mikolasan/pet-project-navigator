@@ -9,6 +9,9 @@ import android.os.Bundle;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.widget.ListView;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
 /**
  * Вот класс, который должен убрать из любой активити лишник методы и члены, необходимые для
  * отображения данных из таблицы данных. Передаем ему класс активити и вьюху, в которой нужно
@@ -17,21 +20,38 @@ import android.widget.ListView;
 
 
 class PetDataLoader<T extends PetAnyLoader> implements LoaderManager.LoaderCallbacks<Cursor> {
+    private final Constructor<? extends T> loaderFactory;
+    private T loader;
+    public static final int mainActivityId = 1;
+    public static final int projectActivityId = 2;
+    public static final int tasksActivityId = 3;
     SimpleCursorAdapter cursorAdapter;
-    private T t;
 
-    public PetDataLoader(Context context, T t, ListView list) {
-        this.t = t;
-        String[] from = t.getColumnNames();
-        int[] to = t.getLayoutItems();
-        cursorAdapter = new SimpleCursorAdapter(context, t.getLayoutId(), null, from, to, 0);
+    public PetDataLoader(Context context, Class<? extends T> impl, T loader, ListView list) throws NoSuchMethodException {
+        this.loaderFactory = impl.getConstructor(Context.class, DB.class);
+        this.loader = loader;
+        String[] from = loader.getColumnNames();
+        int[] to = loader.getLayoutItems();
+        cursorAdapter = new SimpleCursorAdapter(context, loader.getLayoutId(), null, from, to, 0);
         list.setAdapter(cursorAdapter);
     }
 
     @Override
     public T onCreateLoader(int id, Bundle args) {
-        t.onCreate(id, args);
-        return t;
+        DB db = loader.db;
+        Context context = loader.getContext();
+        loader = null;
+        try {
+            loader = loaderFactory.newInstance(context, db);
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        loader.onCreate(id, args);
+        return loader;
     }
 
     @Override
@@ -41,6 +61,10 @@ class PetDataLoader<T extends PetAnyLoader> implements LoaderManager.LoaderCallb
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        cursorAdapter.changeCursor(null);
+        cursorAdapter.swapCursor(null);
+    }
+
+    public void notifyAdapter() {
+        cursorAdapter.notifyDataSetChanged();
     }
 }
