@@ -89,7 +89,7 @@ public class ProjectActivity extends FragmentActivity {
             activityDataLoader = new PetDataLoader<>(context, PetTaskLoader.class, new PetTaskLoader(context, db), taskView);
             Bundle args = new Bundle();
             args.putInt("project_id", projectId);
-            getLoaderManager().initLoader(activityDataLoader.projectActivityId, args, activityDataLoader);
+            getSupportLoaderManager().initLoader(activityDataLoader.projectActivityId, args, activityDataLoader);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -99,7 +99,7 @@ public class ProjectActivity extends FragmentActivity {
         if (activityDataLoader != null) {
             Bundle args = new Bundle();
             args.putInt("project_id", projectId);
-            getLoaderManager().restartLoader(activityDataLoader.projectActivityId, args, activityDataLoader);
+            getSupportLoaderManager().restartLoader(activityDataLoader.projectActivityId, args, activityDataLoader);
         }
     }
     @Override

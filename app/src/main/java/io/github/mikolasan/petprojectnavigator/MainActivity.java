@@ -1,26 +1,27 @@
 package io.github.mikolasan.petprojectnavigator;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.ListView;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -55,15 +56,20 @@ public class MainActivity extends FragmentActivity implements ConnectionCallback
     private static final int REQUEST_EXTERNAL_STORAGE = 5;
     private GoogleApiClient mGoogleApiClient;
 
+    private static final int PROJECTS_PAGE_ID = 0;
+    private static final int TASKS_PAGE_ID = 1;
+    private static final int BUFFER_PAGE_ID = 2;
+    private static final int N_PAGES = 3;
+    private ProjectFragment projectFragment;
+    private TaskListActivity taskFragment;
+    private BufferFragment bufferFragment;
 
-    /**
-     * Checks if the app has permission to write to device storage
-     *
-     * If the app does not has permission then the user will be prompted to grant permissions
-     *
-     * @param activity
-     */
-    public static void verifyStoragePermissions(FragmentActivity activity, String permission) {
+    PetPagerAdapter pagerAdapter;
+    ViewPager pager;
+
+    // Checks if the app has permission to write to device storage
+    // If the app does not has permission then the user will be prompted to grant permissions
+    public static void verifyStoragePermissions(Activity activity, String permission) {
         // Check if we have write permission
         int status = ContextCompat.checkSelfPermission(activity, permission);
         if (status != PackageManager.PERMISSION_GRANTED) {
@@ -89,15 +95,6 @@ public class MainActivity extends FragmentActivity implements ConnectionCallback
             }
         });
         */
-        final Button btn_add_project = (Button) findViewById(R.id.btn_add_project);
-        btn_add_project.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), ProjectActivity.class);
-                intent.putExtra("status", ProjectActivity.STATUS_NEW);
-                startActivity(intent);
-            }
-        });
-
         BottomNavigationView bottomNavigationView = (BottomNavigationView)
                 findViewById(R.id.bottom_navigation);
 
@@ -107,48 +104,18 @@ public class MainActivity extends FragmentActivity implements ConnectionCallback
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.action_projects:
-
+                                pager.setCurrentItem(PROJECTS_PAGE_ID);
                                 break;
                             case R.id.action_tasks:
-                                Intent intent = new Intent(getApplicationContext(), TaskListActivity.class);
-                                startActivity(intent);
+                                pager.setCurrentItem(TASKS_PAGE_ID);
                                 break;
                             case R.id.action_buffer:
-
+                                pager.setCurrentItem(BUFFER_PAGE_ID);
+                                break;
                         }
                         return true;
                     }
                 });
-    }
-
-    private void initProjectView() {
-        final ListView list = (ListView) findViewById(R.id.project_view);
-        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Cursor c = (Cursor) list.getItemAtPosition(i);
-
-                int id_column = c.getColumnIndex(DB.COLUMN_ID);
-                int projectId = c.getInt(id_column);
-                int name_column = c.getColumnIndex(DB.COLUMN_NAME);
-                int desc_column = c.getColumnIndex(DB.COLUMN_DESC);
-
-                Intent intent = new Intent(getApplicationContext(), ProjectActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.putExtra("status", ProjectActivity.STATUS_EDIT);
-                intent.putExtra("project_id", projectId);
-                intent.putExtra("title", c.getString(name_column));
-                intent.putExtra("description", c.getString(desc_column));
-                startActivity(intent);
-            }
-        });
-        Context context = getApplicationContext();
-        try {
-            activityDataLoader = new PetDataLoader<>(context, PetProjectLoader.class, new PetProjectLoader(context, db), list);
-            getLoaderManager().initLoader(activityDataLoader.mainActivityId, null, activityDataLoader);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -158,7 +125,62 @@ public class MainActivity extends FragmentActivity implements ConnectionCallback
         db = DB.getOpenedInstance();
         setContentView(R.layout.activity_main);
         setButtonListeners();
-        initProjectView();
+
+        projectFragment = new ProjectFragment();
+        taskFragment = new TaskListActivity();
+        bufferFragment = new BufferFragment();
+
+        pagerAdapter = new PetPagerAdapter(getSupportFragmentManager());
+
+        pager = (ViewPager)findViewById(R.id.pager);
+        pager.setAdapter(pagerAdapter);
+    }
+
+    private class PetPagerAdapter extends FragmentPagerAdapter {
+
+        public PetPagerAdapter(FragmentManager manager) {
+            super(manager);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            // Do NOT try to save references to the Fragments in getItem(),
+            // because getItem() is not always called. If the Fragment
+            // was already created then it will be retrieved from the FragmentManger
+            // and not here (i.e. getItem() won't be called again).
+            switch (position) {
+                case PROJECTS_PAGE_ID:
+                    return projectFragment;
+                case TASKS_PAGE_ID:
+                    return taskFragment;
+                case BUFFER_PAGE_ID:
+                    return bufferFragment;
+                default:
+                    // This should never happen. Always account for each position above
+                    return null;
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return N_PAGES;
+        }
+/*
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+
+            // save the appropriate reference depending on position
+            switch (position) {
+                case PROJECTS_PAGE_ID:
+                    return projectFragment;
+                case TASKS_PAGE_ID:
+                    return taskFragment;
+                case BUFFER_PAGE_ID:
+                    return bufferFragment;
+            }
+            return null;
+        }
+        */
     }
 
     @Override
@@ -170,8 +192,9 @@ public class MainActivity extends FragmentActivity implements ConnectionCallback
     @Override
     protected void onResume() {
         super.onResume();
-        getLoaderManager().restartLoader(activityDataLoader.mainActivityId, null, activityDataLoader);
-        //activityDataLoader.notifyAdapter();
+        if(activityDataLoader != null) {
+            getSupportLoaderManager().restartLoader(activityDataLoader.mainActivityId, null, activityDataLoader);
+        }
     }
 
     @Override

@@ -2,8 +2,8 @@ package io.github.mikolasan.petprojectnavigator;
 
 
 import android.content.Context;
-import android.content.CursorLoader;
 import android.os.Bundle;
+import android.support.v4.content.CursorLoader;
 
 class PetAnyLoader extends CursorLoader {
     DB db;
