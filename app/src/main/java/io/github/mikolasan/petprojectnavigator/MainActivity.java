@@ -19,9 +19,14 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -67,6 +72,13 @@ public class MainActivity extends FragmentActivity implements ConnectionCallback
     PetPagerAdapter pagerAdapter;
     ViewPager pager;
 
+    private final int drawerAddProjectPos = 0;
+    private final int drawerOpenProjectsPos = 1;
+    private final int drawerOpenTasksPos = 2;
+    private final int drawerOpenBufferPos = 3;
+    private final int drawerBackupPos = 4;
+    private final int drawerToCloudPos = 5;
+
     // Checks if the app has permission to write to device storage
     // If the app does not has permission then the user will be prompted to grant permissions
     public static void verifyStoragePermissions(Activity activity, String permission) {
@@ -78,23 +90,49 @@ public class MainActivity extends FragmentActivity implements ConnectionCallback
         }
     }
 
-    private void setButtonListeners() {
-        /*
-        final Button btn_backup = (Button) findViewById(R.id.btn_backup_project);
-        btn_backup.setOnClickListener(new OnClickListener() {
+    private void initDrawer()
+    {
+        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ListView listView = (ListView) findViewById(R.id.left_drawer);
+        // Set the adapter for the list view
+        listView.setAdapter(new ArrayAdapter<>(this,
+                R.layout.drawer_list_item, getResources().getStringArray(R.array.menu_list)));
+        // Set the list's click listener
+        listView.setOnItemClickListener(new ListView.OnItemClickListener() {
             @Override
-            public void onClick(View v) {
-                backup();
-            }
-        });
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case drawerAddProjectPos:
+                        Intent intent = new Intent(getApplicationContext(), ProjectActivity.class);
+                        intent.putExtra("status", ProjectActivity.STATUS_NEW);
+                        startActivity(intent);
+                        break;
+                    case drawerOpenProjectsPos:
+                        pager.setCurrentItem(PROJECTS_PAGE_ID);
+                        listView.setItemChecked(position, true);
 
-        final Button btn_to_cloud = (Button) findViewById(R.id.btn_to_cloud);
-        btn_to_cloud.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                toCloud();
+                        break;
+                    case drawerOpenTasksPos:
+                        pager.setCurrentItem(TASKS_PAGE_ID);
+                        listView.setItemChecked(position, true);
+                        break;
+                    case drawerOpenBufferPos:
+                        pager.setCurrentItem(BUFFER_PAGE_ID);
+                        listView.setItemChecked(position, true);
+                        break;
+                    case drawerBackupPos:
+                        backup();
+                        break;
+                    case drawerToCloudPos:
+                        toCloud();
+                        break;
+                }
+                drawerLayout.closeDrawer(listView);
             }
         });
-        */
+    }
+
+    private void setButtonListeners() {
         BottomNavigationView bottomNavigationView = (BottomNavigationView)
                 findViewById(R.id.bottom_navigation);
 
@@ -125,6 +163,7 @@ public class MainActivity extends FragmentActivity implements ConnectionCallback
         db = DB.getOpenedInstance();
         setContentView(R.layout.activity_main);
         setButtonListeners();
+        initDrawer();
 
         projectFragment = new ProjectFragment();
         taskFragment = new TaskListActivity();

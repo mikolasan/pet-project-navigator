@@ -34,4 +34,10 @@
     <string name="sample_project_desc">Небольшое описание. Буквально в несколько строк</string>
     <string name="chooser_title">Select a DB backup file"</string>
     <string name="title_activity_task_list">TaskListActivity</string>
+    <string-array name="menu_list">
+        <item>@string/btn_add_project</item>
+        <item>@string/bottom_menu_projects</item>
+        <item>@string/bottom_menu_tasks</item>
+        <item>@string/bottom_menu_buffer</item>
+    </string-array>
 </resources>
