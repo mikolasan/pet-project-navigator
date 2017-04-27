@@ -193,7 +193,7 @@ public class MainActivity extends FragmentActivity implements ConnectionCallback
     protected void onResume() {
         super.onResume();
         if(activityDataLoader != null) {
-            getSupportLoaderManager().restartLoader(activityDataLoader.mainActivityId, null, activityDataLoader);
+            getSupportLoaderManager().restartLoader(PetDataLoader.mainActivityId, null, activityDataLoader);
         }
     }
 

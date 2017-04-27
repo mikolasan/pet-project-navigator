@@ -19,7 +19,7 @@ import java.lang.reflect.InvocationTargetException;
 
 
 class PetDataLoader<T extends PetAnyLoader> implements LoaderManager.LoaderCallbacks<Cursor> {
-    private final Constructor<? extends T> loaderFactory;
+    private final Constructor<? extends PetAnyLoader> loaderFactory;
     private T loader;
     public static final int mainActivityId = 1;
     public static final int projectActivityId = 2;
@@ -27,7 +27,7 @@ class PetDataLoader<T extends PetAnyLoader> implements LoaderManager.LoaderCallb
     SimpleCursorAdapter cursorAdapter;
 
     public PetDataLoader(Context context, Class<? extends T> impl, T loader, ListView list) throws NoSuchMethodException {
-        this.loaderFactory = (Constructor<? extends T>) loader.getClass().getConstructor(Context.class, DB.class);
+        this.loaderFactory = loader.getClass().getConstructor(Context.class, DB.class);
         this.loader = loader;
         String[] from = loader.getColumnNames();
         int[] to = loader.getLayoutItems();
@@ -41,12 +41,8 @@ class PetDataLoader<T extends PetAnyLoader> implements LoaderManager.LoaderCallb
         Context context = loader.getContext();
         loader = null;
         try {
-            loader = loaderFactory.newInstance(context, db);
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
+            loader = (T) loaderFactory.newInstance(context, db);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
         loader.onCreate(id, args);
