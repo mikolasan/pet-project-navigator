@@ -10,11 +10,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.ArraySet;
 import android.util.Log;
 
+import org.apache.commons.codec.binary.Hex;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import org.apache.commons.codec.binary.Hex;
 
 import java.util.Iterator;
 
