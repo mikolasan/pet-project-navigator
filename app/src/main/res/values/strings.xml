@@ -7,6 +7,7 @@
     <string name="btn_save_project">Сохранить</string>
     <string name="btn_delete_project">Удалить</string>
     <string name="btn_backup_project">Забэкапить</string>
+    <string name="btn_restore_local">Загурзить</string>
     <string name="btn_to_cloud">Заоблачить</string>
     <string name="btn_restore">Восстановить</string>
     <string name="btn_add_task">Добавить задачу</string>
@@ -39,5 +40,10 @@
         <item>@string/bottom_menu_projects</item>
         <item>@string/bottom_menu_tasks</item>
         <item>@string/bottom_menu_buffer</item>
+        <item>@string/btn_backup_project</item>
+        <item>@string/btn_restore_local</item>
+        <item>@string/btn_to_cloud</item>
+        <item>@string/btn_restore</item>
+
     </string-array>
 </resources>

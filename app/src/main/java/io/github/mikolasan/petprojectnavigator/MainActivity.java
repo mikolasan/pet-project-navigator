@@ -21,9 +21,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -33,9 +30,7 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.drive.Drive;
-import com.google.android.gms.drive.DriveApi.DriveContentsResult;
 import com.google.android.gms.drive.MetadataChangeSet;
 
 import java.io.ByteArrayOutputStream;
@@ -45,15 +40,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 public class MainActivity extends FragmentActivity implements ConnectionCallbacks,
         OnConnectionFailedListener {
 
     DB db;
-    private PetDataLoader<PetProjectLoader> activityDataLoader;
     private static final String TAG = "drive-quickstart";
     private static final String OPEN_FILE_TAG = "open-file-dialog";
-    private static final int REQUEST_CODE_CAPTURE_IMAGE = 1;
     private static final int REQUEST_CODE_CREATOR = 2;
     private static final int REQUEST_CODE_RESOLUTION = 3;
     private static final int REQUEST_CODE_RESTORE_FILE = 4;
@@ -76,7 +71,9 @@ public class MainActivity extends FragmentActivity implements ConnectionCallback
     private final int drawerOpenTasksPos = 2;
     private final int drawerOpenBufferPos = 3;
     private final int drawerBackupPos = 4;
-    private final int drawerToCloudPos = 5;
+    private final int drawerRestorePos = 5;
+    private final int drawerToCloudPos = 6;
+    private final int drawerFromCloudPos = 7;
 
     // Checks if the app has permission to write to device storage
     // If the app does not has permission then the user will be prompted to grant permissions
@@ -97,37 +94,40 @@ public class MainActivity extends FragmentActivity implements ConnectionCallback
         listView.setAdapter(new ArrayAdapter<>(this,
                 R.layout.drawer_list_item, getResources().getStringArray(R.array.menu_list)));
         // Set the list's click listener
-        listView.setOnItemClickListener(new ListView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                switch (position) {
-                    case drawerAddProjectPos:
-                        Intent intent = new Intent(getApplicationContext(), ProjectActivity.class);
-                        intent.putExtra("status", ProjectActivity.STATUS_NEW);
-                        startActivity(intent);
-                        break;
-                    case drawerOpenProjectsPos:
-                        pager.setCurrentItem(PROJECTS_PAGE_ID);
-                        listView.setItemChecked(position, true);
+        listView.setOnItemClickListener((parent, view, position, id) -> {
+            switch (position) {
+                case drawerAddProjectPos:
+                    Intent intent = new Intent(getApplicationContext(), ProjectActivity.class);
+                    intent.putExtra("status", ProjectActivity.STATUS_NEW);
+                    startActivity(intent);
+                    break;
+                case drawerOpenProjectsPos:
+                    pager.setCurrentItem(PROJECTS_PAGE_ID);
+                    listView.setItemChecked(position, true);
 
-                        break;
-                    case drawerOpenTasksPos:
-                        pager.setCurrentItem(TASKS_PAGE_ID);
-                        listView.setItemChecked(position, true);
-                        break;
-                    case drawerOpenBufferPos:
-                        pager.setCurrentItem(BUFFER_PAGE_ID);
-                        listView.setItemChecked(position, true);
-                        break;
-                    case drawerBackupPos:
-                        backup();
-                        break;
-                    case drawerToCloudPos:
-                        toCloud();
-                        break;
-                }
-                drawerLayout.closeDrawer(listView);
+                    break;
+                case drawerOpenTasksPos:
+                    pager.setCurrentItem(TASKS_PAGE_ID);
+                    listView.setItemChecked(position, true);
+                    break;
+                case drawerOpenBufferPos:
+                    pager.setCurrentItem(BUFFER_PAGE_ID);
+                    listView.setItemChecked(position, true);
+                    break;
+                case drawerBackupPos:
+                    backup();
+                    break;
+                case drawerRestorePos:
+                    db.restore(loadLocalCopy());
+                    break;
+                case drawerToCloudPos:
+                    toCloud();
+                    break;
+                case drawerFromCloudPos:
+                    restoreDB();
+                    break;
             }
+            drawerLayout.closeDrawer(listView);
         });
     }
 
@@ -136,22 +136,19 @@ public class MainActivity extends FragmentActivity implements ConnectionCallback
                 findViewById(R.id.bottom_navigation);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(
-                new BottomNavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.action_projects:
-                                pager.setCurrentItem(PROJECTS_PAGE_ID);
-                                break;
-                            case R.id.action_tasks:
-                                pager.setCurrentItem(TASKS_PAGE_ID);
-                                break;
-                            case R.id.action_buffer:
-                                pager.setCurrentItem(BUFFER_PAGE_ID);
-                                break;
-                        }
-                        return true;
+                item -> {
+                    switch (item.getItemId()) {
+                        case R.id.action_projects:
+                            pager.setCurrentItem(PROJECTS_PAGE_ID);
+                            break;
+                        case R.id.action_tasks:
+                            pager.setCurrentItem(TASKS_PAGE_ID);
+                            break;
+                        case R.id.action_buffer:
+                            pager.setCurrentItem(BUFFER_PAGE_ID);
+                            break;
                     }
+                    return true;
                 });
     }
 
@@ -176,7 +173,7 @@ public class MainActivity extends FragmentActivity implements ConnectionCallback
 
     private class PetPagerAdapter extends FragmentPagerAdapter {
 
-        public PetPagerAdapter(FragmentManager manager) {
+        private PetPagerAdapter(FragmentManager manager) {
             super(manager);
         }
 
@@ -225,14 +222,6 @@ public class MainActivity extends FragmentActivity implements ConnectionCallback
     protected void onStart() {
         super.onStart();
         verifyStoragePermissions(this, Manifest.permission.READ_EXTERNAL_STORAGE);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if(activityDataLoader != null) {
-            getSupportLoaderManager().restartLoader(PetDataLoader.mainActivityId, null, activityDataLoader);
-        }
     }
 
     @Override
@@ -299,8 +288,6 @@ public class MainActivity extends FragmentActivity implements ConnectionCallback
                     } else {
                         Toast.makeText(getApplicationContext(), "Bad data", Toast.LENGTH_SHORT).show();
                     }
-                }else if(resultCode == RESULT_CANCELED) {
-                    //
                 }
         }
     }
@@ -382,43 +369,40 @@ public class MainActivity extends FragmentActivity implements ConnectionCallback
         Log.i(TAG, "Creating new contents.");
         String str = db.prepareJson();
         Drive.DriveApi.newDriveContents(mGoogleApiClient)
-                .setResultCallback(new ResultCallback<DriveContentsResult>() {
-
-                    @Override
-                    public void onResult(DriveContentsResult result) {
-                        // If the operation was not successful, we cannot do anything
-                        // and must
-                        // fail.
-                        if (!result.getStatus().isSuccess()) {
-                            Log.i(TAG, "Failed to create new contents.");
-                            return;
-                        }
-                        // Otherwise, we can write our data to the new contents.
-                        Log.i(TAG, "New contents created.");
-                        // Get an output stream for the contents.
-                        OutputStream outputStream = result.getDriveContents().getOutputStream();
-                        try {
-                            outputStream.write(str.getBytes(Charset.forName("UTF-8")));
-                        } catch (IOException e1) {
-                            Log.i(TAG, "Unable to write file contents.");
-                        }
-                        // Create the initial metadata - MIME type and title.
-                        // Note that the user will be able to change the title later.
-                        String date = ""; // !TODO
-                        MetadataChangeSet metadataChangeSet = new MetadataChangeSet.Builder()
-                                .setMimeType("application/json").setTitle("pet-project-navigator-backup" + date + ".json").build();
-                        // Create an intent for the file chooser, and start it.
-                        IntentSender intentSender = Drive.DriveApi
-                                .newCreateFileActivityBuilder()
-                                .setInitialMetadata(metadataChangeSet)
-                                .setInitialDriveContents(result.getDriveContents())
-                                .build(mGoogleApiClient);
-                        try {
-                            startIntentSenderForResult(
-                                    intentSender, REQUEST_CODE_CREATOR, null, 0, 0, 0);
-                        } catch (IntentSender.SendIntentException e) {
-                            Log.i(TAG, "Failed to launch file chooser.");
-                        }
+                .setResultCallback(result -> {
+                    // If the operation was not successful, we cannot do anything
+                    // and must
+                    // fail.
+                    if (!result.getStatus().isSuccess()) {
+                        Log.i(TAG, "Failed to create new contents.");
+                        return;
+                    }
+                    // Otherwise, we can write our data to the new contents.
+                    Log.i(TAG, "New contents created.");
+                    // Get an output stream for the contents.
+                    OutputStream outputStream = result.getDriveContents().getOutputStream();
+                    try {
+                        outputStream.write(str.getBytes(Charset.forName("UTF-8")));
+                    } catch (IOException e1) {
+                        Log.i(TAG, "Unable to write file contents.");
+                    }
+                    // Create the initial metadata - MIME type and title.
+                    // Note that the user will be able to change the title later.
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd--HH-mm-ss", Locale.US);
+                    String date = simpleDateFormat.toString();
+                    MetadataChangeSet metadataChangeSet = new MetadataChangeSet.Builder()
+                            .setMimeType("application/json").setTitle("pet-project-navigator-backup" + date + ".json").build();
+                    // Create an intent for the file chooser, and start it.
+                    IntentSender intentSender = Drive.DriveApi
+                            .newCreateFileActivityBuilder()
+                            .setInitialMetadata(metadataChangeSet)
+                            .setInitialDriveContents(result.getDriveContents())
+                            .build(mGoogleApiClient);
+                    try {
+                        startIntentSenderForResult(
+                                intentSender, REQUEST_CODE_CREATOR, null, 0, 0, 0);
+                    } catch (IntentSender.SendIntentException e) {
+                        Log.i(TAG, "Failed to launch file chooser.");
                     }
                 });
     }
