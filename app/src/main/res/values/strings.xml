@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">Pet Project Navigator</string>
+    <string name="title_main_activity">Pet Project Navigator</string>
+    <string name="title_project_activity">Проект</string>
+    <string name="title_task_activity">Детали задачи</string>
+    <string name="action_settings">Настройки</string>
     <string name="bottom_menu_projects">Проекты</string>
     <string name="bottom_menu_tasks">Задачи</string>
     <string name="bottom_menu_buffer">Буфер</string>
@@ -7,7 +11,7 @@
     <string name="btn_save_project">Сохранить</string>
     <string name="btn_delete_project">Удалить</string>
     <string name="btn_backup_project">Забэкапить</string>
-    <string name="btn_restore_local">Загурзить</string>
+    <string name="btn_restore_local">Загрузить</string>
     <string name="btn_to_cloud">Заоблачить</string>
     <string name="btn_restore">Восстановить</string>
     <string name="btn_add_task">Добавить задачу</string>
@@ -36,7 +40,6 @@
     <string name="chooser_title">Select a DB backup file"</string>
     <string name="title_activity_task_list">TaskListActivity</string>
     <string-array name="menu_list">
-        <item>@string/btn_add_project</item>
         <item>@string/bottom_menu_projects</item>
         <item>@string/bottom_menu_tasks</item>
         <item>@string/bottom_menu_buffer</item>

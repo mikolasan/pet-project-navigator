@@ -14,13 +14,16 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -43,7 +46,7 @@ import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-public class MainActivity extends FragmentActivity implements ConnectionCallbacks,
+public class MainActivity extends AppCompatActivity implements ConnectionCallbacks,
         OnConnectionFailedListener {
 
     PetDatabase petDatabase;
@@ -169,8 +172,39 @@ public class MainActivity extends FragmentActivity implements ConnectionCallback
 
         pager = (ViewPager)findViewById(R.id.pager);
         pager.setAdapter(pagerAdapter);
-    }
 
+        /*
+        final Toolbar petToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(petToolbar);
+        // Get a support ActionBar corresponding to this toolbar
+        ActionBar ab = getSupportActionBar();
+
+        // Enable the Up button
+        ab.setDisplayHomeAsUpEnabled(true);
+        */
+    }
+/*
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                // User chose the "Settings" item, show the app settings UI...
+                return true;
+
+            case R.id.action_add_project:
+                Intent intent = new Intent(getApplicationContext(), ProjectActivity.class);
+                intent.putExtra("status", ProjectActivity.STATUS_NEW);
+                startActivity(intent);
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+*/
     private class PetPagerAdapter extends FragmentPagerAdapter {
 
         private PetPagerAdapter(FragmentManager manager) {

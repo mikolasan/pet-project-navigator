@@ -67,6 +67,11 @@
         </LinearLayout>
     </ScrollView>
 
+    <Button
+        android:text="@string/btn_add_task"
+        android:id="@+id/btn_add_task"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
     <android.support.v4.widget.NestedScrollView
         android:id="@+id/bottom_sheet_task"
         android:layout_width="match_parent"
@@ -79,26 +84,11 @@
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/project_lbl_task"
-                android:id="@+id/lbl_task"/>
-
             <ListView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:id="@+id/task_view" />
 
-            <Button
-                android:text="@string/btn_add_task"
-                android:id="@+id/btn_add_task"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
+
     </android.support.v4.widget.NestedScrollView>
 </android.support.design.widget.CoordinatorLayout>

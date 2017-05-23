@@ -16,6 +16,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
+            android:label="@string/title_main_activity"
             android:configChanges="orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,15 +26,26 @@
         </activity>
         <activity
             android:name=".ProjectActivity"
+            android:label="@string/title_project_activity"
+            android:parentActivityName=".MainActivity"
             android:configChanges="orientation|screenSize"
-            android:windowSoftInputMode="stateUnchanged" />
+            android:windowSoftInputMode="stateUnchanged">
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
         <activity
             android:name=".TaskActivity"
+            android:label="@string/title_task_activity"
+            android:parentActivityName=".MainActivity"
             android:configChanges="orientation|screenSize"
-            android:windowSoftInputMode="stateUnchanged" />
-        <activity
-            android:name=".TaskListActivity"
-            android:label="@string/title_activity_task_list"></activity>
+            android:windowSoftInputMode="stateUnchanged">
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
     </application>
 
 </manifest>

@@ -8,7 +8,11 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -19,7 +23,7 @@ import android.widget.Spinner;
 
 import java.util.Locale;
 
-public class TaskActivity extends Activity implements PetDialogListener {
+public class TaskActivity extends AppCompatActivity implements PetDialogListener {
 
     public static final int STATUS_NEW = 0;
     public static final int STATUS_EDIT = 1;
@@ -178,6 +182,14 @@ public class TaskActivity extends Activity implements PetDialogListener {
             petDatabase.dbTask.add(petTask);
             TaskActivity.this.finish();
         });
+
+        final Toolbar petToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(petToolbar);
+        // Get a support ActionBar corresponding to this toolbar
+        ActionBar ab = getSupportActionBar();
+
+        // Enable the Up button
+        ab.setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -264,6 +276,24 @@ public class TaskActivity extends Activity implements PetDialogListener {
             default: {
                 break;
             }
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                // User chose the "Settings" item, show the app settings UI...
+                return true;
+
+            case R.id.action_save_task:
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
         }
     }
 
