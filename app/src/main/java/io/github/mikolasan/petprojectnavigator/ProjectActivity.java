@@ -3,6 +3,7 @@ package io.github.mikolasan.petprojectnavigator;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -109,6 +110,13 @@ public class ProjectActivity extends FragmentActivity {
         petDatabase = PetDatabase.getOpenedInstance();
         setButtonListeners();
         initTaskView();
+
+        final BottomSheetBehavior bottomSheetBehavior;
+        final View view = findViewById(R.id.bottom_sheet_task);
+        bottomSheetBehavior = BottomSheetBehavior.from(view);
+        bottomSheetBehavior.setHideable(false);
+        bottomSheetBehavior.setPeekHeight(120);
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
     }
 
     @Override
