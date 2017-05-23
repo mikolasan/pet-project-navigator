@@ -17,7 +17,7 @@ import android.widget.ListView;
  */
 
 public class ProjectFragment extends Fragment {
-    DB db;
+    PetDatabase petDatabase;
     private PetDataLoader<PetProjectLoader> activityDataLoader;
 
     private void setButtonListeners(View v) {
@@ -38,10 +38,10 @@ public class ProjectFragment extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Cursor c = (Cursor) list.getItemAtPosition(i);
 
-                int id_column = c.getColumnIndex(DB.COLUMN_ID);
+                int id_column = c.getColumnIndex(PetDatabase.COLUMN_ID);
                 int projectId = c.getInt(id_column);
-                int name_column = c.getColumnIndex(DB.COLUMN_NAME);
-                int desc_column = c.getColumnIndex(DB.COLUMN_DESC);
+                int name_column = c.getColumnIndex(PetDatabase.COLUMN_NAME);
+                int desc_column = c.getColumnIndex(PetDatabase.COLUMN_DESC);
 
                 Intent intent = new Intent(context, ProjectActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -53,7 +53,7 @@ public class ProjectFragment extends Fragment {
             }
         });
         try {
-            activityDataLoader = new PetDataLoader<>(context, PetProjectLoader.class, new PetProjectLoader(context, db), list);
+            activityDataLoader = new PetDataLoader<>(context, PetProjectLoader.class, new PetProjectLoader(context, petDatabase), list);
             getLoaderManager().initLoader(PetDataLoader.mainActivityId, null, activityDataLoader);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
@@ -68,7 +68,7 @@ public class ProjectFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        db = DB.getOpenedInstance();
+        petDatabase = PetDatabase.getOpenedInstance();
     }
 
     @Override

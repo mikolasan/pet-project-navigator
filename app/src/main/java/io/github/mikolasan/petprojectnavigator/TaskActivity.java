@@ -1,12 +1,13 @@
 package io.github.mikolasan.petprojectnavigator;
 
+import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,27 +17,27 @@ import android.widget.EditText;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 
-public class TaskActivity extends FragmentActivity implements PetDialogListener {
+import java.util.Locale;
+
+public class TaskActivity extends Activity implements PetDialogListener {
 
     public static final int STATUS_NEW = 0;
     public static final int STATUS_EDIT = 1;
 
-    private int project_id;
-    private int task_id;
+    PetDatabase petDatabase;
+    PetTask petTask;
 
-    DB db;
-    Button btn_save_task;
-    EditText e_name;
-    EditText e_desc;
-    EditText e_links;
-    EditText e_time;
+    EditText eName;
+    EditText eDesc;
+    EditText eLinks;
+    EditText eTime;
 
     SimpleCursorAdapter spinnerAdapter;
     SimpleCursorAdapter typeAdapter;
-    private Spinner s_tech;
-    private Spinner s_type;
+    private Spinner sTech;
+    private Spinner sType;
 
-    FragmentTransaction ft;
+    FragmentTransaction fragmentTransaction;
 
     private void hideTechDialog() {
         hideDialog("TechNameDialogFragment");
@@ -47,13 +48,14 @@ public class TaskActivity extends FragmentActivity implements PetDialogListener 
     }
 
     private void hideDialog(String tag) {
-        ft = getFragmentManager().beginTransaction();
-        Fragment prev = getFragmentManager().findFragmentByTag(tag);
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
+        Fragment prev = fragmentManager.findFragmentByTag(tag);
         if (prev != null) {
             ((DialogFragment)prev).dismiss();
-            ft.remove(prev);
+            fragmentTransaction.remove(prev);
         }
-        ft.addToBackStack(null);
+        fragmentTransaction.addToBackStack(null);
     }
 
     private void openTechDialog() {
@@ -65,24 +67,24 @@ public class TaskActivity extends FragmentActivity implements PetDialogListener 
     }
 
     private void openDialog(String tag) {
-        if (tag == "TechNameDialogFragment"){
+        if (tag.equals("TechNameDialogFragment")){
             TechNameDialogFragment dialog = TechNameDialogFragment.newInstance(TaskActivity.this);
-            dialog.show(ft, tag);
+            dialog.show(fragmentTransaction, tag);
         } else {
             TypeNameDialogFragment dialog = TypeNameDialogFragment.newInstance(TaskActivity.this);
-            dialog.show(ft, tag);
+            dialog.show(fragmentTransaction, tag);
         }
     }
 
     private void updateTechList() {
         if (spinnerAdapter != null) {
-            spinnerAdapter.swapCursor(db.getAllTech());
+            spinnerAdapter.swapCursor(petDatabase.getAllTech());
         }
     }
 
     private void updateTypeList() {
         if (typeAdapter != null) {
-            typeAdapter.swapCursor(db.getAllTypes());
+            typeAdapter.swapCursor(petDatabase.getAllTypes());
         }
     }
 
@@ -92,7 +94,7 @@ public class TaskActivity extends FragmentActivity implements PetDialogListener 
         if (c.moveToLast()) {
             id = c.getPosition();
         }
-        int name_id = c.getColumnIndex(DB.COLUMN_NAME);
+        int name_id = c.getColumnIndex(PetDatabase.COLUMN_NAME);
         String label = c.getString(name_id);
         if(label.equals(result)) {
             spinner.setSelection(id);
@@ -100,7 +102,7 @@ public class TaskActivity extends FragmentActivity implements PetDialogListener 
     }
 
     private SimpleCursorAdapter fillList(Spinner spinner, Cursor cursor) {
-        String[] from = new String[] { DB.COLUMN_NAME };
+        String[] from = new String[] { PetDatabase.COLUMN_NAME };
         int[] to = new int[] { android.R.id.text1 };
         int flags = 0;
         SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,
@@ -117,7 +119,7 @@ public class TaskActivity extends FragmentActivity implements PetDialogListener 
         Cursor cursor = adapter.getCursor();
         if (cursor.getCount() > 0 && spinner.getCount() > 0) {
             cursor.moveToPosition(spinner.getSelectedItemPosition());
-            int id = cursor.getColumnIndex(DB.COLUMN_ID);
+            int id = cursor.getColumnIndex(PetDatabase.COLUMN_ID);
             return cursor.getInt(id);
         }
         return 0;
@@ -128,66 +130,53 @@ public class TaskActivity extends FragmentActivity implements PetDialogListener 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task);
 
-        db = DB.getOpenedInstance();
+        petDatabase = PetDatabase.getOpenedInstance();
 
-        s_tech = (Spinner) findViewById(R.id.s_tech);
-        s_type = (Spinner) findViewById(R.id.s_type);
-        spinnerAdapter = fillList(s_tech, db.getAllTech());
-        typeAdapter = fillList(s_type, db.getAllTypes());
+        sTech = (Spinner) findViewById(R.id.s_tech);
+        sType = (Spinner) findViewById(R.id.s_type);
+        spinnerAdapter = fillList(sTech, petDatabase.getAllTech());
+        typeAdapter = fillList(sType, petDatabase.getAllTypes());
 
         final Button btn_add_tech = (Button) findViewById(R.id.btn_add_tech);
-        btn_add_tech.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                hideTechDialog();
-                openTechDialog();
-            }
+        btn_add_tech.setOnClickListener(v -> {
+            hideTechDialog();
+            openTechDialog();
         });
 
         final Button btn_delete_tech = (Button) findViewById(R.id.btn_delete_tech);
-        btn_delete_tech.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                //TODO
-            }
+        btn_delete_tech.setOnClickListener(v -> {
+            //TODO
         });
 
         final Button btn_add_type = (Button) findViewById(R.id.btn_add_type);
-        btn_add_type.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                hideTypeDialog();
-                openTypeDialog();
-            }
+        btn_add_type.setOnClickListener(v -> {
+            hideTypeDialog();
+            openTypeDialog();
         });
 
         final Button btn_delete_type = (Button) findViewById(R.id.btn_delete_type);
-        btn_delete_type.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                //TODO
-            }
+        btn_delete_type.setOnClickListener(v -> {
+            //TODO
         });
 
-        btn_save_task = (Button) findViewById(R.id.btn_save_task);
-        e_name = (EditText) findViewById(R.id.e_name);
-        e_desc = (EditText) findViewById(R.id.e_desc);
-        e_links = (EditText) findViewById(R.id.e_links);
-        e_time = (EditText) findViewById(R.id.e_time);
+        Button btnSaveTask = (Button) findViewById(R.id.btn_save_task);
+        eName = (EditText) findViewById(R.id.e_name);
+        eDesc = (EditText) findViewById(R.id.e_desc);
+        eLinks = (EditText) findViewById(R.id.e_links);
+        eTime = (EditText) findViewById(R.id.e_time);
 
-        btn_save_task.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                PetTask petTask = new PetTask();
-                petTask.setProjectId(project_id);
-                petTask.setTaskId(task_id);
-                petTask.setName(e_name.getText().toString());
-                petTask.setLinks(e_links.getText().toString());
-                petTask.setStatement(e_desc.getText().toString());
-                petTask.setTech(getSelectedItemDBId(s_tech, spinnerAdapter));
-                String timeStr = e_time.getText().toString();
-                int time = 0;
-                if (!timeStr.isEmpty()) time = Integer.parseInt(timeStr);
-                petTask.setTime(time);
-                petTask.setType(getSelectedItemDBId(s_type, typeAdapter));
-                db.dbTask.add(petTask);
-                TaskActivity.this.finish();
-            }
+        btnSaveTask.setOnClickListener(v -> {
+            petTask.setName(eName.getText().toString());
+            petTask.setLinks(eLinks.getText().toString());
+            petTask.setStatement(eDesc.getText().toString());
+            petTask.setTech(getSelectedItemDBId(sTech, spinnerAdapter));
+            String timeStr = eTime.getText().toString();
+            int time = 0;
+            if (!timeStr.isEmpty()) time = Integer.parseInt(timeStr);
+            petTask.setTime(time);
+            petTask.setType(getSelectedItemDBId(sType, typeAdapter));
+            petDatabase.dbTask.add(petTask);
+            TaskActivity.this.finish();
         });
     }
 
@@ -195,15 +184,15 @@ public class TaskActivity extends FragmentActivity implements PetDialogListener 
     protected void onStart() {
         super.onStart();
 
-        s_tech.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        sTech.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView,
                                        int position, long id) {
                 Cursor cursor = (Cursor) parentView.getItemAtPosition(position);
-                int index = cursor.getColumnIndex(DB.COLUMN_ID);
+                int index = cursor.getColumnIndex(PetDatabase.COLUMN_ID);
                 int tech_id = cursor.getInt(index);
                 switch (tech_id) {
-                    case DB.TECH_UNDEFINED_ID: {
+                    case PetDatabase.TECH_UNDEFINED_ID: {
                         break;
                     }
                 }
@@ -216,15 +205,15 @@ public class TaskActivity extends FragmentActivity implements PetDialogListener 
 
         });
 
-        s_type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        sType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView,
                                        int position, long id) {
                 Cursor cursor = (Cursor) parentView.getItemAtPosition(position);
-                int index = cursor.getColumnIndex(DB.COLUMN_ID);
+                int index = cursor.getColumnIndex(PetDatabase.COLUMN_ID);
                 int type_id = cursor.getInt(index);
                 switch (type_id) {
-                    case DB.TYPE_UNDEFINED_ID: {
+                    case PetDatabase.TYPE_UNDEFINED_ID: {
                         break;
                     }
                 }
@@ -239,22 +228,37 @@ public class TaskActivity extends FragmentActivity implements PetDialogListener 
 
         Intent intent = getIntent();
         int status = intent.getIntExtra("status", STATUS_NEW);
-        project_id = intent.getIntExtra("project_id", 0);
-        task_id = intent.getIntExtra("task_id", 0);
+        petTask = new PetTask();
+        petTask.setProjectId(intent.getIntExtra("project_id", 0));
+        petTask.setTaskId(intent.getIntExtra("task_id", 0));
         switch  (status) {
             case STATUS_NEW: {
                 break;
             }
             case STATUS_EDIT: {
-                e_name.setText(intent.getStringExtra("title"));
-                e_links.setText(intent.getStringExtra("links"));
-                e_desc.setText(intent.getStringExtra("statement"));
+                String str = intent.getStringExtra("title");
+                eName.setText(str);
+                petTask.setName(str);
 
-                int tech_id = intent.getIntExtra("tech_id", 0);
-                s_tech.setSelection(tech_id);
-                int type_id = intent.getIntExtra("type_id", 0);
-                s_type.setSelection(type_id);
-                e_time.setText(Integer.toString(intent.getIntExtra("time", 0)));
+                str = intent.getStringExtra("links");
+                eLinks.setText(str);
+                petTask.setLinks(str);
+
+                str = intent.getStringExtra("statement");
+                eDesc.setText(str);
+                petTask.setStatement(str);
+
+                int techId = intent.getIntExtra("tech_id", 0);
+                sTech.setSelection(techId);
+                petTask.setTech(techId);
+
+                int typeId = intent.getIntExtra("type_id", 0);
+                sType.setSelection(typeId);
+                petTask.setType(typeId);
+
+                int taskTime = intent.getIntExtra("time", 0);
+                eTime.setText(String.format(Locale.US, "%d", taskTime));
+                petTask.setTime(taskTime);
                 break;
             }
             default: {
@@ -265,17 +269,17 @@ public class TaskActivity extends FragmentActivity implements PetDialogListener 
 
     @Override
     public void techCallback(View view, String result) {
-        db.addTech(result);
+        petDatabase.addTech(result);
         hideTechDialog();
         updateTechList();
-        selectItem(result, s_tech, spinnerAdapter);
+        selectItem(result, sTech, spinnerAdapter);
     }
 
     public void typeCallback(View view, String result) {
-        db.addType(result);
+        petDatabase.addType(result);
         hideTypeDialog();
         updateTypeList();
-        selectItem(result, s_type, typeAdapter);
+        selectItem(result, sType, typeAdapter);
     }
 
 
@@ -295,11 +299,7 @@ public class TaskActivity extends FragmentActivity implements PetDialogListener 
             final EditText e = (EditText)v.findViewById(R.id.e_tech_name);
             // Watch for button clicks.
             Button button = (Button)v.findViewById(R.id.btn_add_tech);
-            button.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    ml.techCallback(e, e.getText().toString());
-                }
-            });
+            button.setOnClickListener(v1 -> ml.techCallback(e, e.getText().toString()));
             return v;
         }
     }
@@ -320,11 +320,7 @@ public class TaskActivity extends FragmentActivity implements PetDialogListener 
             final EditText e = (EditText)v.findViewById(R.id.e_type_name);
             // Watch for button clicks.
             Button button = (Button)v.findViewById(R.id.btn_add_type);
-            button.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
-                    ml.typeCallback(e, e.getText().toString());
-                }
-            });
+            button.setOnClickListener(v1 -> ml.typeCallback(e, e.getText().toString()));
             return v;
         }
     }

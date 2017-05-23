@@ -27,7 +27,7 @@ class PetDataLoader<T extends PetAnyLoader> implements LoaderManager.LoaderCallb
     SimpleCursorAdapter cursorAdapter;
 
     public PetDataLoader(Context context, Class<? extends T> impl, T loader, ListView list) throws NoSuchMethodException {
-        this.loaderFactory = loader.getClass().getConstructor(Context.class, DB.class);
+        this.loaderFactory = loader.getClass().getConstructor(Context.class, PetDatabase.class);
         this.loader = loader;
         String[] from = loader.getColumnNames();
         int[] to = loader.getLayoutItems();
@@ -37,11 +37,11 @@ class PetDataLoader<T extends PetAnyLoader> implements LoaderManager.LoaderCallb
 
     @Override
     public T onCreateLoader(int id, Bundle args) {
-        DB db = loader.db;
+        PetDatabase petDatabase = loader.petDatabase;
         Context context = loader.getContext();
         loader = null;
         try {
-            loader = (T) loaderFactory.newInstance(context, db);
+            loader = (T) loaderFactory.newInstance(context, petDatabase);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }

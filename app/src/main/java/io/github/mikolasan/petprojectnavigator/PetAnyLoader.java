@@ -6,16 +6,16 @@ import android.os.Bundle;
 import android.support.v4.content.CursorLoader;
 
 class PetAnyLoader extends CursorLoader {
-    DB db;
+    PetDatabase petDatabase;
     private String[] columnNames;
     private int[] layoutItems;
     private int layoutId;
     int id;
     Bundle args;
 
-    PetAnyLoader(Context context, DB db) {
+    PetAnyLoader(Context context, PetDatabase petDatabase) {
         super(context);
-        this.db = db;
+        this.petDatabase = petDatabase;
     }
 
     void onCreate(int id, Bundle args) {

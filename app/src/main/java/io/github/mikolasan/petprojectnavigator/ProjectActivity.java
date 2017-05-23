@@ -17,7 +17,7 @@ public class ProjectActivity extends FragmentActivity {
     public static final int STATUS_NEW = 0;
     public static final int STATUS_EDIT = 1;
 
-    DB db;
+    PetDatabase petDatabase;
     private PetDataLoader<PetTaskLoader> activityDataLoader;
 
     EditText projectName;
@@ -49,12 +49,12 @@ public class ProjectActivity extends FragmentActivity {
                 switch (status) {
                     case STATUS_NEW:
                     {
-                        db.addProject(name, description);
+                        petDatabase.addProject(name, description);
                         break;
                     }
                     case STATUS_EDIT:
                     {
-                        db.saveProjectDetails(projectId, name, description);
+                        petDatabase.saveProjectDetails(projectId, name, description);
                         break;
                     }
                 }
@@ -65,7 +65,7 @@ public class ProjectActivity extends FragmentActivity {
         btnDeleteProject = (Button) findViewById(R.id.btn_delete_project);
         btnDeleteProject.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                db.deleteProject(projectId);
+                petDatabase.deleteProject(projectId);
                 ProjectActivity.this.finish();
             }
         });
@@ -86,7 +86,7 @@ public class ProjectActivity extends FragmentActivity {
         });
         Context context = getApplicationContext();
         try {
-            activityDataLoader = new PetDataLoader<>(context, PetTaskLoader.class, new PetTaskLoader(context, db), taskView);
+            activityDataLoader = new PetDataLoader<>(context, PetTaskLoader.class, new PetTaskLoader(context, petDatabase), taskView);
             Bundle args = new Bundle();
             args.putInt("project_id", projectId);
             getSupportLoaderManager().initLoader(activityDataLoader.projectActivityId, args, activityDataLoader);
@@ -106,7 +106,7 @@ public class ProjectActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project);
-        db = DB.getOpenedInstance();
+        petDatabase = PetDatabase.getOpenedInstance();
         setButtonListeners();
         initTaskView();
     }

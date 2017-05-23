@@ -46,7 +46,7 @@ import java.util.Locale;
 public class MainActivity extends FragmentActivity implements ConnectionCallbacks,
         OnConnectionFailedListener {
 
-    DB db;
+    PetDatabase petDatabase;
     private static final String TAG = "drive-quickstart";
     private static final String OPEN_FILE_TAG = "open-file-dialog";
     private static final int REQUEST_CODE_CREATOR = 2;
@@ -118,7 +118,7 @@ public class MainActivity extends FragmentActivity implements ConnectionCallback
                     backup();
                     break;
                 case drawerRestorePos:
-                    db.restore(loadLocalCopy());
+                    petDatabase.restore(loadLocalCopy());
                     break;
                 case drawerToCloudPos:
                     toCloud();
@@ -156,7 +156,7 @@ public class MainActivity extends FragmentActivity implements ConnectionCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        db = DB.getOpenedInstance();
+        petDatabase = PetDatabase.getOpenedInstance();
         setContentView(R.layout.activity_main);
         setButtonListeners();
         initDrawer();
@@ -235,7 +235,7 @@ public class MainActivity extends FragmentActivity implements ConnectionCallback
     protected void onDestroy() {
         super.onDestroy();
         // закрываем подключение при выходе
-        db.close();
+        petDatabase.close();
     }
 
     @Override
@@ -329,7 +329,7 @@ public class MainActivity extends FragmentActivity implements ConnectionCallback
                     return;
                 }
                 String json = inputToString(inputStream);
-                if(db.restore(json)){
+                if(petDatabase.restore(json)){
                     Toast.makeText(context, "DB restored", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(context, "Failed to restore", Toast.LENGTH_SHORT).show();
@@ -344,7 +344,7 @@ public class MainActivity extends FragmentActivity implements ConnectionCallback
         }
     }
     public void backup() {
-        saveLocalCopy(db.prepareJson());
+        saveLocalCopy(petDatabase.prepareJson());
     }
 
     public void toCloud() {
@@ -367,7 +367,7 @@ public class MainActivity extends FragmentActivity implements ConnectionCallback
     private void saveFileToDrive() {
         // Start by creating a new contents, and setting a callback.
         Log.i(TAG, "Creating new contents.");
-        String str = db.prepareJson();
+        String str = petDatabase.prepareJson();
         Drive.DriveApi.newDriveContents(mGoogleApiClient)
                 .setResultCallback(result -> {
                     // If the operation was not successful, we cannot do anything

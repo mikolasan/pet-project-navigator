@@ -18,9 +18,9 @@ import org.json.JSONObject;
 import java.util.Iterator;
 
 
-class DB {
+class PetDatabase {
 
-    private static DB instance = null;
+    private static PetDatabase instance = null;
     private static final String DB_NAME = "petprojectdb";
     private static final int DB_VERSION = 5;
 
@@ -41,9 +41,9 @@ class DB {
     private SQLiteDatabase mDB;
     DBTask dbTask;
 
-    public static DB getOpenedInstance() {
+    public static PetDatabase getOpenedInstance() {
         if(instance == null) {
-            instance = new DB(AndroidClient.getAppContext());
+            instance = new PetDatabase(AndroidClient.getAppContext());
             instance.open();
         }
         return instance;
@@ -57,7 +57,7 @@ class DB {
     public static final int TYPE_UNDEFINED_ID = -1;
     public static final String TYPE_UNDEFINED_NAME = "Undefined";
 
-    public DB(Context ctx) {
+    public PetDatabase(Context ctx) {
         new_tech = new MatrixCursor(new String[]{ COLUMN_ID, COLUMN_NAME});
         new_tech.addRow(new Object[]{TECH_UNDEFINED_ID, TECH_UNDEFINED_NAME});
         new_type = new MatrixCursor(new String[]{ COLUMN_ID, COLUMN_NAME});
@@ -220,7 +220,7 @@ class DB {
                     ");";
 
 
-    private static final String LOG_TAG_NAME = "DB LOG";
+    private static final String LOG_TAG_NAME = "PetDatabase LOG";
 
     void clearAll(SQLiteDatabase db){
         db.execSQL("drop table " + DB_TECH_TABLE);
@@ -277,10 +277,10 @@ class DB {
     }
 
     public String prepareJson() {
-        String[] tables = {DB.DB_TECH_TABLE,
-                DB.DB_TYPES_TABLE,
-                DB.DB_TASKS_TABLE,
-                DB.DB_PROJECTS_TABLE
+        String[] tables = {PetDatabase.DB_TECH_TABLE,
+                PetDatabase.DB_TYPES_TABLE,
+                PetDatabase.DB_TASKS_TABLE,
+                PetDatabase.DB_PROJECTS_TABLE
         };
         JSONObject obj = new JSONObject();
         for (String tableName : tables) {

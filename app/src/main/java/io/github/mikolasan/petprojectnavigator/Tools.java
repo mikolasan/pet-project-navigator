@@ -27,13 +27,13 @@ class Tools {
     }
 
     static Intent parseTaskItem(Intent intent, Cursor c) {
-        intent.putExtra("task_id", getNumber(c, DB.COLUMN_ID));
-        intent.putExtra("title", getString(c, DB.COLUMN_NAME));
-        intent.putExtra("time", getNumber(c, DB.COLUMN_TIME));
-        intent.putExtra("tech_id", getNumber(c, DB.COLUMN_TECH_ID));
-        intent.putExtra("statement", getString(c, DB.COLUMN_STATEMENT));
-        intent.putExtra("links", getString(c, DB.COLUMN_LINKS));
-        intent.putExtra("type_id", getNumber(c, DB.COLUMN_TYPE_ID));
+        intent.putExtra("task_id", getNumber(c, PetDatabase.COLUMN_ID));
+        intent.putExtra("title", getString(c, PetDatabase.COLUMN_NAME));
+        intent.putExtra("time", getNumber(c, PetDatabase.COLUMN_TIME));
+        intent.putExtra("tech_id", getNumber(c, PetDatabase.COLUMN_TECH_ID));
+        intent.putExtra("statement", getString(c, PetDatabase.COLUMN_STATEMENT));
+        intent.putExtra("links", getString(c, PetDatabase.COLUMN_LINKS));
+        intent.putExtra("type_id", getNumber(c, PetDatabase.COLUMN_TYPE_ID));
         return intent;
     }
 

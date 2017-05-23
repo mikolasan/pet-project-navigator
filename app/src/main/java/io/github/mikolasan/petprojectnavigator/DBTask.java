@@ -56,8 +56,8 @@ public class DBTask {
         cv.put(COLUMN_TIME, petTask.getTime());
         cv.put(COLUMN_TYPE_ID, petTask.getType());
 
-        if (hasObject(DB_TASKS_TABLE, DB.COLUMN_ID, id)) {
-            mDB.update(DB_TASKS_TABLE, cv, DB.COLUMN_ID + " = ?", new String[] {id});
+        if (hasObject(DB_TASKS_TABLE, PetDatabase.COLUMN_ID, id)) {
+            mDB.update(DB_TASKS_TABLE, cv, PetDatabase.COLUMN_ID + " = ?", new String[] {id});
         } else {
             mDB.insert(DB_TASKS_TABLE, null, cv);
         }

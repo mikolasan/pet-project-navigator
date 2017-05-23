@@ -14,7 +14,7 @@ import static io.github.mikolasan.petprojectnavigator.Tools.createTaskIntent;
 
 public class TaskListActivity extends Fragment {
 
-    DB db;
+    PetDatabase petDatabase;
     private PetDataLoader<PetTaskLoader> activityDataLoader;
 
     private void initView(Context context, View v) {
@@ -29,7 +29,7 @@ public class TaskListActivity extends Fragment {
             }
         });
         try {
-            activityDataLoader = new PetDataLoader<>(context, PetTaskLoader.class, new PetTaskLoader(context, db), list);
+            activityDataLoader = new PetDataLoader<>(context, PetTaskLoader.class, new PetTaskLoader(context, petDatabase), list);
             Bundle args = new Bundle();
             args.putBoolean("all_projects", true);
             getLoaderManager().initLoader(activityDataLoader.tasksActivityId, args, activityDataLoader);
@@ -46,7 +46,7 @@ public class TaskListActivity extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        db = DB.getOpenedInstance();
+        petDatabase = PetDatabase.getOpenedInstance();
     }
 
     @Override
