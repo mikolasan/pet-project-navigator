@@ -1,151 +1,161 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="io.github.mikolasan.petprojectnavigator.TaskActivity"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:fitsSystemWindows="true">
 
-    <LinearLayout
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:minHeight="?attr/actionBarSize"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:elevation="4dp"
-            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:menu="@menu/task_toolbar"/>
-        <TextView
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/project_lbl_name"
-            android:id="@+id/lbl_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:menu="@menu/task_toolbar"
+        tools:targetApi="lollipop" />
 
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/e_name"
-            android:inputType="text|textMultiLine" />
-
-        <TextView
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/project_lbl_tech"
-            android:id="@+id/lbl_tech"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <Spinner
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/s_tech"
-            android:layout_weight="1" />
+    <ScrollView tools:context="io.github.mikolasan.petprojectnavigator.TaskActivity"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <Button
-                android:text="@string/btn_add_tech"
-                android:id="@+id/btn_add_tech"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
-
-            <Button
-                android:text="@string/btn_delete_tech"
-                android:id="@+id/btn_delete_tech"
-                android:layout_weight="1"
-                android:layout_width="wrap_content"
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/project_lbl_name"
+                android:id="@+id/lbl_name"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-        </LinearLayout>
-
-
-        <TextView
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/project_lbl_time"
-            android:id="@+id/lbl_time"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <EditText
-            android:inputType="numberDecimal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/e_time"
-            android:hint="@string/task_edit_time" />
-
-        <TextView
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/project_lbl_links"
-            android:id="@+id/lbl_links"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/e_links"
-            android:inputType="text|textMultiLine" />
-
-        <TextView
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/project_lbl_desc"
-            android:id="@+id/lbl_desc"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <EditText
-            android:layout_width="fill_parent"
-            android:layout_height="120dp"
-            android:id="@+id/e_desc"
-            android:inputType="text|textMultiLine" />
-
-        <TextView
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/project_lbl_type"
-            android:id="@+id/lbl_type"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <Spinner
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/s_type"
-            android:layout_weight="1" />
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <Button
-                android:text="@string/btn_add_type"
-                android:id="@+id/btn_add_type"
-                android:layout_width="wrap_content"
+            <EditText
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:id="@+id/e_name"
+                android:inputType="text|textMultiLine" />
 
-            <Button
-                android:text="@string/btn_delete_type"
-                android:id="@+id/btn_delete_type"
-                android:layout_weight="1"
-                android:layout_width="wrap_content"
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/project_lbl_tech"
+                android:id="@+id/lbl_tech"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/s_tech"
+                android:layout_weight="1" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:text="@string/btn_add_tech"
+                    android:id="@+id/btn_add_tech"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <Button
+                    android:text="@string/btn_delete_tech"
+                    android:id="@+id/btn_delete_tech"
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/project_lbl_time"
+                android:id="@+id/lbl_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <EditText
+                android:inputType="numberDecimal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/e_time"
+                android:hint="@string/task_edit_time" />
+
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/project_lbl_links"
+                android:id="@+id/lbl_links"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/e_links"
+                android:inputType="text|textMultiLine" />
+
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/project_lbl_desc"
+                android:id="@+id/lbl_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="120dp"
+                android:id="@+id/e_desc"
+                android:inputType="text|textMultiLine" />
+
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/project_lbl_type"
+                android:id="@+id/lbl_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/s_type"
+                android:layout_weight="1" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:text="@string/btn_add_type"
+                    android:id="@+id/btn_add_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <Button
+                    android:text="@string/btn_delete_type"
+                    android:id="@+id/btn_delete_type"
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <Button
+                android:text="@string/btn_save_task"
+                android:id="@+id/btn_save_task"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
         </LinearLayout>
-
-        <Button
-            android:text="@string/btn_save_task"
-            android:id="@+id/btn_save_task"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-    </LinearLayout>
-</ScrollView>
+    </ScrollView>
+</LinearLayout>

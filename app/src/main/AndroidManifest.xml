@@ -38,13 +38,13 @@
         <activity
             android:name=".TaskActivity"
             android:label="@string/title_task_activity"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".ProjectActivity"
             android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="stateUnchanged">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".ProjectActivity" />
         </activity>
     </application>
 
