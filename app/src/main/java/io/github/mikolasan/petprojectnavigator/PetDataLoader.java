@@ -5,7 +5,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.SimpleCursorAdapter;
+import android.support.v4.widget.CursorAdapter;
 import android.widget.ListView;
 
 import java.lang.reflect.Constructor;
@@ -24,15 +24,14 @@ class PetDataLoader<T extends PetAnyLoader> implements LoaderManager.LoaderCallb
     public static final int mainActivityId = 1;
     public static final int projectActivityId = 2;
     public static final int tasksActivityId = 3;
-    SimpleCursorAdapter cursorAdapter;
+    private CursorAdapter cursorAdapter;
+    private ListView list;
 
     public PetDataLoader(Context context, T loader, ListView list) throws NoSuchMethodException {
         this.loaderFactory = loader.getClass().getConstructor(Context.class, PetDatabase.class);
         this.loader = loader;
-        String[] from = loader.getColumnNames();
-        int[] to = loader.getLayoutItems();
-        cursorAdapter = new SimpleCursorAdapter(context, loader.getLayoutId(), null, from, to, 0);
-        list.setAdapter(cursorAdapter);
+        this.list = list;
+        cursorAdapter = null;
     }
 
     @Override
@@ -51,15 +50,17 @@ class PetDataLoader<T extends PetAnyLoader> implements LoaderManager.LoaderCallb
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        if (cursorAdapter == null) {
+            cursorAdapter = this.loader.createAdapter(data);
+            list.setAdapter(cursorAdapter);
+        }
         cursorAdapter.swapCursor(data);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        cursorAdapter.swapCursor(null);
-    }
-
-    public void notifyAdapter() {
-        cursorAdapter.notifyDataSetChanged();
+        if (cursorAdapter != null) {
+            cursorAdapter.swapCursor(null);
+        }
     }
 }

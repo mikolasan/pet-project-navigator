@@ -144,6 +144,17 @@ class PetDatabase {
         mDB.delete(DB_TECH_TABLE, COLUMN_ID + " = ?", new String[] {techId});
     }
 
+    public String getTechName(int techId) {
+        Cursor c = mDB.query(DB_TECH_TABLE, null,  COLUMN_ID + " = ?", new String[] {Integer.toString(techId)}, null, null, null);
+        if (c.moveToFirst()) {
+            int column = c.getColumnIndex(COLUMN_NAME);
+            if (column > -1 && !c.isNull(column)) {
+                return c.getString(column);
+            }
+        }
+        return "";
+    }
+
     Cursor getAllTasksByTech(String techId) {
         return mDB.query(DB_TASKS_TABLE, null, COLUMN_ID + " = ?", new String[] {techId}, null, null, null);
     }

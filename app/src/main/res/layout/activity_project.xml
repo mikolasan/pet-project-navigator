@@ -91,9 +91,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true"
-                android:layout_marginTop="-5dp"
-                style="@android:style/Widget.DeviceDefault.Button" />
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="-5dp" />
 
             <ListView
                 android:layout_width="wrap_content"
@@ -101,8 +100,7 @@
                 android:id="@+id/task_view"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentStart="true"
-                android:layout_marginTop="20dp"
-                android:elevation="0dp" />
+                android:layout_marginTop="20dp" />
         </RelativeLayout>
 
 

@@ -2,16 +2,41 @@ package io.github.mikolasan.petprojectnavigator;
 
 
 import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.content.CursorLoader;
+import android.support.v4.widget.CursorAdapter;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
 
 class PetAnyLoader extends CursorLoader {
-    PetDatabase petDatabase;
+    protected PetDatabase petDatabase;
     private String[] columnNames;
     private int[] layoutItems;
     private int layoutId;
-    int id;
-    Bundle args;
+    private Bundle args;
+    private CursorAdapter adapter;
+
+    protected void fillView(View view, Context context, Cursor cursor) {}
+
+    private class TrueCursorAdapter extends CursorAdapter
+    {
+        public TrueCursorAdapter(Context context, Cursor cursor) {
+            super(context, cursor, 0);
+        }
+
+        @Override
+        public View newView(Context context, Cursor cursor, ViewGroup parent) {
+            return LayoutInflater.from(context).inflate(layoutId, parent, false);
+        }
+
+        @Override
+        public void bindView(View view, Context context, Cursor cursor) {
+            fillView(view, context, cursor);
+        }
+    }
 
     PetAnyLoader(Context context, PetDatabase petDatabase) {
         super(context);
@@ -19,8 +44,19 @@ class PetAnyLoader extends CursorLoader {
     }
 
     void onCreate(int id, Bundle args) {
-        setId(id);
         setArgs(args);
+    }
+
+    CursorAdapter createAdapter(Cursor cursor) {
+        return new TrueCursorAdapter(getContext(), cursor);
+    }
+
+    public int getLayoutId() {
+        return layoutId;
+    }
+
+    public void setLayoutId(int layoutId) {
+        this.layoutId = layoutId;
     }
 
     String[] getColumnNames() {
@@ -29,10 +65,6 @@ class PetAnyLoader extends CursorLoader {
 
     int[] getLayoutItems() {
         return layoutItems;
-    }
-
-    int getLayoutId() {
-        return layoutId;
     }
 
     public Bundle getArgs() {
@@ -45,14 +77,6 @@ class PetAnyLoader extends CursorLoader {
 
     void setLayoutItems(int[] layoutItems) {
         this.layoutItems = layoutItems;
-    }
-
-    void setLayoutId(int layoutId) {
-        this.layoutId = layoutId;
-    }
-
-    private void setId(int id) {
-        this.id = id;
     }
 
     private void setArgs(Bundle args) {
