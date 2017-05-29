@@ -87,7 +87,7 @@ public class ProjectActivity extends FragmentActivity {
         });
         Context context = getApplicationContext();
         try {
-            activityDataLoader = new PetDataLoader<>(context, PetTaskLoader.class, new PetTaskLoader(context, petDatabase), taskView);
+            activityDataLoader = new PetDataLoader<>(context, new PetTaskLoader(context, petDatabase), taskView);
             Bundle args = new Bundle();
             args.putInt("project_id", projectId);
             getSupportLoaderManager().initLoader(activityDataLoader.projectActivityId, args, activityDataLoader);

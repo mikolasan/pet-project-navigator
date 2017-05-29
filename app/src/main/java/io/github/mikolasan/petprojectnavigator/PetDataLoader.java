@@ -26,7 +26,7 @@ class PetDataLoader<T extends PetAnyLoader> implements LoaderManager.LoaderCallb
     public static final int tasksActivityId = 3;
     SimpleCursorAdapter cursorAdapter;
 
-    public PetDataLoader(Context context, Class<? extends T> impl, T loader, ListView list) throws NoSuchMethodException {
+    public PetDataLoader(Context context, T loader, ListView list) throws NoSuchMethodException {
         this.loaderFactory = loader.getClass().getConstructor(Context.class, PetDatabase.class);
         this.loader = loader;
         String[] from = loader.getColumnNames();

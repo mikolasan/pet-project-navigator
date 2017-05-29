@@ -29,7 +29,7 @@ public class TaskListActivity extends Fragment {
             }
         });
         try {
-            activityDataLoader = new PetDataLoader<>(context, PetTaskLoader.class, new PetTaskLoader(context, petDatabase), list);
+            activityDataLoader = new PetDataLoader<>(context, new PetTaskLoader(context, petDatabase), list);
             Bundle args = new Bundle();
             args.putBoolean("all_projects", true);
             getLoaderManager().initLoader(PetDataLoader.tasksActivityId, args, activityDataLoader);

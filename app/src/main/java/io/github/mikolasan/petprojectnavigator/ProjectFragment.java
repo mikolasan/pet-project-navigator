@@ -53,7 +53,7 @@ public class ProjectFragment extends Fragment {
             }
         });
         try {
-            activityDataLoader = new PetDataLoader<>(context, PetProjectLoader.class, new PetProjectLoader(context, petDatabase), list);
+            activityDataLoader = new PetDataLoader<>(context, new PetProjectLoader(context, petDatabase), list);
             getLoaderManager().initLoader(PetDataLoader.mainActivityId, null, activityDataLoader);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();

@@ -38,6 +38,10 @@
     <string name="btn_delete_type">Дел</string>
     <string name="sample_project">Пример длинного названия проекта</string>
     <string name="sample_project_desc">Небольшое описание. Буквально в несколько строк</string>
+    <string name="sample_project_counter">4 задачи</string>
+    <string name="sample_task_title">Пример длинного названия задачи</string>
+    <string name="sample_task_tech">Технология 1</string>
+    <string name="sample_task_time">1 неделя 2 дня 13 часов 40 минут</string>
     <string name="chooser_title">Select a DB backup file"</string>
     <string name="title_activity_task_list">TaskListActivity</string>
     <string-array name="menu_list">
