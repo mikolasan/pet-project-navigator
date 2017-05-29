@@ -17,12 +17,19 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -170,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         pager = (ViewPager)findViewById(R.id.pager);
         pager.setAdapter(pagerAdapter);
 
-        /*
+
         final Toolbar petToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(petToolbar);
         // Get a support ActionBar corresponding to this toolbar
@@ -178,9 +185,52 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
 
         // Enable the Up button
         ab.setDisplayHomeAsUpEnabled(true);
-        */
+
     }
-/*
+
+    // Menu icons are inflated just as they were with actionbar
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.toolbar, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        // Configure the search info and add any event listeners...
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                taskFragment.applyQuery(query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
+        // Define the listener
+        MenuItemCompat.OnActionExpandListener expandListener = new MenuItemCompat.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                // Do something when action item collapses
+                return true;  // Return true to collapse action view
+            }
+
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                // Do something when expanded
+                return true;  // Return true to expand action view
+            }
+        };
+
+        // Assign the listener to that action item
+        MenuItemCompat.setOnActionExpandListener(searchItem, expandListener);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -201,7 +251,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
 
         }
     }
-*/
+
     private class PetPagerAdapter extends FragmentPagerAdapter {
 
         private PetPagerAdapter(FragmentManager manager) {
@@ -231,22 +281,6 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         public int getCount() {
             return N_PAGES;
         }
-/*
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-
-            // save the appropriate reference depending on position
-            switch (position) {
-                case PROJECTS_PAGE_ID:
-                    return projectFragment;
-                case TASKS_PAGE_ID:
-                    return taskFragment;
-                case BUFFER_PAGE_ID:
-                    return bufferFragment;
-            }
-            return null;
-        }
-        */
     }
 
     @Override

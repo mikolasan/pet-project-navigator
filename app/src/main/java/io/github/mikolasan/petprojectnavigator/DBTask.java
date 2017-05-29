@@ -4,6 +4,9 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
+
+import java.util.ArrayList;
 
 /**
  * Created by neupo on 3/25/2017.
@@ -77,7 +80,7 @@ public class DBTask {
     }
 
     void deleteTasksOfProject(int projectId) {
-        mDB.delete(DB_TASKS_TABLE, COLUMN_PROJECT_ID + " = ?", new String[] {Integer.toString(projectId)});
+        mDB.delete(DB_TASKS_TABLE, COLUMN_PROJECT_ID + " = ? ", new String[] {Integer.toString(projectId)});
     }
 
     void move(int taskId, int projectId) {
@@ -89,8 +92,39 @@ public class DBTask {
         move(taskId, BUFFER_ID);
     }
 
-    Cursor getAllByTech(String techId) {
-        return mDB.query(DB_TASKS_TABLE, null, COLUMN_ID + " = ?", new String[] {techId}, null, null, null);
+    Cursor getAllByTech(String techName) {
+        ArrayList<String> technologies = new ArrayList<>();
+        try (Cursor cursor = mDB.query(true,
+                PetDatabase.DB_TECH_TABLE,
+                new String[]{PetDatabase.COLUMN_ID},
+                PetDatabase.COLUMN_NAME + " LIKE ?",
+                new String[]{"%" + techName + "%"},
+                null,
+                null,
+                null,
+                null)) {
+            int id = cursor.getColumnIndex(PetDatabase.COLUMN_ID);
+            while (cursor.moveToNext()) {
+                int tech = cursor.getInt(id);
+                technologies.add(Integer.toString(tech));
+            }
+            if (!technologies.isEmpty()) {
+                String selection = COLUMN_TECH_ID + " = ?";
+                int nTech = technologies.size();
+                if (nTech > 1) {
+                    selection = "(" + selection;
+                    int i = 1;
+                    while (i++ < nTech) {
+                        selection += " or " + COLUMN_TECH_ID + " = ?";
+                    }
+                    selection += ")";
+                }
+                return mDB.query(DB_TASKS_TABLE, null, selection, technologies.toArray(new String[0]), null, null, null);
+            }
+        } catch (Exception e) {
+            Log.e("getAllByTech", "hmmm... :(", e);
+        }
+        return null;
     }
 
     public static final String DB_TASKS_TABLE = "pp_tasks";

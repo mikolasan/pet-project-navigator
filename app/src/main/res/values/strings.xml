@@ -3,6 +3,7 @@
     <string name="title_main_activity">Pet Project Navigator</string>
     <string name="title_project_activity">Проект</string>
     <string name="title_task_activity">Детали задачи</string>
+    <string name="action_search">Искать</string>
     <string name="action_settings">Настройки</string>
     <string name="bottom_menu_projects">Проекты</string>
     <string name="bottom_menu_tasks">Задачи</string>

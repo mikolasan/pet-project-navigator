@@ -16,7 +16,12 @@ class PetTaskLoader extends PetAnyLoader {
     public Cursor loadInBackground() {
         boolean loadAll = super.getArgs().getBoolean("all_projects", false);
         if(loadAll) {
-            return petDatabase.dbTask.getAll();
+            String query = super.getArgs().getString("query", "");
+            if (query.isEmpty()) {
+                return petDatabase.dbTask.getAll();
+            } else {
+                return petDatabase.dbTask.getAllByTech(query);
+            }
         } else {
             int projectId = super.getArgs().getInt("project_id", 0);
             return petDatabase.dbTask.getAllByProject(projectId);
