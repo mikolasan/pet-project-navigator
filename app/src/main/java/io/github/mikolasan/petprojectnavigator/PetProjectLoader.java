@@ -3,8 +3,6 @@ package io.github.mikolasan.petprojectnavigator;
 import android.content.Context;
 import android.database.Cursor;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.CursorAdapter;
 import android.widget.TextView;
 
 class PetProjectLoader extends PetAnyLoader {
