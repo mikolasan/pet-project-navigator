@@ -92,7 +92,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginTop="-5dp" />
+                android:layout_marginTop="-5dp"
+                style="@android:style/Widget.DeviceDefault.Button" />
 
             <ListView
                 android:layout_width="wrap_content"
