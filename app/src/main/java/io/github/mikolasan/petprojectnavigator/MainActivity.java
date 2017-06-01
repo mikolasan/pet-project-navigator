@@ -47,6 +47,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements ConnectionCallbacks,
@@ -65,21 +66,27 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
     private static final int TASKS_PAGE_ID = 1;
     private static final int BUFFER_PAGE_ID = 2;
     private static final int N_PAGES = 3;
+    private int currentPage = 0;
     private ProjectFragment projectFragment;
     private TaskListActivity taskFragment;
     private BufferFragment bufferFragment;
 
     PetPagerAdapter pagerAdapter;
     ViewPager pager;
+    ListView listView;
+    BottomNavigationView bottomNavigationView;
+    SearchView searchView;
+    ArrayList<String> searchPerPage;
 
-    private final int drawerAddProjectPos = 0;
-    private final int drawerOpenProjectsPos = 1;
-    private final int drawerOpenTasksPos = 2;
-    private final int drawerOpenBufferPos = 3;
-    private final int drawerBackupPos = 4;
-    private final int drawerRestorePos = 5;
-    private final int drawerToCloudPos = 6;
-    private final int drawerFromCloudPos = 7;
+    private final int drawerOpenProjectsPos = 0;
+    private final int drawerOpenTasksPos = 1;
+    private final int drawerOpenBufferPos = 2;
+    private final int drawerBackupPos = 3;
+    private final int drawerRestorePos = 4;
+    private final int drawerToCloudPos = 5;
+    private final int drawerFromCloudPos = 6;
+    private final int drawerAddProjectPos = 7;
+
 
     // Checks if the app has permission to write to device storage
     // If the app does not has permission then the user will be prompted to grant permissions
@@ -95,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
     private void initDrawer()
     {
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ListView listView = (ListView) findViewById(R.id.left_drawer);
+        listView = (ListView) findViewById(R.id.left_drawer);
         // Set the adapter for the list view
         listView.setAdapter(new ArrayAdapter<>(this,
                 R.layout.drawer_list_item, getResources().getStringArray(R.array.menu_list)));
@@ -108,17 +115,13 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
                     startActivity(intent);
                     break;
                 case drawerOpenProjectsPos:
-                    pager.setCurrentItem(PROJECTS_PAGE_ID);
-                    listView.setItemChecked(position, true);
-
+                    selectPage(PROJECTS_PAGE_ID, position);
                     break;
                 case drawerOpenTasksPos:
-                    pager.setCurrentItem(TASKS_PAGE_ID);
-                    listView.setItemChecked(position, true);
+                    selectPage(TASKS_PAGE_ID, position);
                     break;
                 case drawerOpenBufferPos:
-                    pager.setCurrentItem(BUFFER_PAGE_ID);
-                    listView.setItemChecked(position, true);
+                    selectPage(BUFFER_PAGE_ID, position);
                     break;
                 case drawerBackupPos:
                     backup();
@@ -137,21 +140,35 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         });
     }
 
+    private void selectPage(int pageId, int listItemId) {
+        pager.setCurrentItem(pageId);
+        listView.setItemChecked(listItemId, true);
+        bottomNavigationView.setSelectedItemId(pageId);
+        currentPage = pageId;
+        if (searchView != null && searchPerPage.size() > pageId) {
+            searchView.setQuery(searchPerPage.get(pageId), false);
+        }
+    }
+
+    private int getCurrentPage() {
+        return pager.getCurrentItem();
+    }
+
     private void setButtonListeners() {
-        BottomNavigationView bottomNavigationView = (BottomNavigationView)
+        bottomNavigationView = (BottomNavigationView)
                 findViewById(R.id.bottom_navigation);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(
                 item -> {
                     switch (item.getItemId()) {
                         case R.id.action_projects:
-                            pager.setCurrentItem(PROJECTS_PAGE_ID);
+                            selectPage(PROJECTS_PAGE_ID, drawerOpenProjectsPos);
                             break;
                         case R.id.action_tasks:
-                            pager.setCurrentItem(TASKS_PAGE_ID);
+                            selectPage(TASKS_PAGE_ID, drawerOpenTasksPos);
                             break;
                         case R.id.action_buffer:
-                            pager.setCurrentItem(BUFFER_PAGE_ID);
+                            selectPage(BUFFER_PAGE_ID, drawerOpenBufferPos);
                             break;
                     }
                     return true;
@@ -162,6 +179,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        searchPerPage = new ArrayList<>(N_PAGES);
         petDatabase = PetDatabase.getOpenedInstance();
         setContentView(R.layout.activity_main);
         setButtonListeners();
@@ -175,6 +193,32 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
 
         pager = (ViewPager)findViewById(R.id.pager);
         pager.setAdapter(pagerAdapter);
+        pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                switch (position) {
+                    case PROJECTS_PAGE_ID:
+                        selectPage(position, drawerOpenProjectsPos);
+                        break;
+                    case TASKS_PAGE_ID:
+                        selectPage(position, drawerOpenTasksPos);
+                        break;
+                    case BUFFER_PAGE_ID:
+                        selectPage(position, drawerOpenBufferPos);
+                        break;
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
 
         final Toolbar petToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -194,18 +238,29 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         getMenuInflater().inflate(R.menu.toolbar, menu);
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         // Configure the search info and add any event listeners...
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                taskFragment.applyQuery(query);
-                return true;
+                return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                return false;
+                int page = getCurrentPage();
+                searchPerPage.set(page, newText);
+                switch (page){
+                    case PROJECTS_PAGE_ID:
+                        break;
+                    case TASKS_PAGE_ID:
+                        taskFragment.applyQuery(newText);
+                        break;
+                    case BUFFER_PAGE_ID:
+                        break;
+                }
+                return true;
             }
         });
 
@@ -213,13 +268,30 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         MenuItemCompat.OnActionExpandListener expandListener = new MenuItemCompat.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
-                // Do something when action item collapses
+                searchPerPage.clear();
+                switch (item.getItemId()) {
+                    case R.id.action_search:
+                        //taskFragment.updateList();
+                        break;
+                    default:
+                        break;
+                }
                 return true;  // Return true to collapse action view
             }
 
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
-                // Do something when expanded
+                searchPerPage.add("");
+                searchPerPage.add("");
+                searchPerPage.add("");
+                switch (item.getItemId()) {
+                    case R.id.action_search:
+
+                        break;
+
+                    default:
+                        break;
+                }
                 return true;  // Return true to expand action view
             }
         };
