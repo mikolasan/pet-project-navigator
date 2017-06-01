@@ -30,9 +30,7 @@ public class TaskListActivity extends Fragment {
         });
         try {
             activityDataLoader = new PetDataLoader<>(context, new PetTaskLoader(context, petDatabase), list);
-            Bundle args = new Bundle();
-            args.putBoolean("all_projects", true);
-            getLoaderManager().initLoader(PetDataLoader.tasksActivityId, args, activityDataLoader);
+            initLoader(null);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
@@ -41,8 +39,11 @@ public class TaskListActivity extends Fragment {
     public void applyQuery(String query) {
         Bundle args = new Bundle();
         args.putString("query", query);
-        args.putBoolean("all_projects", true);
-        getLoaderManager().restartLoader(PetDataLoader.tasksActivityId, args, activityDataLoader);
+        restartLoader(args);
+    }
+
+    public void updateList() {
+        restartLoader(null);
     }
 
     @Override
@@ -68,8 +69,26 @@ public class TaskListActivity extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Bundle args = new Bundle();
+        restartLoader(null);
+    }
+
+    private Bundle checkLoaderArgs(Bundle args) {
+        if (args == null) {
+            args = new Bundle();
+        }
         args.putBoolean("all_projects", true);
-        getLoaderManager().restartLoader(PetDataLoader.tasksActivityId, args, activityDataLoader);
+        return args;
+    }
+
+    private void initLoader(Bundle args) {
+        getLoaderManager().initLoader(PetDataLoader.tasksActivityId,
+                checkLoaderArgs(args),
+                activityDataLoader);
+    }
+
+    private void restartLoader(Bundle args) {
+        getLoaderManager().restartLoader(PetDataLoader.tasksActivityId,
+                checkLoaderArgs(args),
+                activityDataLoader);
     }
 }
