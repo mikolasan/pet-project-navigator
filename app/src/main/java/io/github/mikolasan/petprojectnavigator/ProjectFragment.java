@@ -12,13 +12,15 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
+import static io.github.mikolasan.petprojectnavigator.Tools.restartLoader;
+
 /**
  * Created by neupo on 4/25/2017.
  */
 
 public class ProjectFragment extends Fragment {
     PetDatabase petDatabase;
-    private PetDataLoader<PetProjectLoader> activityDataLoader;
+    public PetDataLoader<PetProjectLoader> activityDataLoader;
 
     private void setButtonListeners(View v) {
         final Button btn_add_project = (Button) v.findViewById(R.id.btn_add_project);
@@ -84,8 +86,6 @@ public class ProjectFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Bundle args = new Bundle();
-        args.putBoolean("all_projects", true);
-        getLoaderManager().restartLoader(PetDataLoader.tasksActivityId, args, activityDataLoader);
+        restartLoader(this, activityDataLoader, null);
     }
 }

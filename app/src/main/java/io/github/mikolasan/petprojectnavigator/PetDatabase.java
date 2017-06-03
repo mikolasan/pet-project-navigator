@@ -7,7 +7,6 @@ import android.database.MatrixCursor;
 import android.database.MergeCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.ArraySet;
 import android.util.Log;
 
 import org.apache.commons.codec.binary.Hex;
@@ -15,7 +14,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+
+import static io.github.mikolasan.petprojectnavigator.Tools.getOrSelection;
 
 
 class PetDatabase {
@@ -155,22 +157,27 @@ class PetDatabase {
         return "";
     }
 
-    Cursor getAllTasksByTech(String techId) {
-        return mDB.query(DB_TASKS_TABLE, null, COLUMN_ID + " = ?", new String[] {techId}, null, null, null);
+    Cursor getAllTasksByTech(String techName) {
+        return dbTask.getAllByTech(techName);
     }
 
     Cursor getAllProjectByTech(String techId) {
         Cursor c = getAllTasksByTech(techId);
-        ArraySet<String> projects = new ArraySet<>();
+        if (c == null) return null;
+
+        ArrayList<String> projects = new ArrayList<>();
         if (c.moveToFirst()) {
-            int columnIndex =  c.getColumnIndex(COLUMN_PROJECT_ID);
+            int columnIndex = c.getColumnIndex(COLUMN_PROJECT_ID);
             do {
-                projects.add(c.getString(columnIndex));
+                String s = c.getString(columnIndex);
+                if (!projects.contains(s))
+                    projects.add(s);
             } while (c.moveToNext());
         }
-        String[] selection = new String[projects.size()];
-        projects.toArray(selection);
-        return mDB.query(DB_PROJECTS_TABLE, null, COLUMN_ID + " = ?", selection, null, null, null);
+        String[] selectionArgs = new String[projects.size()];
+        projects.toArray(selectionArgs);
+        String selection = getOrSelection(COLUMN_ID, selectionArgs.length);
+        return mDB.query(DB_PROJECTS_TABLE, null, selection, selectionArgs, null, null, null);
     }
 
     /*

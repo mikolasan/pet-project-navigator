@@ -8,6 +8,8 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
+import static io.github.mikolasan.petprojectnavigator.Tools.getOrSelection;
+
 /**
  * Created by neupo on 3/25/2017.
  */
@@ -109,16 +111,7 @@ public class DBTask {
                 technologies.add(Integer.toString(tech));
             }
             if (!technologies.isEmpty()) {
-                String selection = COLUMN_TECH_ID + " = ?";
-                int nTech = technologies.size();
-                if (nTech > 1) {
-                    selection = "(" + selection;
-                    int i = 1;
-                    while (i++ < nTech) {
-                        selection += " or " + COLUMN_TECH_ID + " = ?";
-                    }
-                    selection += ")";
-                }
+                String selection = getOrSelection(COLUMN_TECH_ID, technologies.size());
                 return mDB.query(DB_TASKS_TABLE, null, selection, technologies.toArray(new String[0]), null, null, null);
             }
         } catch (Exception e) {

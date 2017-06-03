@@ -3,6 +3,8 @@ package io.github.mikolasan.petprojectnavigator;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.widget.ListView;
 
 /**
@@ -42,5 +44,44 @@ class Tools {
         Cursor c = (Cursor) view.getItemAtPosition(selectedItem);
         parseTaskItem(intent, c);
         return intent;
+    }
+
+    static Bundle checkLoaderArgs(Bundle args) {
+        if (args == null) {
+            args = new Bundle();
+        }
+        args.putBoolean("all_projects", true);
+        return args;
+    }
+
+    static void initLoader(Fragment fragment, PetDataLoader loader, Bundle args) {
+        fragment.getLoaderManager().initLoader(PetDataLoader.tasksActivityId,
+                checkLoaderArgs(args),
+                loader);
+    }
+
+    static void restartLoader(Fragment fragment, PetDataLoader loader, Bundle args) {
+        fragment.getLoaderManager().restartLoader(PetDataLoader.tasksActivityId,
+                checkLoaderArgs(args),
+                loader);
+    }
+
+    static void applyQuery(Fragment fragment, PetDataLoader loader, String query) {
+        Bundle args = new Bundle();
+        args.putString("query", query);
+        restartLoader(fragment, loader, args);
+    }
+
+    static String getOrSelection(String column, int n) {
+        String selection = column + " = ?";
+        if (n > 1) {
+            selection = "(" + selection;
+            int i = 1;
+            while (i++ < n) {
+                selection += " or " + column + " = ?";
+            }
+            selection += ")";
+        }
+        return selection;
     }
 }

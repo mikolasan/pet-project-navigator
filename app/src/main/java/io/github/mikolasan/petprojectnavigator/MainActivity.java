@@ -50,6 +50,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import static io.github.mikolasan.petprojectnavigator.Tools.applyQuery;
+
 public class MainActivity extends AppCompatActivity implements ConnectionCallbacks,
         OnConnectionFailedListener {
 
@@ -77,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
     BottomNavigationView bottomNavigationView;
     SearchView searchView;
     ArrayList<String> searchPerPage;
+    MenuItem prevMenuItem;
 
     private final int drawerOpenProjectsPos = 0;
     private final int drawerOpenTasksPos = 1;
@@ -143,7 +146,15 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
     private void selectPage(int pageId, int listItemId) {
         pager.setCurrentItem(pageId);
         listView.setItemChecked(listItemId, true);
-        bottomNavigationView.setSelectedItemId(pageId);
+        if (prevMenuItem != null) {
+            prevMenuItem.setChecked(false);
+        } else {
+            bottomNavigationView.getMenu().getItem( 0).setChecked(false);
+        }
+        bottomNavigationView.getMenu().getItem(pageId).setChecked(true);
+        prevMenuItem = bottomNavigationView.getMenu().getItem(pageId);
+
+
         currentPage = pageId;
         if (searchView != null && searchPerPage.size() > pageId) {
             searchView.setQuery(searchPerPage.get(pageId), false);
@@ -157,7 +168,6 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
     private void setButtonListeners() {
         bottomNavigationView = (BottomNavigationView)
                 findViewById(R.id.bottom_navigation);
-
         bottomNavigationView.setOnNavigationItemSelectedListener(
                 item -> {
                     switch (item.getItemId()) {
@@ -169,6 +179,8 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
                             break;
                         case R.id.action_buffer:
                             selectPage(BUFFER_PAGE_ID, drawerOpenBufferPos);
+                            break;
+                        default:
                             break;
                     }
                     return true;
@@ -194,6 +206,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         pager = (ViewPager)findViewById(R.id.pager);
         pager.setAdapter(pagerAdapter);
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
@@ -218,8 +231,8 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
             public void onPageScrollStateChanged(int state) {
 
             }
-        });
 
+        });
 
         final Toolbar petToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(petToolbar);
@@ -240,7 +253,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         MenuItem searchItem = menu.findItem(R.id.action_search);
         searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         // Configure the search info and add any event listeners...
-
+        searchView.setIconified(false);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -253,11 +266,13 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
                 searchPerPage.set(page, newText);
                 switch (page){
                     case PROJECTS_PAGE_ID:
+                        applyQuery(projectFragment, projectFragment.activityDataLoader, newText);
                         break;
                     case TASKS_PAGE_ID:
-                        taskFragment.applyQuery(newText);
+                        applyQuery(taskFragment, taskFragment.activityDataLoader, newText);
                         break;
                     case BUFFER_PAGE_ID:
+                        //applyQuery(bufferFragment, bufferFragment.activityDataLoader, newText);
                         break;
                 }
                 return true;
@@ -268,31 +283,30 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         MenuItemCompat.OnActionExpandListener expandListener = new MenuItemCompat.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
-                searchPerPage.clear();
                 switch (item.getItemId()) {
                     case R.id.action_search:
-                        //taskFragment.updateList();
-                        break;
+                        searchPerPage.clear();
+                        applyQuery(projectFragment, projectFragment.activityDataLoader, "");
+                        applyQuery(taskFragment, taskFragment.activityDataLoader, "");
+                        //applyQuery(bufferFragment, bufferFragment.activityDataLoader, "");
+                        return true;
                     default:
-                        break;
+                        return false;
                 }
-                return true;  // Return true to collapse action view
             }
 
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
-                searchPerPage.add("");
-                searchPerPage.add("");
-                searchPerPage.add("");
                 switch (item.getItemId()) {
                     case R.id.action_search:
-
-                        break;
-
+                        searchPerPage.add("");
+                        searchPerPage.add("");
+                        searchPerPage.add("");
+                        searchView.setQuery("", true);
+                        return true;
                     default:
-                        break;
+                        return false;
                 }
-                return true;  // Return true to expand action view
             }
         };
 

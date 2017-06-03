@@ -11,11 +11,13 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import static io.github.mikolasan.petprojectnavigator.Tools.createTaskIntent;
+import static io.github.mikolasan.petprojectnavigator.Tools.initLoader;
+import static io.github.mikolasan.petprojectnavigator.Tools.restartLoader;
 
 public class TaskListActivity extends Fragment {
 
     PetDatabase petDatabase;
-    private PetDataLoader<PetTaskLoader> activityDataLoader;
+    public PetDataLoader<PetTaskLoader> activityDataLoader;
 
     private void initView(Context context, View v) {
         final ListView list = (ListView) v.findViewById(R.id.task_full_view);
@@ -30,20 +32,10 @@ public class TaskListActivity extends Fragment {
         });
         try {
             activityDataLoader = new PetDataLoader<>(context, new PetTaskLoader(context, petDatabase), list);
-            initLoader(null);
+            initLoader(this, activityDataLoader, null);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
-    }
-
-    public void applyQuery(String query) {
-        Bundle args = new Bundle();
-        args.putString("query", query);
-        restartLoader(args);
-    }
-
-    public void updateList() {
-        restartLoader(null);
     }
 
     @Override
@@ -69,26 +61,6 @@ public class TaskListActivity extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        restartLoader(null);
-    }
-
-    private Bundle checkLoaderArgs(Bundle args) {
-        if (args == null) {
-            args = new Bundle();
-        }
-        args.putBoolean("all_projects", true);
-        return args;
-    }
-
-    private void initLoader(Bundle args) {
-        getLoaderManager().initLoader(PetDataLoader.tasksActivityId,
-                checkLoaderArgs(args),
-                activityDataLoader);
-    }
-
-    private void restartLoader(Bundle args) {
-        getLoaderManager().restartLoader(PetDataLoader.tasksActivityId,
-                checkLoaderArgs(args),
-                activityDataLoader);
+        restartLoader(this, activityDataLoader, null);
     }
 }

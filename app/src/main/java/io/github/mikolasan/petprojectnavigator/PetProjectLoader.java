@@ -2,6 +2,7 @@ package io.github.mikolasan.petprojectnavigator;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
@@ -19,7 +20,16 @@ class PetProjectLoader extends PetAnyLoader {
 
     @Override
     public Cursor loadInBackground() {
-        return petDatabase.getAllProjects();
+        Bundle args = super.getArgs();
+        String query = "";
+        if (args != null && !args.isEmpty()) {
+            query = super.getArgs().getString("query", "");
+        }
+        if (query.isEmpty()) {
+            return petDatabase.getAllProjects();
+        } else {
+            return petDatabase.getAllProjectByTech(query);
+        }
     }
 
     @Override
