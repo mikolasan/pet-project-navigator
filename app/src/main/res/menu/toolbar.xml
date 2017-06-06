@@ -15,6 +15,26 @@
         app:showAsAction="ifRoom|collapseActionView"
         app:actionViewClass="android.widget.SearchView"/>
 
+    <item
+        android:icon="@drawable/ic_search"
+        android:title="@string/criterion_chooser"
+        app:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/criterion_tech"
+                android:title="@string/criterion_tech"/>
+            <item
+                android:id="@+id/criterion_name"
+                android:title="@string/criterion_name"/>
+            <item
+                android:id="@+id/criterion_desc"
+                android:title="@string/criterion_desc"/>
+            <item
+                android:id="@+id/criterion_time"
+                android:title="@string/criterion_time"/>
+        </menu>
+    </item>
+
     <!-- Settings, should always be in the overflow -->
     <item android:id="@+id/action_settings"
         android:title="@string/action_settings"

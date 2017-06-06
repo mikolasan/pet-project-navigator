@@ -180,6 +180,51 @@ class PetDatabase {
         return mDB.query(DB_PROJECTS_TABLE, null, selection, selectionArgs, null, null, null);
     }
 
+    public Cursor getAllProjectsByName(String query) {
+        return mDB.query(DB_PROJECTS_TABLE, null, COLUMN_NAME + " LIKE ?", new String[] {"%" + query + "%"}, null, null, null);
+    }
+
+    public Cursor getAllProjectsByDesc(String query) {
+        return mDB.query(DB_PROJECTS_TABLE, null, COLUMN_DESC + " LIKE ?", new String[] {"%" + query + "%"}, null, null, null);
+    }
+
+    public Cursor getAllProjectsByTime(String query) {
+        try {
+            int time = Integer.parseInt(query);
+            if (time > 0) {
+                try (Cursor projects = getAllProjects()) {
+                    ArrayList<String> selectionArgs = new ArrayList<>();
+                    while (projects.moveToNext()) {
+                        int columnIndex = projects.getColumnIndex(COLUMN_ID);
+                        int projectId = projects.getInt(columnIndex);
+                        int totalTime = 0;
+                        try (Cursor tasks = dbTask.getAllByProject(projectId)) {
+                            while (tasks.moveToNext()) {
+                                int timeColumn = tasks.getColumnIndex(COLUMN_TIME);
+                                totalTime += tasks.getInt(timeColumn);
+                                if (totalTime > time) {
+                                    break;
+                                }
+                            }
+                        }
+                        if (totalTime <= time) {
+                            selectionArgs.add(Integer.toString(projectId));
+                        }
+                    }
+                    String selection = getOrSelection(COLUMN_ID, selectionArgs.size());
+                    return mDB.query(DB_PROJECTS_TABLE, null, selection, selectionArgs.toArray(new String[0]), null, null, null);
+                } catch (Exception e) {
+                    Log.e("getAllProjectsByTime", "hmmm... :(", e);
+                }
+                return null;
+            } else {
+                return getAllProjects();
+            }
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
     /*
     *
     * Types

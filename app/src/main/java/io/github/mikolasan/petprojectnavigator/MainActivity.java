@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
     private static final int BUFFER_PAGE_ID = 2;
     private static final int N_PAGES = 3;
     private int currentPage = 0;
+    private int criterion = 0;
     private ProjectFragment projectFragment;
     private TaskListActivity taskFragment;
     private BufferFragment bufferFragment;
@@ -153,7 +154,6 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         }
         bottomNavigationView.getMenu().getItem(pageId).setChecked(true);
         prevMenuItem = bottomNavigationView.getMenu().getItem(pageId);
-
 
         currentPage = pageId;
         if (searchView != null && searchPerPage.size() > pageId) {
@@ -253,7 +253,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         MenuItem searchItem = menu.findItem(R.id.action_search);
         searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         // Configure the search info and add any event listeners...
-        searchView.setIconified(false);
+        searchView.setIconifiedByDefault(false);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -266,13 +266,13 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
                 searchPerPage.set(page, newText);
                 switch (page){
                     case PROJECTS_PAGE_ID:
-                        applyQuery(projectFragment, projectFragment.activityDataLoader, newText);
+                        applyQuery(projectFragment, projectFragment.activityDataLoader, criterion, newText);
                         break;
                     case TASKS_PAGE_ID:
-                        applyQuery(taskFragment, taskFragment.activityDataLoader, newText);
+                        applyQuery(taskFragment, taskFragment.activityDataLoader, criterion, newText);
                         break;
                     case BUFFER_PAGE_ID:
-                        //applyQuery(bufferFragment, bufferFragment.activityDataLoader, newText);
+                        //applyQuery(bufferFragment, bufferFragment.activityDataLoader, criterion, newText);
                         break;
                 }
                 return true;
@@ -286,9 +286,9 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
                 switch (item.getItemId()) {
                     case R.id.action_search:
                         searchPerPage.clear();
-                        applyQuery(projectFragment, projectFragment.activityDataLoader, "");
-                        applyQuery(taskFragment, taskFragment.activityDataLoader, "");
-                        //applyQuery(bufferFragment, bufferFragment.activityDataLoader, "");
+                        applyQuery(projectFragment, projectFragment.activityDataLoader, 0, "");
+                        applyQuery(taskFragment, taskFragment.activityDataLoader, 0, "");
+                        //applyQuery(bufferFragment, bufferFragment.activityDataLoader, 0, "");
                         return true;
                     default:
                         return false;
@@ -316,6 +316,10 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         return super.onCreateOptionsMenu(menu);
     }
 
+    private void setCriterion(int criterion) {
+        this.criterion = criterion;
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -327,6 +331,13 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
                 Intent intent = new Intent(getApplicationContext(), ProjectActivity.class);
                 intent.putExtra("status", ProjectActivity.STATUS_NEW);
                 startActivity(intent);
+                return true;
+
+            case R.id.criterion_tech:
+            case R.id.criterion_name:
+            case R.id.criterion_desc:
+            case R.id.criterion_time:
+                setCriterion(item.getItemId());
                 return true;
 
             default:

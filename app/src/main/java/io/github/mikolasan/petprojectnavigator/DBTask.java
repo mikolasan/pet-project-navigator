@@ -120,6 +120,27 @@ public class DBTask {
         return null;
     }
 
+
+    public Cursor getAllByName(String query) {
+        return mDB.query(PetDatabase.DB_TASKS_TABLE, null, PetDatabase.COLUMN_NAME + " LIKE ?", new String[] {"%" + query + "%"}, null, null, null);
+    }
+
+    public Cursor getAllByDesc(String query) {
+        return mDB.query(PetDatabase.DB_TASKS_TABLE, null, PetDatabase.COLUMN_DESC + " LIKE ?", new String[] {"%" + query + "%"}, null, null, null);
+    }
+
+    public Cursor getAllByTime(String query) {
+        try {
+            int time = Integer.parseInt(query);
+            if (time  > 0)
+                return mDB.query(PetDatabase.DB_TASKS_TABLE, null, PetDatabase.COLUMN_TIME + " <= ?", new String[]{query}, null, null, null);
+            else
+                return getAll();
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
     public static final String DB_TASKS_TABLE = "pp_tasks";
     private static final String DB_TASKS_CREATE =
             "create table " + DB_TASKS_TABLE + "(" +
@@ -141,5 +162,4 @@ public class DBTask {
     void create(SQLiteDatabase db){
         db.execSQL(DB_TASKS_CREATE);
     }
-
 }

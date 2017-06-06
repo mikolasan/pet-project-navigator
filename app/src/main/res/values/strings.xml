@@ -54,4 +54,9 @@
         <item>@string/btn_restore</item>
 
     </string-array>
+    <string name="criterion_chooser">Поиск по...</string>
+    <string name="criterion_tech">Поиск по технологии</string>
+    <string name="criterion_name">Поиск по названию</string>
+    <string name="criterion_desc">Поиск по описанию</string>
+    <string name="criterion_time">Поиск по времени</string>
 </resources>

@@ -66,9 +66,10 @@ class Tools {
                 loader);
     }
 
-    static void applyQuery(Fragment fragment, PetDataLoader loader, String query) {
+    static void applyQuery(Fragment fragment, PetDataLoader loader, int criterion, String query) {
         Bundle args = new Bundle();
         args.putString("query", query);
+        if (criterion != 0) args.putInt("criterion", criterion);
         restartLoader(fragment, loader, args);
     }
 

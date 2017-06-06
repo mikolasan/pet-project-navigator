@@ -22,7 +22,18 @@ class PetTaskLoader extends PetAnyLoader {
             if (query.isEmpty()) {
                 return petDatabase.dbTask.getAll();
             } else {
-                return petDatabase.dbTask.getAllByTech(query);
+                int criterion = super.getArgs().getInt("criterion", 0);
+                switch (criterion) {
+                    case R.id.criterion_name:
+                        return petDatabase.dbTask.getAllByName(query);
+                    case R.id.criterion_desc:
+                        return petDatabase.dbTask.getAllByDesc(query);
+                    case R.id.criterion_time:
+                        return petDatabase.dbTask.getAllByTime(query);
+                    case R.id.criterion_tech:
+                    default:
+                        return petDatabase.dbTask.getAllByTech(query);
+                }
             }
         } else {
             int projectId = super.getArgs().getInt("project_id", 0);

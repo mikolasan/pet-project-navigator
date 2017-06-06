@@ -28,7 +28,18 @@ class PetProjectLoader extends PetAnyLoader {
         if (query.isEmpty()) {
             return petDatabase.getAllProjects();
         } else {
-            return petDatabase.getAllProjectByTech(query);
+            int criterion = super.getArgs().getInt("criterion", 0);
+            switch (criterion) {
+                case R.id.criterion_name:
+                    return petDatabase.getAllProjectsByName(query);
+                case R.id.criterion_desc:
+                    return petDatabase.getAllProjectsByDesc(query);
+                case R.id.criterion_time:
+                    return petDatabase.getAllProjectsByTime(query);
+                case R.id.criterion_tech:
+                default:
+                    return petDatabase.getAllProjectByTech(query);
+            }
         }
     }
 
