@@ -69,9 +69,11 @@ class PetDatabase {
 
     // открыть подключение
     public void open() {
-        mDBHelper = new DBHelper(mCtx, DB_NAME, null, DB_VERSION);
-        mDB = mDBHelper.getWritableDatabase();
-        dbTask = new DBTask(mDB);
+        if (mDBHelper == null) {
+            mDBHelper = new DBHelper(mCtx, DB_NAME, null, DB_VERSION);
+            mDB = mDBHelper.getWritableDatabase();
+            dbTask = new DBTask(mDB);
+        }
     }
 
     // закрыть подключение
@@ -147,12 +149,15 @@ class PetDatabase {
     }
 
     public String getTechName(int techId) {
-        Cursor c = mDB.query(DB_TECH_TABLE, null,  COLUMN_ID + " = ?", new String[] {Integer.toString(techId)}, null, null, null);
-        if (c.moveToFirst()) {
-            int column = c.getColumnIndex(COLUMN_NAME);
-            if (column > -1 && !c.isNull(column)) {
-                return c.getString(column);
+        try(Cursor c = mDB.query(DB_TECH_TABLE, null,  COLUMN_ID + " = ?", new String[] {Integer.toString(techId)}, null, null, null)) {
+            if (c.moveToFirst()) {
+                int column = c.getColumnIndex(COLUMN_NAME);
+                if (column > -1 && !c.isNull(column)) {
+                    return c.getString(column);
+                }
             }
+        } catch (Exception e) {
+            Log.e("getTechName", "hmmm... :(", e);
         }
         return "";
     }
@@ -174,6 +179,7 @@ class PetDatabase {
                     projects.add(s);
             } while (c.moveToNext());
         }
+        c.close();
         String[] selectionArgs = new String[projects.size()];
         projects.toArray(selectionArgs);
         String selection = getOrSelection(COLUMN_ID, selectionArgs.length);
