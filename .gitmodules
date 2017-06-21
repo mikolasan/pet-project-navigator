@@ -1,0 +1,3 @@
+[submodule "DragListView"]
+	path = DragListView
+	url = git@github.com:woxblom/DragListView.git
