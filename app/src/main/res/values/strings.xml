@@ -17,6 +17,7 @@
     <string name="btn_restore">Восстановить</string>
     <string name="btn_add_task">Добавить задачу</string>
     <string name="btn_save_task">Commit</string>
+    <string name="btn_combine_buffer">Собрать таски в проект</string>
     <string name="project_lbl_name">Название</string>
     <string name="project_lbl_task">Задачи</string>
     <string name="project_lbl_tech">Технологии</string>
@@ -59,4 +60,6 @@
     <string name="criterion_name">Поиск по названию</string>
     <string name="criterion_desc">Поиск по описанию</string>
     <string name="criterion_time">Поиск по времени</string>
+    <string name="sample_buffer_title">Буффер</string>
+    <string name="sample_buffer_desc">Проект из буферных тасков</string>
 </resources>

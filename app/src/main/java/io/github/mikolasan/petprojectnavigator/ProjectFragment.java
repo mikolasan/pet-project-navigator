@@ -25,12 +25,10 @@ public class ProjectFragment extends Fragment {
 
     private void setButtonListeners(View v) {
         final Button btn_add_project = (Button) v.findViewById(R.id.btn_add_project);
-        btn_add_project.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), ProjectActivity.class);
-                intent.putExtra("status", ProjectActivity.STATUS_NEW);
-                startActivity(intent);
-            }
+        btn_add_project.setOnClickListener(v1 -> {
+            Intent intent = new Intent(getActivity(), ProjectActivity.class);
+            intent.putExtra("status", ProjectActivity.STATUS_NEW);
+            startActivity(intent);
         });
     }
 

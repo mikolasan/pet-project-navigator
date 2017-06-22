@@ -250,6 +250,15 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.toolbar, menu);
 
+        MenuItem combineItem = menu.findItem(R.id.combine_buffer);
+        combineItem.setOnMenuItemClickListener(item -> {
+            Intent intent = new Intent(this, ProjectActivity.class);
+            intent.putExtra("status", ProjectActivity.STATUS_NEW);
+            intent.putExtra("from_buffer", true);
+            startActivity(intent);
+            return true;
+        });
+
         MenuItem searchItem = menu.findItem(R.id.action_search);
         searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         // Configure the search info and add any event listeners...

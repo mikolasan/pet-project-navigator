@@ -130,6 +130,12 @@ public class ProjectActivity extends FragmentActivity {
         switch  (status) {
             case STATUS_NEW: {
                 btnDeleteProject.setVisibility(View.INVISIBLE);
+                if (intent.getBooleanExtra("from_buffer", false)) {
+                    projectName.setText(R.string.sample_buffer_title);
+                    projectDesc.setText(R.string.sample_buffer_desc);
+                    projectId = 0;
+                    updateTaskView();
+                }
                 break;
             }
             case STATUS_EDIT: {
