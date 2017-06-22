@@ -6,12 +6,10 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
-import android.support.v7.widget.RecyclerView;
 import android.widget.ListView;
 
 import com.mobeta.android.dslv.DragSortCursorAdapter;
 import com.mobeta.android.dslv.DragSortListView;
-import com.woxthebox.draglistview.DragListView;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

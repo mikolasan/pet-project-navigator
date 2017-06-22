@@ -5,16 +5,14 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Toast;
 
 import com.mobeta.android.dslv.DragSortListView;
-import com.woxthebox.draglistview.DragListView;
+
 import static io.github.mikolasan.petprojectnavigator.Tools.restartLoader;
 
 /**
