@@ -16,37 +16,22 @@ import static io.github.mikolasan.petprojectnavigator.Tools.restartLoader;
 
 public class TaskListActivity extends Fragment {
 
-    PetDatabase petDatabase;
     public PetDataLoader<PetTaskLoader> activityDataLoader;
 
     private void initView(Context context, View v) {
         final ListView list = (ListView) v.findViewById(R.id.task_full_view);
-        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = createTaskIntent(context, list, i);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.putExtra("status", TaskActivity.STATUS_EDIT);
-                startActivity(intent);
-            }
+        list.setOnItemClickListener((adapterView, view, i, l) -> {
+            Intent intent = createTaskIntent(context, list, i);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.putExtra("status", TaskActivity.STATUS_EDIT);
+            startActivity(intent);
         });
         try {
-            activityDataLoader = new PetDataLoader<>(context, new PetTaskLoader(context, petDatabase), list);
+            activityDataLoader = new PetDataLoader<>(context, new PetTaskLoader(context, PetDatabase.getOpenedInstance()), list);
             initLoader(this, activityDataLoader, null);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public void onAttach(Context context){
-        super.onAttach(context);
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        petDatabase = PetDatabase.getOpenedInstance();
     }
 
     @Override

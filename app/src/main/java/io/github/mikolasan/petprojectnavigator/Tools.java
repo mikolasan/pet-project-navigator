@@ -49,8 +49,8 @@ class Tools {
     static Bundle checkLoaderArgs(Bundle args) {
         if (args == null) {
             args = new Bundle();
+            args.putBoolean("all_projects", true);
         }
-        args.putBoolean("all_projects", true);
         return args;
     }
 

@@ -89,6 +89,7 @@ public class ProjectActivity extends FragmentActivity {
         try {
             activityDataLoader = new PetDataLoader<>(context, new PetTaskLoader(context, petDatabase), taskView);
             Bundle args = new Bundle();
+            args.putBoolean("all_projects", false);
             args.putInt("project_id", projectId);
             getSupportLoaderManager().initLoader(activityDataLoader.projectActivityId, args, activityDataLoader);
         } catch (NoSuchMethodException e) {
@@ -99,6 +100,7 @@ public class ProjectActivity extends FragmentActivity {
     void updateTaskView() {
         if (activityDataLoader != null) {
             Bundle args = new Bundle();
+            args.putBoolean("all_projects", false);
             args.putInt("project_id", projectId);
             getSupportLoaderManager().restartLoader(activityDataLoader.projectActivityId, args, activityDataLoader);
         }

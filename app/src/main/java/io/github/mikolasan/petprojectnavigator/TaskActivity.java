@@ -141,12 +141,13 @@ public class TaskActivity extends AppCompatActivity implements PetDialogListener
         spinnerAdapter = fillList(sTech, petDatabase.getAllTech());
         typeAdapter = fillList(sType, petDatabase.getAllTypes());
 
+        /*
         final Button btn_add_tech = (Button) findViewById(R.id.btn_add_tech);
         btn_add_tech.setOnClickListener(v -> {
             hideTechDialog();
             openTechDialog();
         });
-
+*/
         final Button btn_delete_tech = (Button) findViewById(R.id.btn_delete_tech);
         btn_delete_tech.setOnClickListener(v -> {
             //TODO

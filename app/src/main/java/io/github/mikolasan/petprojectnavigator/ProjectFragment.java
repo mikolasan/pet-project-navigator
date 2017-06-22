@@ -38,24 +38,21 @@ public class ProjectFragment extends Fragment {
 
     private void initView(Context context, View v) {
         final DragSortListView list = (DragSortListView) v.findViewById(R.id.project_view);
-        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Cursor c = (Cursor) list.getItemAtPosition(i);
+        list.setOnItemClickListener((adapterView, view, i, l) -> {
+            Cursor c = (Cursor) list.getItemAtPosition(i);
 
-                int id_column = c.getColumnIndex(PetDatabase.COLUMN_ID);
-                int projectId = c.getInt(id_column);
-                int name_column = c.getColumnIndex(PetDatabase.COLUMN_NAME);
-                int desc_column = c.getColumnIndex(PetDatabase.COLUMN_DESC);
+            int id_column = c.getColumnIndex(PetDatabase.COLUMN_ID);
+            int projectId = c.getInt(id_column);
+            int name_column = c.getColumnIndex(PetDatabase.COLUMN_NAME);
+            int desc_column = c.getColumnIndex(PetDatabase.COLUMN_DESC);
 
-                Intent intent = new Intent(context, ProjectActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.putExtra("status", ProjectActivity.STATUS_EDIT);
-                intent.putExtra("project_id", projectId);
-                intent.putExtra("title", c.getString(name_column));
-                intent.putExtra("description", c.getString(desc_column));
-                startActivity(intent);
-            }
+            Intent intent = new Intent(context, ProjectActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.putExtra("status", ProjectActivity.STATUS_EDIT);
+            intent.putExtra("project_id", projectId);
+            intent.putExtra("title", c.getString(name_column));
+            intent.putExtra("description", c.getString(desc_column));
+            startActivity(intent);
         });
 
         try {
