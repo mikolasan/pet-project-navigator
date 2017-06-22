@@ -2,14 +2,19 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:dslv="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
-    <ListView
+    <com.mobeta.android.dslv.DragSortListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
-        android:id="@+id/project_view" >
-    </ListView>
+        android:id="@+id/project_view"
+        dslv:sort_enabled="true"
+        dslv:drag_start_mode="onMove"
+        dslv:remove_enabled="true"
+        dslv:remove_mode="flingRemove">
+    </com.mobeta.android.dslv.DragSortListView>
 
     <Button
         android:layout_width="wrap_content"

@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.mobeta.android.dslv.DragSortCursorAdapter;
+
 
 class PetAnyLoader extends CursorLoader {
     protected PetDatabase petDatabase;
@@ -38,6 +40,23 @@ class PetAnyLoader extends CursorLoader {
         }
     }
 
+    private class TrueDragCursorAdapter extends DragSortCursorAdapter
+    {
+        public TrueDragCursorAdapter(Context context, Cursor cursor) {
+            super(context, cursor, 0);
+        }
+
+        @Override
+        public View newView(Context context, Cursor cursor, ViewGroup parent) {
+            return LayoutInflater.from(context).inflate(layoutId, parent, false);
+        }
+
+        @Override
+        public void bindView(View view, Context context, Cursor cursor) {
+            fillView(view, context, cursor);
+        }
+    }
+
     PetAnyLoader(Context context, PetDatabase petDatabase) {
         super(context);
         this.petDatabase = petDatabase;
@@ -49,6 +68,10 @@ class PetAnyLoader extends CursorLoader {
 
     CursorAdapter createAdapter(Cursor cursor) {
         return new TrueCursorAdapter(getContext(), cursor);
+    }
+
+    DragSortCursorAdapter createDragAdapter(Cursor cursor) {
+        return new TrueDragCursorAdapter(getContext(), cursor);
     }
 
     public int getLayoutId() {

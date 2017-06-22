@@ -5,13 +5,16 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ListView;
+import android.widget.Toast;
 
+import com.mobeta.android.dslv.DragSortListView;
+import com.woxthebox.draglistview.DragListView;
 import static io.github.mikolasan.petprojectnavigator.Tools.restartLoader;
 
 /**
@@ -34,7 +37,7 @@ public class ProjectFragment extends Fragment {
     }
 
     private void initView(Context context, View v) {
-        final ListView list = (ListView) v.findViewById(R.id.project_view);
+        final DragSortListView list = (DragSortListView) v.findViewById(R.id.project_view);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -54,9 +57,22 @@ public class ProjectFragment extends Fragment {
                 startActivity(intent);
             }
         });
+
         try {
             activityDataLoader = new PetDataLoader<>(context, new PetProjectLoader(context, petDatabase), list);
             getLoaderManager().initLoader(PetDataLoader.mainActivityId, null, activityDataLoader);
+            list.setDropListener((from, to) -> {
+                if (from != to) {
+                    activityDataLoader.onDropAction(from, to);
+                    Toast.makeText(getActivity(), "End - position: " + to, Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            list.setRemoveListener(which -> {
+                activityDataLoader.onRemoveAction(which);
+                Toast.makeText(getActivity(), "Remove - position: " + which, Toast.LENGTH_SHORT).show();
+            });
+
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
