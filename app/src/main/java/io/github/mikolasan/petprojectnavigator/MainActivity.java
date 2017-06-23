@@ -50,6 +50,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import static io.github.mikolasan.petprojectnavigator.BackupManager.readBackupFile;
 import static io.github.mikolasan.petprojectnavigator.Tools.applyQuery;
 
 public class MainActivity extends AppCompatActivity implements ConnectionCallbacks,
@@ -57,7 +58,6 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
 
     PetDatabase petDatabase;
     private static final String TAG = "drive-quickstart";
-    private static final String OPEN_FILE_TAG = "open-file-dialog";
     private static final int REQUEST_CODE_CREATOR = 2;
     private static final int REQUEST_CODE_RESOLUTION = 3;
     private static final int REQUEST_CODE_RESTORE_FILE = 4;
@@ -112,36 +112,40 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
                 R.layout.drawer_list_item, getResources().getStringArray(R.array.menu_list)));
         // Set the list's click listener
         listView.setOnItemClickListener((parent, view, position, id) -> {
-            switch (position) {
-                case drawerAddProjectPos:
-                    Intent intent = new Intent(getApplicationContext(), ProjectActivity.class);
-                    intent.putExtra("status", ProjectActivity.STATUS_NEW);
-                    startActivity(intent);
-                    break;
-                case drawerOpenProjectsPos:
-                    selectPage(PROJECTS_PAGE_ID, position);
-                    break;
-                case drawerOpenTasksPos:
-                    selectPage(TASKS_PAGE_ID, position);
-                    break;
-                case drawerOpenBufferPos:
-                    selectPage(BUFFER_PAGE_ID, position);
-                    break;
-                case drawerBackupPos:
-                    backup();
-                    break;
-                case drawerRestorePos:
-                    petDatabase.restore(loadLocalCopy());
-                    break;
-                case drawerToCloudPos:
-                    toCloud();
-                    break;
-                case drawerFromCloudPos:
-                    restoreDB();
-                    break;
-            }
-            drawerLayout.closeDrawer(listView);
-        });
+		defineAction(position);
+		drawerLayout.closeDrawer(listView);
+	});
+    }
+
+    private void defineAction(int drawerPosition) {
+        switch (drawerPosition) {
+        case drawerAddProjectPos:
+            Intent intent = new Intent(getApplicationContext(), ProjectActivity.class);
+            intent.putExtra("status", ProjectActivity.STATUS_NEW);
+            startActivity(intent);
+            break;
+        case drawerOpenProjectsPos:
+            selectPage(PROJECTS_PAGE_ID, drawerPosition);
+            break;
+        case drawerOpenTasksPos:
+            selectPage(TASKS_PAGE_ID, drawerPosition);
+            break;
+        case drawerOpenBufferPos:
+            selectPage(BUFFER_PAGE_ID, drawerPosition);
+            break;
+        case drawerBackupPos:
+            backup();
+            break;
+        case drawerRestorePos:
+            petDatabase.restore(loadLocalCopy());
+            break;
+        case drawerToCloudPos:
+            toCloud();
+            break;
+        case drawerFromCloudPos:
+            restoreDB();
+            break;
+        }
     }
 
     private void selectPage(int pageId, int listItemId) {
@@ -238,18 +242,68 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         setSupportActionBar(petToolbar);
         // Get a support ActionBar corresponding to this toolbar
         ActionBar ab = getSupportActionBar();
-
-        // Enable the Up button
-        ab.setDisplayHomeAsUpEnabled(true);
+        if (ab != null) {
+            ab.setDisplayHomeAsUpEnabled(true);
+        }
 
     }
 
-    // Menu icons are inflated just as they were with actionbar
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.toolbar, menu);
+    private class PetQueryTextListener implements SearchView.OnQueryTextListener {
+        @Override
+        public boolean onQueryTextSubmit(String query) {
+            return false;
+        }
 
+        @Override
+        public boolean onQueryTextChange(String newText) {
+            int page = getCurrentPage();
+            searchPerPage.set(page, newText);
+            switch (page){
+                case PROJECTS_PAGE_ID:
+                    applyQuery(projectFragment, projectFragment.activityDataLoader, criterion, newText);
+                break;
+                case TASKS_PAGE_ID:
+                    applyQuery(taskFragment, taskFragment.activityDataLoader, criterion, newText);
+                break;
+                case BUFFER_PAGE_ID:
+                //applyQuery(bufferFragment, bufferFragment.activityDataLoader, criterion, newText);
+                break;
+            }
+            return true;
+        }
+    }
+    
+    private class PetActionExpandListener implements MenuItemCompat.OnActionExpandListener {
+	@Override
+	public boolean onMenuItemActionCollapse(MenuItem item) {
+	    switch (item.getItemId()) {
+	    case R.id.action_search:
+		searchPerPage.clear();
+		applyQuery(projectFragment, projectFragment.activityDataLoader, 0, "");
+		applyQuery(taskFragment, taskFragment.activityDataLoader, 0, "");
+		//applyQuery(bufferFragment, bufferFragment.activityDataLoader, 0, "");
+		return true;
+	    default:
+		return false;
+	    }
+	}
+
+	@Override
+	public boolean onMenuItemActionExpand(MenuItem item) {
+	    switch (item.getItemId()) {
+	    case R.id.action_search:
+		searchPerPage.add("");
+		searchPerPage.add("");
+		searchPerPage.add("");
+		searchView.setQuery("", true);
+		return true;
+	    default:
+		return false;
+	    }
+	}
+    };
+
+    private void createMenu(Menu menu) {
         MenuItem combineItem = menu.findItem(R.id.combine_buffer);
         combineItem.setOnMenuItemClickListener(item -> {
             Intent intent = new Intent(this, ProjectActivity.class);
@@ -263,65 +317,17 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         // Configure the search info and add any event listeners...
         searchView.setIconifiedByDefault(false);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                int page = getCurrentPage();
-                searchPerPage.set(page, newText);
-                switch (page){
-                    case PROJECTS_PAGE_ID:
-                        applyQuery(projectFragment, projectFragment.activityDataLoader, criterion, newText);
-                        break;
-                    case TASKS_PAGE_ID:
-                        applyQuery(taskFragment, taskFragment.activityDataLoader, criterion, newText);
-                        break;
-                    case BUFFER_PAGE_ID:
-                        //applyQuery(bufferFragment, bufferFragment.activityDataLoader, criterion, newText);
-                        break;
-                }
-                return true;
-            }
-        });
-
-        // Define the listener
-        MenuItemCompat.OnActionExpandListener expandListener = new MenuItemCompat.OnActionExpandListener() {
-            @Override
-            public boolean onMenuItemActionCollapse(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.action_search:
-                        searchPerPage.clear();
-                        applyQuery(projectFragment, projectFragment.activityDataLoader, 0, "");
-                        applyQuery(taskFragment, taskFragment.activityDataLoader, 0, "");
-                        //applyQuery(bufferFragment, bufferFragment.activityDataLoader, 0, "");
-                        return true;
-                    default:
-                        return false;
-                }
-            }
-
-            @Override
-            public boolean onMenuItemActionExpand(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.action_search:
-                        searchPerPage.add("");
-                        searchPerPage.add("");
-                        searchPerPage.add("");
-                        searchView.setQuery("", true);
-                        return true;
-                    default:
-                        return false;
-                }
-            }
-        };
-
+        searchView.setOnQueryTextListener(new PetQueryTextListener());
         // Assign the listener to that action item
-        MenuItemCompat.setOnActionExpandListener(searchItem, expandListener);
+        MenuItemCompat.setOnActionExpandListener(searchItem, new PetActionExpandListener());
+    }
 
+    // Menu icons are inflated just as they were with actionbar
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.toolbar, menu);
+        createMenu(menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -439,8 +445,6 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         }
     }
 
-
-
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         switch (requestCode) {
@@ -454,7 +458,16 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
                 if(resultCode == RESULT_OK) {
                     if (data != null) {
                         // Get the URI of the selected file
-                        readBackupFile(data.getData());
+                        try {
+                            String json = readBackupFile(data.getData());
+                            if (petDatabase.restore(json)) {
+                                Toast.makeText(this, "DB restored", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(this, "Failed to restore", Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     } else {
                         Toast.makeText(getApplicationContext(), "Bad data", Toast.LENGTH_SHORT).show();
                     }
@@ -462,57 +475,6 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         }
     }
 
-    private String inputToString(FileInputStream inputStream) {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        int i;
-        try {
-            i = inputStream.read();
-            while (i != -1) {
-                byteArrayOutputStream.write(i);
-                i = inputStream.read();
-            }
-            inputStream.close();
-        } catch (IOException e) {
-            Toast.makeText(getApplicationContext(), "IO exception", Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
-            return "";
-        }
-        return byteArrayOutputStream.toString();
-    }
-
-    private void readBackupFile(Uri uri) {
-        Log.i(OPEN_FILE_TAG, "Uri = " + uri.toString());
-        try {
-            Context context = getApplicationContext();
-            // Get the file path from the URI
-            final String path = "";//FileUtils.getPath(this, uri);
-            Toast.makeText(context,
-                    "File Selected: " + path, Toast.LENGTH_LONG).show();
-            Log.i(OPEN_FILE_TAG, "File Selected: " + path);
-            File selectedFile = new File(path);
-            if(selectedFile.exists()) {
-                FileInputStream inputStream;
-                try {
-                    inputStream = new FileInputStream(selectedFile);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                    return;
-                }
-                String json = inputToString(inputStream);
-                if(petDatabase.restore(json)){
-                    Toast.makeText(context, "DB restored", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(context, "Failed to restore", Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                CharSequence status = "File " + path + " doesn't exist";
-                Log.i(OPEN_FILE_TAG, status.toString());
-                Toast.makeText(context, status, Toast.LENGTH_SHORT).show();
-            }
-        } catch (Exception e) {
-            Log.e(OPEN_FILE_TAG, "File select error", e);
-        }
-    }
     public void backup() {
         saveLocalCopy(petDatabase.prepareJson());
     }
@@ -596,15 +558,4 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
                 .addCategory(Intent.CATEGORY_OPENABLE);
         startActivityForResult(Intent.createChooser(intent, "Select a DB backup file"), REQUEST_CODE_RESTORE_FILE);
     }
-    /*
-        Intent target = FileUtils.createGetContentIntent();
-        // Create the chooser Intent
-        Intent intent = Intent.createChooser(
-                target, getString(R.string.chooser_title));
-        try {
-            startActivityForResult(intent, REQUEST_CODE_RESTORE_FILE);
-        } catch (ActivityNotFoundException e) {
-            // The reason for the existence of aFileChooser
-        }
-    */
 }
