@@ -194,41 +194,46 @@ class PetDatabase {
         return mDB.query(DB_PROJECTS_TABLE, null, COLUMN_DESC + " LIKE ?", new String[] {"%" + query + "%"}, null, null, null);
     }
 
-    public Cursor getAllProjectsByTime(String query) {
-        try {
-            int time = Integer.parseInt(query);
-            if (time > 0) {
-                try (Cursor projects = getAllProjects()) {
-                    ArrayList<String> selectionArgs = new ArrayList<>();
-                    while (projects.moveToNext()) {
-                        int columnIndex = projects.getColumnIndex(COLUMN_ID);
-                        int projectId = projects.getInt(columnIndex);
-                        int totalTime = 0;
-                        try (Cursor tasks = dbTask.getAllByProject(projectId)) {
-                            while (tasks.moveToNext()) {
-                                int timeColumn = tasks.getColumnIndex(COLUMN_TIME);
-                                totalTime += tasks.getInt(timeColumn);
-                                if (totalTime > time) {
-                                    break;
-                                }
-                            }
-                        }
-                        if (totalTime <= time) {
-                            selectionArgs.add(Integer.toString(projectId));
-                        }
+    private Cursor getAllTasksByTime(Cursor projects, int time) {
+        ArrayList<String> selectionArgs = new ArrayList<>();
+        while (projects.moveToNext()) {
+            int columnIndex = projects.getColumnIndex(COLUMN_ID);
+            int projectId = projects.getInt(columnIndex);
+            int totalTime = 0;
+            try (Cursor tasks = dbTask.getAllByProject(projectId)) {
+                while (tasks.moveToNext()) {
+                    int timeColumn = tasks.getColumnIndex(COLUMN_TIME);
+                    totalTime += tasks.getInt(timeColumn);
+                    if (totalTime > time) {
+                        break;
                     }
-                    String selection = getOrSelection(COLUMN_ID, selectionArgs.size());
-                    return mDB.query(DB_PROJECTS_TABLE, null, selection, selectionArgs.toArray(new String[0]), null, null, null);
-                } catch (Exception e) {
-                    Log.e("getAllProjectsByTime", "hmmm... :(", e);
                 }
-                return null;
-            } else {
-                return getAllProjects();
             }
+            if (totalTime <= time) {
+                selectionArgs.add(Integer.toString(projectId));
+            }
+        }
+        String selection = getOrSelection(COLUMN_ID, selectionArgs.size());
+        return mDB.query(DB_PROJECTS_TABLE, null, selection, selectionArgs.toArray(new String[0]), null, null, null);
+    }
+
+    public Cursor getAllProjectsByTime(String query) {
+        int time = 0;
+        try {
+            Integer.parseInt(query);
         } catch (NumberFormatException e) {
             return null;
         }
+        if (time == 0) {
+            return getAllProjects();
+        }
+
+        try (Cursor projects = getAllProjects()) {
+            return getAllTasksByTime(projects, time);
+        } catch (Exception e) {
+            Log.e("getAllProjectsByTime", "hmmm... :(", e);
+        }
+        return null;
     }
 
     /*

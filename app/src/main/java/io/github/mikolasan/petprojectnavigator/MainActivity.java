@@ -7,18 +7,11 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -28,7 +21,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -39,19 +31,13 @@ import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListe
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.MetadataChangeSet;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Locale;
 
 import static io.github.mikolasan.petprojectnavigator.BackupManager.readBackupFile;
-import static io.github.mikolasan.petprojectnavigator.Tools.applyQuery;
 
 public class MainActivity extends AppCompatActivity implements ConnectionCallbacks,
         OnConnectionFailedListener {
@@ -64,33 +50,14 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
     private static final int REQUEST_EXTERNAL_STORAGE = 5;
     private GoogleApiClient mGoogleApiClient;
 
-    private static final int PROJECTS_PAGE_ID = 0;
-    private static final int TASKS_PAGE_ID = 1;
-    private static final int BUFFER_PAGE_ID = 2;
-    private static final int N_PAGES = 3;
-    private int currentPage = 0;
-    private int criterion = 0;
-    private ProjectFragment projectFragment;
-    private TaskListActivity taskFragment;
-    private BufferFragment bufferFragment;
-
-    PetPagerAdapter pagerAdapter;
-    ViewPager pager;
+    PetMainPager mainPager;
     ListView listView;
-    BottomNavigationView bottomNavigationView;
-    SearchView searchView;
-    ArrayList<String> searchPerPage;
-    MenuItem prevMenuItem;
 
-    private final int drawerOpenProjectsPos = 0;
-    private final int drawerOpenTasksPos = 1;
-    private final int drawerOpenBufferPos = 2;
     private final int drawerBackupPos = 3;
     private final int drawerRestorePos = 4;
     private final int drawerToCloudPos = 5;
     private final int drawerFromCloudPos = 6;
     private final int drawerAddProjectPos = 7;
-
 
     // Checks if the app has permission to write to device storage
     // If the app does not has permission then the user will be prompted to grant permissions
@@ -118,125 +85,37 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
     }
 
     private void defineAction(int drawerPosition) {
+        mainPager.defineAction(drawerPosition);
         switch (drawerPosition) {
-        case drawerAddProjectPos:
-            Intent intent = new Intent(getApplicationContext(), ProjectActivity.class);
-            intent.putExtra("status", ProjectActivity.STATUS_NEW);
-            startActivity(intent);
-            break;
-        case drawerOpenProjectsPos:
-            selectPage(PROJECTS_PAGE_ID, drawerPosition);
-            break;
-        case drawerOpenTasksPos:
-            selectPage(TASKS_PAGE_ID, drawerPosition);
-            break;
-        case drawerOpenBufferPos:
-            selectPage(BUFFER_PAGE_ID, drawerPosition);
-            break;
-        case drawerBackupPos:
-            backup();
-            break;
-        case drawerRestorePos:
-            petDatabase.restore(loadLocalCopy());
-            break;
-        case drawerToCloudPos:
-            toCloud();
-            break;
-        case drawerFromCloudPos:
-            restoreDB();
-            break;
+            case drawerAddProjectPos:
+                Intent intent = new Intent(getApplicationContext(), ProjectActivity.class);
+                intent.putExtra("status", ProjectActivity.STATUS_NEW);
+                startActivity(intent);
+                break;
+            case drawerBackupPos:
+                backup();
+                break;
+            case drawerRestorePos:
+                petDatabase.restore(loadLocalCopy());
+                break;
+            case drawerToCloudPos:
+                toCloud();
+                break;
+            case drawerFromCloudPos:
+                restoreDB();
+                break;
         }
-    }
-
-    private void selectPage(int pageId, int listItemId) {
-        pager.setCurrentItem(pageId);
-        listView.setItemChecked(listItemId, true);
-        if (prevMenuItem != null) {
-            prevMenuItem.setChecked(false);
-        } else {
-            bottomNavigationView.getMenu().getItem( 0).setChecked(false);
-        }
-        bottomNavigationView.getMenu().getItem(pageId).setChecked(true);
-        prevMenuItem = bottomNavigationView.getMenu().getItem(pageId);
-
-        currentPage = pageId;
-        if (searchView != null && searchPerPage.size() > pageId) {
-            searchView.setQuery(searchPerPage.get(pageId), false);
-        }
-    }
-
-    private int getCurrentPage() {
-        return pager.getCurrentItem();
-    }
-
-    private void setButtonListeners() {
-        bottomNavigationView = (BottomNavigationView)
-                findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setOnNavigationItemSelectedListener(
-                item -> {
-                    switch (item.getItemId()) {
-                        case R.id.action_projects:
-                            selectPage(PROJECTS_PAGE_ID, drawerOpenProjectsPos);
-                            break;
-                        case R.id.action_tasks:
-                            selectPage(TASKS_PAGE_ID, drawerOpenTasksPos);
-                            break;
-                        case R.id.action_buffer:
-                            selectPage(BUFFER_PAGE_ID, drawerOpenBufferPos);
-                            break;
-                        default:
-                            break;
-                    }
-                    return true;
-                });
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        searchPerPage = new ArrayList<>(N_PAGES);
         petDatabase = PetDatabase.getOpenedInstance();
         setContentView(R.layout.activity_main);
-        setButtonListeners();
+        mainPager = new PetMainPager(this);
+        mainPager.setButtonListeners(this);
         initDrawer();
-
-        projectFragment = new ProjectFragment();
-        taskFragment = new TaskListActivity();
-        bufferFragment = new BufferFragment();
-
-        pagerAdapter = new PetPagerAdapter(getSupportFragmentManager());
-
-        pager = (ViewPager)findViewById(R.id.pager);
-        pager.setAdapter(pagerAdapter);
-        pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                switch (position) {
-                    case PROJECTS_PAGE_ID:
-                        selectPage(position, drawerOpenProjectsPos);
-                        break;
-                    case TASKS_PAGE_ID:
-                        selectPage(position, drawerOpenTasksPos);
-                        break;
-                    case BUFFER_PAGE_ID:
-                        selectPage(position, drawerOpenBufferPos);
-                        break;
-                }
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-
-        });
 
         final Toolbar petToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(petToolbar);
@@ -245,63 +124,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         if (ab != null) {
             ab.setDisplayHomeAsUpEnabled(true);
         }
-
     }
-
-    private class PetQueryTextListener implements SearchView.OnQueryTextListener {
-        @Override
-        public boolean onQueryTextSubmit(String query) {
-            return false;
-        }
-
-        @Override
-        public boolean onQueryTextChange(String newText) {
-            int page = getCurrentPage();
-            searchPerPage.set(page, newText);
-            switch (page){
-                case PROJECTS_PAGE_ID:
-                    applyQuery(projectFragment, projectFragment.activityDataLoader, criterion, newText);
-                break;
-                case TASKS_PAGE_ID:
-                    applyQuery(taskFragment, taskFragment.activityDataLoader, criterion, newText);
-                break;
-                case BUFFER_PAGE_ID:
-                //applyQuery(bufferFragment, bufferFragment.activityDataLoader, criterion, newText);
-                break;
-            }
-            return true;
-        }
-    }
-    
-    private class PetActionExpandListener implements MenuItemCompat.OnActionExpandListener {
-	@Override
-	public boolean onMenuItemActionCollapse(MenuItem item) {
-	    switch (item.getItemId()) {
-	    case R.id.action_search:
-		searchPerPage.clear();
-		applyQuery(projectFragment, projectFragment.activityDataLoader, 0, "");
-		applyQuery(taskFragment, taskFragment.activityDataLoader, 0, "");
-		//applyQuery(bufferFragment, bufferFragment.activityDataLoader, 0, "");
-		return true;
-	    default:
-		return false;
-	    }
-	}
-
-	@Override
-	public boolean onMenuItemActionExpand(MenuItem item) {
-	    switch (item.getItemId()) {
-	    case R.id.action_search:
-		searchPerPage.add("");
-		searchPerPage.add("");
-		searchPerPage.add("");
-		searchView.setQuery("", true);
-		return true;
-	    default:
-		return false;
-	    }
-	}
-    };
 
     private void createMenu(Menu menu) {
         MenuItem combineItem = menu.findItem(R.id.combine_buffer);
@@ -314,12 +137,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         });
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
-        searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-        // Configure the search info and add any event listeners...
-        searchView.setIconifiedByDefault(false);
-        searchView.setOnQueryTextListener(new PetQueryTextListener());
-        // Assign the listener to that action item
-        MenuItemCompat.setOnActionExpandListener(searchItem, new PetActionExpandListener());
+        mainPager.setupSearchItem(searchItem);
     }
 
     // Menu icons are inflated just as they were with actionbar
@@ -329,10 +147,6 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         getMenuInflater().inflate(R.menu.toolbar, menu);
         createMenu(menu);
         return super.onCreateOptionsMenu(menu);
-    }
-
-    private void setCriterion(int criterion) {
-        this.criterion = criterion;
     }
 
     @Override
@@ -352,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
             case R.id.criterion_name:
             case R.id.criterion_desc:
             case R.id.criterion_time:
-                setCriterion(item.getItemId());
+                mainPager.setSearchCriterion(item.getItemId());
                 return true;
 
             default:
@@ -360,37 +174,6 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
                 // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
 
-        }
-    }
-
-    private class PetPagerAdapter extends FragmentPagerAdapter {
-
-        private PetPagerAdapter(FragmentManager manager) {
-            super(manager);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            // Do NOT try to save references to the Fragments in getItem(),
-            // because getItem() is not always called. If the Fragment
-            // was already created then it will be retrieved from the FragmentManger
-            // and not here (i.e. getItem() won't be called again).
-            switch (position) {
-                case PROJECTS_PAGE_ID:
-                    return projectFragment;
-                case TASKS_PAGE_ID:
-                    return taskFragment;
-                case BUFFER_PAGE_ID:
-                    return bufferFragment;
-                default:
-                    // This should never happen. Always account for each position above
-                    return null;
-            }
-        }
-
-        @Override
-        public int getCount() {
-            return N_PAGES;
         }
     }
 
