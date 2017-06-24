@@ -3,8 +3,10 @@ package io.github.mikolasan.petprojectnavigator;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SearchView;
 
@@ -12,19 +14,18 @@ import android.widget.SearchView;
  * Created by neupo on 6/22/2017.
  */
 
-public class PetMainPager {
+class PetMainPager {
 
-    PetPagerAdapter pagerAdapter;
-    ViewPager pager;
-    ListView listView;
-    BottomNavigationView bottomNavigationView;
-    SearchView searchView;
-    MenuItem prevMenuItem;
-
+    private PetPagerAdapter pagerAdapter;
+    private ViewPager pager;
+    private ListView listView;
+    private BottomNavigationView bottomNavigationView;
+    private SearchView searchView;
+    private MenuItem prevMenuItem;
+    private PetOnItemClickListener clickListener;
     private final int drawerOpenProjectsPos = 0;
     private final int drawerOpenTasksPos = 1;
     private final int drawerOpenBufferPos = 2;
-
 
     private class PetPageChangeListener implements ViewPager.OnPageChangeListener {
         @Override
@@ -83,10 +84,25 @@ public class PetMainPager {
         pager = (ViewPager)activity.findViewById(R.id.pager);
         pager.setAdapter(pagerAdapter);
         pager.addOnPageChangeListener(new PetPageChangeListener());
+
+        DrawerLayout drawerLayout = (DrawerLayout) activity.findViewById(R.id.drawer_layout);
+        listView = (ListView) activity.findViewById(R.id.left_drawer);
+        // Set the adapter for the list view
+        listView.setAdapter(new ArrayAdapter<>(activity,
+                R.layout.drawer_list_item, activity.getResources().getStringArray(R.array.menu_list)));
+        // Set the list's click listener
+        listView.setOnItemClickListener((parent, view, position, id) -> {
+            clickListener.onItemClick(parent, view, position, id);
+            drawerLayout.closeDrawer(listView);
+        });
+    }
+
+    public void setOnItemClickListener(PetOnItemClickListener listener) {
+        this.clickListener = listener;
     }
 
     public void setupSearchItem(MenuItem searchItem) {
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         // Configure the search info and add any event listeners...
         searchView.setIconifiedByDefault(false);
         searchView.setOnQueryTextListener(new PetQueryTextListener());
@@ -146,7 +162,7 @@ public class PetMainPager {
         prevMenuItem = bottomNavigationView.getMenu().getItem(pageId);
 
         pagerAdapter.selectPage(pageId);
-        if (searchView != null && PetPagerAdapter.N_PAGES > pageId) {
+        if (searchView != null && pagerAdapter.getCount() > pageId) {
             searchView.setQuery(pagerAdapter.getSearchQuery(pageId), false);
         }
     }

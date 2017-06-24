@@ -22,8 +22,8 @@ public class PetPagerAdapter extends FragmentPagerAdapter {
     public static final int PROJECTS_PAGE_ID = 0;
     public static final int TASKS_PAGE_ID = 1;
     public static final int BUFFER_PAGE_ID = 2;
-    public static final int N_PAGES = 3;
-    public int currentPage = 0;
+    private static final int N_PAGES = 3;
+    private int currentPage = 0;
     private ArrayList<String> searchPerPage;
     private int criterion = 0;
 
@@ -62,13 +62,13 @@ public class PetPagerAdapter extends FragmentPagerAdapter {
     public boolean onQueryTextChange(String newText, int page) {
         searchPerPage.set(page, newText);
         switch (page){
-            case PetPagerAdapter.PROJECTS_PAGE_ID:
+            case PROJECTS_PAGE_ID:
                 applyQuery(projectFragment, projectFragment.activityDataLoader, criterion, newText);
                 break;
-            case PetPagerAdapter.TASKS_PAGE_ID:
+            case TASKS_PAGE_ID:
                 applyQuery(taskFragment, taskFragment.activityDataLoader, criterion, newText);
                 break;
-            case PetPagerAdapter.BUFFER_PAGE_ID:
+            case BUFFER_PAGE_ID:
                 //applyQuery(bufferFragment, bufferFragment.activityDataLoader, criterion, newText);
                 break;
         }
