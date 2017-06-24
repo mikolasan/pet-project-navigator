@@ -70,7 +70,16 @@ class PetMainPager {
     private class PetActionExpandListener implements MenuItemCompat.OnActionExpandListener {
         @Override
         public boolean onMenuItemActionCollapse(MenuItem item) {
-            return false;
+            boolean result;
+            switch (item.getItemId()) {
+                case R.id.action_search:
+                    searchView.setQuery("", true);
+                    result = true;
+                    break;
+                default:
+                    result = false;
+            }
+            return result && pagerAdapter.onMenuItemActionCollapse(item);
         }
 
         @Override
@@ -161,8 +170,7 @@ class PetMainPager {
         bottomNavigationView.getMenu().getItem(pageId).setChecked(true);
         prevMenuItem = bottomNavigationView.getMenu().getItem(pageId);
 
-        pagerAdapter.selectPage(pageId);
-        if (searchView != null && pagerAdapter.getCount() > pageId) {
+        if (searchView != null) {
             searchView.setQuery(pagerAdapter.getSearchQuery(pageId), false);
         }
     }

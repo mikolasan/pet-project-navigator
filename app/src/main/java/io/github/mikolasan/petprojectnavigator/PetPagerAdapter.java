@@ -23,7 +23,6 @@ public class PetPagerAdapter extends FragmentPagerAdapter {
     public static final int TASKS_PAGE_ID = 1;
     public static final int BUFFER_PAGE_ID = 2;
     private static final int N_PAGES = 3;
-    private int currentPage = 0;
     private ArrayList<String> searchPerPage;
     private int criterion = 0;
 
@@ -33,6 +32,7 @@ public class PetPagerAdapter extends FragmentPagerAdapter {
         taskFragment = new TaskListActivity();
         bufferFragment = new BufferFragment();
         searchPerPage = new ArrayList<>(N_PAGES);
+        clearSearch();
     }
 
     @Override
@@ -75,10 +75,10 @@ public class PetPagerAdapter extends FragmentPagerAdapter {
         return true;
     }
 
-    public boolean onMenuItemActionExpand(MenuItem item) {
+    public boolean onMenuItemActionCollapse(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_search:
-                searchPerPage.clear();
+                clearSearch();
                 applyQuery(projectFragment, projectFragment.activityDataLoader, 0, "");
                 applyQuery(taskFragment, taskFragment.activityDataLoader, 0, "");
                 //applyQuery(bufferFragment, bufferFragment.activityDataLoader, 0, "");
@@ -88,12 +88,28 @@ public class PetPagerAdapter extends FragmentPagerAdapter {
         }
     }
 
-    public void selectPage(int page) {
-        currentPage = page;
+    private void clearSearch() {
+        searchPerPage.clear();
+        searchPerPage.add("");
+        searchPerPage.add("");
+        searchPerPage.add("");
+    }
+
+    public boolean onMenuItemActionExpand(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_search:
+                clearSearch();
+                return true;
+            default:
+                return false;
+        }
     }
 
     public String getSearchQuery(int page) {
-        return searchPerPage.get(page);
+        if (searchPerPage.size() > page) {
+            return searchPerPage.get(page);
+        }
+        return "";
     }
 
     public void setCriterion(int criterion) {

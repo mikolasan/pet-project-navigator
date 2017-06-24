@@ -16,7 +16,7 @@ class PetTaskLoader extends PetAnyLoader {
 
     @Override
     public Cursor loadInBackground() {
-        boolean loadAll = super.getArgs().getBoolean("all_projects", false);
+        boolean loadAll = super.getArgs().getBoolean("all_projects", true);
         if(loadAll) {
             String query = super.getArgs().getString("query", "");
             if (query.isEmpty()) {
