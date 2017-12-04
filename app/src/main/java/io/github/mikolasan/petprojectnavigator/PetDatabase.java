@@ -78,7 +78,11 @@ class PetDatabase {
 
     // закрыть подключение
     public void close() {
-        if (mDBHelper!=null) mDBHelper.close();
+        if (mDBHelper != null) mDBHelper.close();
+        mDBHelper = null;
+        mDB = null;
+        dbTask = null;
+        instance = null;
     }
 
     public boolean hasObject(String table, String id, String value) {
@@ -116,13 +120,6 @@ class PetDatabase {
         cv.put(COLUMN_NAME, name);
         cv.put(COLUMN_DESC, description);
         mDB.update(DB_PROJECTS_TABLE, cv, COLUMN_ID + " = ?", new String[] {Integer.toString(projectId)});
-    }
-
-    void createProjectFromBuffer(String name, String description) {
-        long projectId = addProject(name, description);
-        ContentValues cv = new ContentValues();
-        cv.put(COLUMN_PROJECT_ID, projectId);
-        mDB.update(DB_TASKS_TABLE, cv, COLUMN_PROJECT_ID + " = ?", new String[] {Integer.toString(BUFFER_ID)});
     }
 
     void deleteProject(int projectId) {

@@ -135,6 +135,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         petDriveCommunicator.verifyStoragePermissions(Manifest.permission.READ_EXTERNAL_STORAGE);
+        petDatabase = PetDatabase.getOpenedInstance();
     }
 
     @Override
