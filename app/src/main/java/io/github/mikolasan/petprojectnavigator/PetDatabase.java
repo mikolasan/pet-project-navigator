@@ -106,6 +106,11 @@ class PetDatabase {
         return mDB.insert(DB_PROJECTS_TABLE, null, cv);
     }
 
+    void projectFromBuffer(String name, String description) {
+        long rowId = addProject(name, description);
+        dbTask.moveBufferToProject((int)rowId);
+    }
+
     void saveProjectDetails(int projectId, String name, String description) {
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_NAME, name);

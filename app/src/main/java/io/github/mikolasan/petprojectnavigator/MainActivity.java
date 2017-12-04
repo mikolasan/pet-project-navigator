@@ -85,8 +85,7 @@ public class MainActivity extends AppCompatActivity {
         MenuItem combineItem = menu.findItem(R.id.combine_buffer);
         combineItem.setOnMenuItemClickListener(item -> {
             Intent intent = new Intent(this, ProjectActivity.class);
-            intent.putExtra("status", ProjectActivity.STATUS_NEW);
-            intent.putExtra("from_buffer", true);
+            intent.putExtra("status", ProjectActivity.STATUS_BUFFER);
             startActivity(intent);
             return true;
         });

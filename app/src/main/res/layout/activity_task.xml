@@ -156,6 +156,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
+            <Button
+                android:id="@+id/btn_delete_task"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_delete_task" />
+
+            <Button
+                android:id="@+id/btn_complete_task"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_complete_task" />
+
+            <Button
+                android:id="@+id/btn_out_task"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_out_task" />
+
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

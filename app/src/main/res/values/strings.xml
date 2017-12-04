@@ -17,6 +17,9 @@
     <string name="btn_restore">Восстановить</string>
     <string name="btn_add_task">Добавить задачу</string>
     <string name="btn_save_task">Commit</string>
+    <string name="btn_delete_task">Удалить</string>
+    <string name="btn_complete_task">Завершить</string>
+    <string name="btn_out_task">Выкинуть из проекта</string>
     <string name="btn_combine_buffer">Собрать таски в проект</string>
     <string name="project_lbl_name">Название</string>
     <string name="project_lbl_task">Задачи</string>

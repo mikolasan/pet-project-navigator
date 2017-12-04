@@ -17,6 +17,7 @@ public class ProjectActivity extends FragmentActivity {
 
     public static final int STATUS_NEW = 0;
     public static final int STATUS_EDIT = 1;
+    public static final int STATUS_BUFFER = 2;
 
     PetDatabase petDatabase;
     private PetDataLoader<PetTaskLoader> activityDataLoader;
@@ -56,6 +57,11 @@ public class ProjectActivity extends FragmentActivity {
                     case STATUS_EDIT:
                     {
                         petDatabase.saveProjectDetails(projectId, name, description);
+                        break;
+                    }
+                    case STATUS_BUFFER:
+                    {
+                        petDatabase.projectFromBuffer(name, description);
                         break;
                     }
                 }
@@ -130,12 +136,6 @@ public class ProjectActivity extends FragmentActivity {
         switch  (status) {
             case STATUS_NEW: {
                 btnDeleteProject.setVisibility(View.INVISIBLE);
-                if (intent.getBooleanExtra("from_buffer", false)) {
-                    projectName.setText(R.string.sample_buffer_title);
-                    projectDesc.setText(R.string.sample_buffer_desc);
-                    projectId = 0;
-                    updateTaskView();
-                }
                 break;
             }
             case STATUS_EDIT: {
@@ -143,6 +143,14 @@ public class ProjectActivity extends FragmentActivity {
                 projectName.setText(intent.getStringExtra("title"));
                 projectDesc.setText(intent.getStringExtra("description"));
                 projectId = intent.getIntExtra("project_id", 0);
+                updateTaskView();
+                break;
+            }
+            case STATUS_BUFFER: {
+                btnDeleteProject.setVisibility(View.INVISIBLE);
+                projectName.setText(R.string.sample_buffer_title);
+                projectDesc.setText(R.string.sample_buffer_desc);
+                projectId = 0;
                 updateTaskView();
                 break;
             }

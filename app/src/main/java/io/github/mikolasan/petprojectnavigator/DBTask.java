@@ -69,12 +69,21 @@ public class DBTask {
     }
 
     void copy(int taskId, int projectId) {
-        Cursor c = mDB.query(DB_TASKS_TABLE, new String[] {COLUMN_PROJECT_ID, COLUMN_NAME, COLUMN_LINKS, COLUMN_LINKS, COLUMN_TECH_ID, COLUMN_TIME, COLUMN_TYPE_ID},
-                COLUMN_ID + " = " + taskId, null, null, null, null);
-        ContentValues cv = new ContentValues();
-        DatabaseUtils.cursorRowToContentValues(c, cv);
-        cv.put(COLUMN_PROJECT_ID, projectId);
-        mDB.insert(DB_TASKS_TABLE, null, cv);
+        String[] columns = new String[] {COLUMN_PROJECT_ID, COLUMN_NAME, COLUMN_LINKS, COLUMN_LINKS, COLUMN_TECH_ID, COLUMN_TIME, COLUMN_TYPE_ID};
+        try(Cursor c = mDB.query(DB_TASKS_TABLE,
+                columns,
+                COLUMN_ID + " = ?",
+                new String[] {Integer.toString(taskId)},
+                null, null, null)) {
+            if (c.moveToFirst()) {
+                ContentValues cv = new ContentValues();
+                DatabaseUtils.cursorRowToContentValues(c, cv);
+                cv.put(COLUMN_PROJECT_ID, projectId);
+                mDB.insert(DB_TASKS_TABLE, null, cv);
+            }
+        } catch (Exception e) {
+            Log.e("DBTask copy", "bad copy argument", e);
+        }
     }
 
     void delete(int taskId) {
@@ -92,6 +101,13 @@ public class DBTask {
 
     void moveToBuffer(int taskId) {
         move(taskId, BUFFER_ID);
+    }
+
+    void moveBufferToProject(int projectId) {
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_PROJECT_ID, projectId);
+        mDB.update(DB_TASKS_TABLE, values,
+                COLUMN_PROJECT_ID + " = ?", new String[] {Integer.toString(BUFFER_ID)});
     }
 
     Cursor getAllByTech(String techName) {
