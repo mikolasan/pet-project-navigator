@@ -36,10 +36,13 @@ public class TaskActivity extends AppCompatActivity implements PetDialogListener
     EditText eLinks;
     EditText eTime;
 
-    SimpleCursorAdapter spinnerAdapter;
+    SimpleCursorAdapter techAdapter;
     SimpleCursorAdapter typeAdapter;
     private Spinner sTech;
     private Spinner sType;
+
+    private int currentTechId = PetDatabase.TECH_UNDEFINED_ID;
+    private int currentTypeId = PetDatabase.TYPE_UNDEFINED_ID;
 
     FragmentTransaction fragmentTransaction;
 
@@ -81,8 +84,8 @@ public class TaskActivity extends AppCompatActivity implements PetDialogListener
     }
 
     private void updateTechList() {
-        if (spinnerAdapter != null) {
-            spinnerAdapter.swapCursor(petDatabase.getAllTech());
+        if (techAdapter != null) {
+            techAdapter.swapCursor(petDatabase.getAllTech());
         }
     }
 
@@ -162,7 +165,7 @@ public class TaskActivity extends AppCompatActivity implements PetDialogListener
         petTask.setName(eName.getText().toString());
         petTask.setLinks(eLinks.getText().toString());
         petTask.setStatement(eDesc.getText().toString());
-        petTask.setTech(getSelectedItemDBId(sTech, spinnerAdapter));
+        petTask.setTech(getSelectedItemDBId(sTech, techAdapter));
         String timeStr = eTime.getText().toString();
         int time = 0;
         if (!timeStr.isEmpty()) time = Integer.parseInt(timeStr);
@@ -180,29 +183,42 @@ public class TaskActivity extends AppCompatActivity implements PetDialogListener
         TaskActivity.this.finish();
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_task);
+    private void completeTask() {
 
-        petDatabase = PetDatabase.getOpenedInstance();
+    }
 
+    private void deleteTask() {
+        petDatabase.dbTask.delete(petTask.getTaskId());
+        TaskActivity.this.finish();
+    }
+
+    private void moveOutTask() {
+        petDatabase.dbTask.moveToBuffer(petTask.getTaskId());
+        TaskActivity.this.finish();
+    }
+
+    private void createTechControls() {
         sTech = (Spinner) findViewById(R.id.s_tech);
-        sType = (Spinner) findViewById(R.id.s_type);
-        spinnerAdapter = fillList(sTech, petDatabase.getAllTech());
-        typeAdapter = fillList(sType, petDatabase.getAllTypes());
-
-        /*
+        techAdapter = fillList(sTech, petDatabase.getAllTech());
         final Button btn_add_tech = (Button) findViewById(R.id.btn_add_tech);
         btn_add_tech.setOnClickListener(v -> {
             hideTechDialog();
             openTechDialog();
         });
-*/
+
         final Button btn_delete_tech = (Button) findViewById(R.id.btn_delete_tech);
         btn_delete_tech.setOnClickListener(v -> {
-            //TODO
+            if (currentTechId != PetDatabase.TECH_UNDEFINED_ID) {
+                petDatabase.deleteTech(Integer.toString(currentTechId));
+                updateTechList();
+                sTech.setSelection(0);
+            }
         });
+    }
+
+    private void createTypeControls() {
+        sType = (Spinner) findViewById(R.id.s_type);
+        typeAdapter = fillList(sType, petDatabase.getAllTypes());
 
         final Button btn_add_type = (Button) findViewById(R.id.btn_add_type);
         btn_add_type.setOnClickListener(v -> {
@@ -212,26 +228,33 @@ public class TaskActivity extends AppCompatActivity implements PetDialogListener
 
         final Button btn_delete_type = (Button) findViewById(R.id.btn_delete_type);
         btn_delete_type.setOnClickListener(v -> {
-            //TODO
+            // !TODO
+            //petDatabase.deleteType(Integer.toString(currentTypeId));
         });
+    }
 
-        Button btnSaveTask = (Button) findViewById(R.id.btn_save_task);
+    private void createLabels() {
         eName = (EditText) findViewById(R.id.e_name);
         eDesc = (EditText) findViewById(R.id.e_desc);
         eLinks = (EditText) findViewById(R.id.e_links);
         eTime = (EditText) findViewById(R.id.e_time);
+    }
 
-        btnSaveTask.setOnClickListener(v -> {
-            saveTaskAndClose();
-        });
-
-        final Toolbar petToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(petToolbar);
-        // Get a support ActionBar corresponding to this toolbar
-        ActionBar ab = getSupportActionBar();
-
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_task);
+        petDatabase = PetDatabase.getOpenedInstance();
+        createTechControls();
+        createTypeControls();
+        createLabels();
+        findViewById(R.id.btn_complete_task).setOnClickListener(view -> completeTask());
+        findViewById(R.id.btn_delete_task).setOnClickListener(view -> deleteTask());
+        findViewById(R.id.btn_out_task).setOnClickListener(view -> moveOutTask());
+        findViewById(R.id.btn_save_task).setOnClickListener(view -> saveTaskAndClose());
+        setSupportActionBar(findViewById(R.id.toolbar));
         // Enable the Up button
-        ab.setDisplayHomeAsUpEnabled(true);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -245,11 +268,7 @@ public class TaskActivity extends AppCompatActivity implements PetDialogListener
                 Cursor cursor = (Cursor) parentView.getItemAtPosition(position);
                 int index = cursor.getColumnIndex(PetDatabase.COLUMN_ID);
                 int tech_id = cursor.getInt(index);
-                switch (tech_id) {
-                    case PetDatabase.TECH_UNDEFINED_ID: {
-                        break;
-                    }
-                }
+                currentTechId = tech_id;
             }
 
             @Override
@@ -266,11 +285,7 @@ public class TaskActivity extends AppCompatActivity implements PetDialogListener
                 Cursor cursor = (Cursor) parentView.getItemAtPosition(position);
                 int index = cursor.getColumnIndex(PetDatabase.COLUMN_ID);
                 int type_id = cursor.getInt(index);
-                switch (type_id) {
-                    case PetDatabase.TYPE_UNDEFINED_ID: {
-                        break;
-                    }
-                }
+                currentTypeId = type_id;
             }
 
             @Override
@@ -318,7 +333,7 @@ public class TaskActivity extends AppCompatActivity implements PetDialogListener
         petDatabase.addTech(result);
         hideTechDialog();
         updateTechList();
-        selectItem(result, sTech, spinnerAdapter);
+        selectItem(result, sTech, techAdapter);
     }
 
     public void typeCallback(View view, String result) {
