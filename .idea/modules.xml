@@ -6,6 +6,7 @@
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/drag-sort-listview/library/drag-listview-library.iml" filepath="$PROJECT_DIR$/drag-sort-listview/library/drag-listview-library.iml" />
       <module fileurl="file://$PROJECT_DIR$/DragListView/library/library.iml" filepath="$PROJECT_DIR$/DragListView/library/library.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pet-project-navigator.iml" filepath="$PROJECT_DIR$/pet-project-navigator.iml" />
     </modules>
   </component>
 </project>
