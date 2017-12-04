@@ -23,6 +23,7 @@ import com.google.android.gms.drive.MetadataChangeSet;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 
 /**
@@ -82,7 +83,7 @@ public class PetDriveCommunicator implements ConnectionCallbacks, OnConnectionFa
 
     private String getFileName() {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd--HH-mm-ss", Locale.US);
-        String date = simpleDateFormat.toString();
+        String date = simpleDateFormat.format(new Date());
         return "pet-project-navigator-backup" + date + ".json";
     }
 

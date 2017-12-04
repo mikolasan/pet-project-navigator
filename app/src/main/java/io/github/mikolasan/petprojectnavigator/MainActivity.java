@@ -14,7 +14,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Toast;
 
-import java.io.IOException;
+import java.io.FileNotFoundException;
 
 import static io.github.mikolasan.petprojectnavigator.BackupManager.readBackupFile;
 
@@ -170,13 +170,13 @@ public class MainActivity extends AppCompatActivity {
     private void readAndRestore(final Intent data) {
         // Get the URI of the selected file
         try {
-            String json = readBackupFile(data.getData());
+            String json = readBackupFile(this, data.getData());
             if (petDatabase.restore(json)) {
                 Toast.makeText(this, "DB restored", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, "Failed to restore", Toast.LENGTH_SHORT).show();
             }
-        } catch (IOException e) {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
