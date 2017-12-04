@@ -155,27 +155,29 @@ public class MainActivity extends AppCompatActivity {
             case REQUEST_CODE_CREATOR:
                 // Called after a file is saved to Drive.
                 if (resultCode == RESULT_OK) {
-                    //! TODO
+                    Toast.makeText(getApplicationContext(), "Saved on Google drive", Toast.LENGTH_SHORT).show();
                 }
                 break;
             case REQUEST_CODE_RESTORE_FILE:
-                if(resultCode == RESULT_OK) {
-                    if (data != null) {
-                        // Get the URI of the selected file
-                        try {
-                            String json = readBackupFile(data.getData());
-                            if (petDatabase.restore(json)) {
-                                Toast.makeText(this, "DB restored", Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(this, "Failed to restore", Toast.LENGTH_SHORT).show();
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Bad data", Toast.LENGTH_SHORT).show();
-                    }
+                if(resultCode == RESULT_OK && data != null) {
+                    readAndRestore(data);
+                } else {
+                    Toast.makeText(getApplicationContext(), "Bad data", Toast.LENGTH_SHORT).show();
                 }
+        }
+    }
+
+    private void readAndRestore(final Intent data) {
+        // Get the URI of the selected file
+        try {
+            String json = readBackupFile(data.getData());
+            if (petDatabase.restore(json)) {
+                Toast.makeText(this, "DB restored", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Failed to restore", Toast.LENGTH_SHORT).show();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

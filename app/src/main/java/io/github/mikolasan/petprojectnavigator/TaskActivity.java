@@ -129,6 +129,57 @@ public class TaskActivity extends AppCompatActivity implements PetDialogListener
         return 0;
     }
 
+    private void fillTask(Intent intent, int status) {
+        petTask = new PetTask();
+        petTask.setProjectId(intent.getIntExtra("project_id", 0));
+        petTask.setTaskId(intent.getIntExtra("task_id", 0));
+        if (STATUS_EDIT == status) {
+            petTask.setName(intent.getStringExtra("title"));
+            petTask.setLinks(intent.getStringExtra("links"));
+            petTask.setStatement(intent.getStringExtra("statement"));
+            petTask.setTech(intent.getIntExtra("tech_id", 0));
+            petTask.setType(intent.getIntExtra("type_id", 0));
+            petTask.setTime(intent.getIntExtra("time", 0));
+        }
+    }
+
+    private void fillLabels(PetTask petTask, int status) {
+        if (STATUS_EDIT == status) {
+            eName.setText(petTask.getName());
+            eLinks.setText(petTask.getLinks());
+            eDesc.setText(petTask.getStatement());
+            if (sTech.getCount() > petTask.getTech()) {
+                sTech.setSelection(petTask.getTech());
+            }
+            if (sType.getCount() > petTask.getType()) {
+                sType.setSelection(petTask.getType());
+            }
+            eTime.setText(String.format(Locale.US, "%d", petTask.getTime()));
+        }
+    }
+
+    private void parseLabels() {
+        petTask.setName(eName.getText().toString());
+        petTask.setLinks(eLinks.getText().toString());
+        petTask.setStatement(eDesc.getText().toString());
+        petTask.setTech(getSelectedItemDBId(sTech, spinnerAdapter));
+        String timeStr = eTime.getText().toString();
+        int time = 0;
+        if (!timeStr.isEmpty()) time = Integer.parseInt(timeStr);
+        petTask.setTime(time);
+        petTask.setType(getSelectedItemDBId(sType, typeAdapter));
+    }
+
+    private void saveTask() {
+        parseLabels();
+        petDatabase.dbTask.add(petTask);
+    }
+
+    private void saveTaskAndClose() {
+        saveTask();
+        TaskActivity.this.finish();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -171,17 +222,7 @@ public class TaskActivity extends AppCompatActivity implements PetDialogListener
         eTime = (EditText) findViewById(R.id.e_time);
 
         btnSaveTask.setOnClickListener(v -> {
-            petTask.setName(eName.getText().toString());
-            petTask.setLinks(eLinks.getText().toString());
-            petTask.setStatement(eDesc.getText().toString());
-            petTask.setTech(getSelectedItemDBId(sTech, spinnerAdapter));
-            String timeStr = eTime.getText().toString();
-            int time = 0;
-            if (!timeStr.isEmpty()) time = Integer.parseInt(timeStr);
-            petTask.setTime(time);
-            petTask.setType(getSelectedItemDBId(sType, typeAdapter));
-            petDatabase.dbTask.add(petTask);
-            TaskActivity.this.finish();
+            saveTaskAndClose();
         });
 
         final Toolbar petToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -241,43 +282,8 @@ public class TaskActivity extends AppCompatActivity implements PetDialogListener
 
         Intent intent = getIntent();
         int status = intent.getIntExtra("status", STATUS_NEW);
-        petTask = new PetTask();
-        petTask.setProjectId(intent.getIntExtra("project_id", 0));
-        petTask.setTaskId(intent.getIntExtra("task_id", 0));
-        switch  (status) {
-            case STATUS_NEW: {
-                break;
-            }
-            case STATUS_EDIT: {
-                String str = intent.getStringExtra("title");
-                eName.setText(str);
-                petTask.setName(str);
-
-                str = intent.getStringExtra("links");
-                eLinks.setText(str);
-                petTask.setLinks(str);
-
-                str = intent.getStringExtra("statement");
-                eDesc.setText(str);
-                petTask.setStatement(str);
-
-                int techId = intent.getIntExtra("tech_id", 0);
-                sTech.setSelection(techId);
-                petTask.setTech(techId);
-
-                int typeId = intent.getIntExtra("type_id", 0);
-                sType.setSelection(typeId);
-                petTask.setType(typeId);
-
-                int taskTime = intent.getIntExtra("time", 0);
-                eTime.setText(String.format(Locale.US, "%d", taskTime));
-                petTask.setTime(taskTime);
-                break;
-            }
-            default: {
-                break;
-            }
-        }
+        fillTask(intent, status);
+        fillLabels(petTask, status);
     }
 
     // Menu icons are inflated just as they were with actionbar
@@ -296,6 +302,7 @@ public class TaskActivity extends AppCompatActivity implements PetDialogListener
                 return true;
 
             case R.id.action_save_task:
+                saveTask();
                 return true;
 
             default:
