@@ -18,7 +18,7 @@ class PetMainPager {
 
     private PetPagerAdapter pagerAdapter;
     private ViewPager pager;
-    private ListView listView;
+    private ListView navigationView;
     private BottomNavigationView bottomNavigationView;
     private SearchView searchView;
     private MenuItem prevMenuItem;
@@ -95,14 +95,13 @@ class PetMainPager {
         pager.addOnPageChangeListener(new PetPageChangeListener());
 
         DrawerLayout drawerLayout = (DrawerLayout) activity.findViewById(R.id.drawer_layout);
-        listView = (ListView) activity.findViewById(R.id.left_drawer);
+        navigationView = (ListView) activity.findViewById(R.id.left_drawer);
         // Set the adapter for the list view
-        listView.setAdapter(new ArrayAdapter<>(activity,
-                R.layout.drawer_list_item, activity.getResources().getStringArray(R.array.menu_list)));
+        navigationView.setAdapter(new PetMenuAdapter(activity));
         // Set the list's click listener
-        listView.setOnItemClickListener((parent, view, position, id) -> {
+        navigationView.setOnItemClickListener((parent, view, position, id) -> {
             clickListener.onItemClick(parent, view, position, id);
-            drawerLayout.closeDrawer(listView);
+            drawerLayout.closeDrawer(navigationView);
         });
     }
 
@@ -161,7 +160,7 @@ class PetMainPager {
 
     public void selectPage(int pageId, int listItemId) {
         pager.setCurrentItem(pageId);
-        listView.setItemChecked(listItemId, true);
+        navigationView.setItemChecked(listItemId, true);
         if (prevMenuItem != null) {
             prevMenuItem.setChecked(false);
         } else {
