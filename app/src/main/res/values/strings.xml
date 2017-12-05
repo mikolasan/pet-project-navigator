@@ -11,7 +11,7 @@
     <string name="btn_add_project">Ещё проект</string>
     <string name="btn_save_project">Сохранить</string>
     <string name="btn_delete_project">Удалить</string>
-    <string name="btn_backup_project">Забэкапить</string>
+    <string name="btn_backup">Забэкапить</string>
     <string name="btn_restore_local">Загрузить</string>
     <string name="btn_to_cloud">Заоблачить</string>
     <string name="btn_restore">Восстановить</string>
@@ -21,6 +21,7 @@
     <string name="btn_complete_task">Завершить</string>
     <string name="btn_out_task">Выкинуть из проекта</string>
     <string name="btn_combine_buffer">Собрать таски в проект</string>
+    <string name="btn_settings">Настройки</string>
     <string name="project_lbl_name">Название</string>
     <string name="project_lbl_task">Задачи</string>
     <string name="project_lbl_tech">Технологии</string>
@@ -49,14 +50,26 @@
     <string name="chooser_title">Select a DB backup file"</string>
     <string name="title_activity_task_list">TaskListActivity</string>
     <string-array name="menu_list">
+        <item />
         <item>@string/bottom_menu_projects</item>
         <item>@string/bottom_menu_tasks</item>
         <item>@string/bottom_menu_buffer</item>
-        <item>@string/btn_backup_project</item>
-        <item>@string/btn_restore_local</item>
-        <item>@string/btn_to_cloud</item>
+        <item />
+        <item>@string/btn_backup</item>
         <item>@string/btn_restore</item>
-
+        <item />
+        <item>@string/btn_settings</item>
+    </string-array>
+    <string-array name="image_list">
+        <item />
+        <item>ic_projects</item>
+        <item>ic_tasks</item>
+        <item>ic_buffer</item>
+        <item />
+        <item>ic_upload</item>
+        <item>ic_restore</item>
+        <item />
+        <item>ic_settings</item>
     </string-array>
     <string name="criterion_chooser">Поиск по...</string>
     <string name="criterion_tech">Поиск по технологии</string>
@@ -65,4 +78,5 @@
     <string name="criterion_time">Поиск по времени</string>
     <string name="sample_buffer_title">Буффер</string>
     <string name="sample_buffer_desc">Проект из буферных тасков</string>
+    <string name="header_file_path">"@drawable/ic_header"</string>
 </resources>
