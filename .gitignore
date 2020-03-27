@@ -45,6 +45,7 @@ proguard/
 /.idea/vcs.xml
 /.idea/workspace.xml
 /.idea/libraries
+/.idea/caches
 
 # OSX files
 .DS_Store
