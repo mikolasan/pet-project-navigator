@@ -1,6 +1,5 @@
 package io.github.mikolasan.petprojectnavigator;
 
-
 import android.content.Context;
 import android.database.Cursor;
 import android.view.View;

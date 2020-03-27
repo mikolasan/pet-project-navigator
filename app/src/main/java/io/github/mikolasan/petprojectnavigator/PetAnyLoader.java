@@ -4,11 +4,12 @@ package io.github.mikolasan.petprojectnavigator;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.loader.content.CursorLoader;
+import androidx.cursoradapter.widget.CursorAdapter;
 
 import com.mobeta.android.dslv.DragSortCursorAdapter;
 

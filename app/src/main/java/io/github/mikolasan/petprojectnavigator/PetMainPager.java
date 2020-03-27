@@ -1,12 +1,11 @@
 package io.github.mikolasan.petprojectnavigator;
 
-import android.support.design.widget.BottomNavigationView;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import androidx.core.view.MenuItemCompat;
+import androidx.viewpager.widget.ViewPager;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SearchView;
 

@@ -1,9 +1,9 @@
 package io.github.mikolasan.petprojectnavigator;
 
 import android.content.Context;
-import android.support.design.internal.BottomNavigationItemView;
-import android.support.design.internal.BottomNavigationMenuView;
-import android.support.design.widget.BottomNavigationView;
+import com.google.android.material.bottomnavigation.BottomNavigationItemView;
+import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
@@ -43,7 +43,7 @@ public class PetBottomNavigationView extends BottomNavigationView {
                 ImageView icon = (ImageView) menuItemView.findViewById(R.id.icon);
                 FrameLayout.LayoutParams params = (LayoutParams) icon.getLayoutParams();
                 params.gravity = Gravity.CENTER;
-                menuItemView.setShiftingMode(true);
+                //menuItemView.setShiftingMode(true);
             }
         }
     }
