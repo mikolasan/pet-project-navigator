@@ -1,11 +1,26 @@
 # Pet project navigator
 
-[![codebeat badge][codebeat_badge_link]][codebeat_link] 
-[![Codacy Badge][codacy_badge_link]][codacy_link]
+**Pet project navigator** is my own pet project for Android. It is a navigator for other pet projects. 
 
-[![Code Climate][codeclimate_badge_link]][codeclimate_link]
+It's just another todo list.
 
-My pet project for Android. It is a navigator for other pet projects.
+Code quality | Badge
+-------------|------
+Codebeat | [![codebeat badge][codebeat_badge_link]][codebeat_link] 
+Codacy | [![Codacy Badge][codacy_badge_link]][codacy_link]
+Code Climate | [![Code Climate][codeclimate_badge_link]][codeclimate_link]
+
+## Website / screenshots
+
+https://mikolasan.github.io/projects/pet-project-navigator
+
+## For developers
+
+```
+git clone https://github.com/mikolasan/pet-project-navigator.git
+cd pet-project-navigator
+git submodule update --init
+```
 
 [codebeat_link]: https://codebeat.co/projects/github-com-mikolasan-pet-project-navigator
 [codebeat_badge_link]: https://codebeat.co/badges/bfc58f6b-d11f-4a70-8dba-e002248dd500
