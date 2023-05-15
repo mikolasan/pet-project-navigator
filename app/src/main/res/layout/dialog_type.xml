@@ -10,12 +10,11 @@
         android:id="@+id/lbl_add_type" />
 
     <EditText
+        android:id="@+id/e_type_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:text="@string/new_type_sample"
         android:ems="10"
-        android:id="@+id/e_type_name" />
+        android:inputType="textPersonName" />
 
     <Button
         android:text="@string/new_type_ok"

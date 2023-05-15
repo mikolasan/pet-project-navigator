@@ -5,27 +5,28 @@ import android.net.Uri;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 class BackupManager {
-    private static final String OPEN_FILE_TAG = "open-file-dialog";
+    private static final int bufferSize = 1024;
+    private static final String charsetName = StandardCharsets.UTF_8.name();
 
     private static String inputToString(InputStream inputStream) {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        int i;
+        String result = "";
         try {
-            i = inputStream.read();
-            while (i != -1) {
-                byteArrayOutputStream.write(i);
-                i = inputStream.read();
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            byte[] buffer = new byte[bufferSize];
+            int length;
+            while ((length = inputStream.read(buffer)) != -1) {
+                byteArrayOutputStream.write(buffer, 0, length);
             }
             inputStream.close();
-        } catch (IOException e) {
+            result = byteArrayOutputStream.toString(charsetName);
+        } catch (Exception e) {
             e.printStackTrace();
-            return "";
         }
-        return byteArrayOutputStream.toString();
+        return result;
     }
 
     static String readBackupFile(Context context, Uri uri) throws FileNotFoundException {

@@ -18,6 +18,7 @@ import java.io.FileNotFoundException;
 
 import static io.github.mikolasan.petprojectnavigator.BackupManager.readBackupFile;
 
+// If you want the backported Material Design look, use AppCompatActivity
 public class MainActivity extends AppCompatActivity {
 
     private PetDatabase petDatabase;
@@ -151,6 +152,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case REQUEST_CODE_CREATOR:
                 // Called after a file is saved to Drive.
@@ -159,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case REQUEST_CODE_RESTORE_FILE:
-                if(resultCode == RESULT_OK && data != null) {
+                if (resultCode == RESULT_OK && data != null) {
                     readAndRestore(data);
                 } else {
                     Toast.makeText(getApplicationContext(), "Bad data", Toast.LENGTH_SHORT).show();

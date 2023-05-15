@@ -1,37 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/panelAccentBack"
+    android:orientation="vertical">
 
     <TextView
-        android:text="@string/sample_task_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:id="@+id/lbl_title"
-        android:paddingBottom="2dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="15dp"
         android:paddingTop="12dp"
-        android:paddingLeft="15dp"
         android:paddingRight="15dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
+        android:paddingBottom="2dp"
+        android:text="@string/sample_task_title"
+        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+        android:textColor="@color/whiteFont" />
+
     <TextView
-        android:text="@string/sample_task_time"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:id="@+id/lbl_time"
-        android:paddingBottom="0dp"
-        android:paddingTop="0dp"
-        android:paddingLeft="15dp"
-        android:paddingRight="0dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
-    <TextView
-        android:text="@string/sample_task_tech"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/lbl_tech"
-        android:paddingBottom="5dp"
-        android:paddingTop="2dp"
         android:paddingLeft="15dp"
+        android:paddingTop="0dp"
+        android:paddingRight="0dp"
+        android:paddingBottom="0dp"
+        android:text="@string/sample_task_time"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@color/whiteFont" />
+
+    <TextView
+        android:id="@+id/lbl_tech"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="15dp"
+        android:paddingTop="2dp"
         android:paddingRight="15dp"
-        android:textStyle="normal|italic"
-        android:textAllCaps="true" />
+        android:paddingBottom="5dp"
+        android:text="@string/sample_task_tech"
+        android:textAllCaps="true"
+        android:textColor="@color/whiteFont"
+        android:textStyle="normal|italic" />
 </LinearLayout>

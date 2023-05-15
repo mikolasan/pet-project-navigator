@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="white">#DCE1DE</color>
+    <color name="white">#F2F4F3</color>
     <color name="black">#1F2421</color>
     <color name="colorPrimary">#49A078</color>
     <color name="colorPrimaryDark">#1F2421</color>
     <color name="colorAccent">#216869</color>
+
+    <color name="buttonBack">#9DB5B2</color>
+    <color name="buttonAccentBack">#EC4067</color>
+    <color name="panelBack">#1C2A31</color>
+    <color name="panelAccentBack">#22333B</color>
+    <color name="blackFont">#2A2B2E</color>
+    <color name="whiteFont">#F2F4F3</color>
 </resources>

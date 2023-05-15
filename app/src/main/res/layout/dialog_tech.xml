@@ -10,12 +10,12 @@
         android:id="@+id/lbl_add_tech" />
 
     <EditText
+        android:id="@+id/e_tech_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:text="@string/new_tech_sample"
         android:ems="10"
-        android:id="@+id/e_tech_name" />
+        android:hint="@string/new_tech_sample"
+        android:inputType="textPersonName" />
 
     <Button
         android:text="@string/new_tech_ok"
