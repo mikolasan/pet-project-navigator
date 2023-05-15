@@ -52,11 +52,11 @@ dependencies {
     implementation project(path: ':drag-listview-library')
 
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.android.support:multidex:1.0.3'
-    implementation 'com.google.android.material:material:1.9.0'
     // https://mvnrepository.com/artifact/commons-codec/commons-codec
     implementation 'commons-codec:commons-codec:1.15'
+    implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.google.android.gms:play-services-drive:17.0.0'
+    implementation 'com.google.android.material:material:1.9.0'
 
     testImplementation 'junit:junit:4.13.2'
 }

@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         mainPager.setButtonListeners(this);
         mainPager.setOnItemClickListener(new MainOnItemClickListener());
 
-        final Toolbar petToolbar = (Toolbar) findViewById(R.id.toolbar);
+        final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(petToolbar);
         // Get a support ActionBar corresponding to this toolbar
         ActionBar ab = getSupportActionBar();
