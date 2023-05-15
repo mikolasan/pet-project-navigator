@@ -2,10 +2,19 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/drag-sort-listview/library/drag-listview-library.iml" filepath="$PROJECT_DIR$/drag-sort-listview/library/drag-listview-library.iml" />
-      <module fileurl="file://$PROJECT_DIR$/DragListView/library/library.iml" filepath="$PROJECT_DIR$/DragListView/library/library.iml" />
       <module fileurl="file://$PROJECT_DIR$/pet-project-navigator.iml" filepath="$PROJECT_DIR$/pet-project-navigator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/pet-project-navigator.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/pet-project-navigator.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/pet-project-navigator.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/pet-project-navigator.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/pet-project-navigator.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/pet-project-navigator.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/pet-project-navigator.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/pet-project-navigator.app.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/drag-sort-listview/library/pet-project-navigator.drag-listview-library.iml" filepath="$PROJECT_DIR$/.idea/modules/drag-sort-listview/library/pet-project-navigator.drag-listview-library.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/drag-sort-listview/library/pet-project-navigator.drag-listview-library.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/drag-sort-listview/library/pet-project-navigator.drag-listview-library.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/drag-sort-listview/library/pet-project-navigator.drag-listview-library.main.iml" filepath="$PROJECT_DIR$/.idea/modules/drag-sort-listview/library/pet-project-navigator.drag-listview-library.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/drag-sort-listview/library/pet-project-navigator.drag-listview-library.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/drag-sort-listview/library/pet-project-navigator.drag-listview-library.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DragListView/library/pet-project-navigator.library.iml" filepath="$PROJECT_DIR$/.idea/modules/DragListView/library/pet-project-navigator.library.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DragListView/library/pet-project-navigator.library.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/DragListView/library/pet-project-navigator.library.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DragListView/library/pet-project-navigator.library.main.iml" filepath="$PROJECT_DIR$/.idea/modules/DragListView/library/pet-project-navigator.library.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DragListView/library/pet-project-navigator.library.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/DragListView/library/pet-project-navigator.library.unitTest.iml" />
     </modules>
   </component>
 </project>

@@ -11,12 +11,14 @@ def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
-    compileSdkVersion 29
+    namespace 'io.github.mikolasan.petprojectnavigator'
+
+    compileSdkVersion 33
 
     defaultConfig {
         applicationId "io.github.mikolasan.petprojectnavigator"
         minSdkVersion 19
-        targetSdkVersion 29
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
     }
@@ -48,11 +50,11 @@ dependencies {
     implementation project(path: ':library')
     implementation project(path: ':drag-listview-library')
 
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.9.0'
     // https://mvnrepository.com/artifact/commons-codec/commons-codec
     implementation group: 'commons-codec', name: 'commons-codec', version: '1.13'
     implementation 'com.google.android.gms:play-services-drive:17.0.0'
 
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13.2'
 }

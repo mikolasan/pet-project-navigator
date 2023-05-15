@@ -9,19 +9,31 @@
 
     <application
         android:name=".AndroidClient"
-        android:allowBackup="false"
+        android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:supportsRtl="true"
+        android:supportsRtl="false"
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
             android:label="@string/title_main_activity"
-            android:configChanges="orientation|screenSize">
+            android:configChanges="layoutDirection"
+            android:exported="true">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme="https"
+                    android:host="mikolasan.github.io"
+                    android:pathPrefix="/projects/pet-project-navigator" />
             </intent-filter>
         </activity>
         <activity
@@ -29,23 +41,13 @@
             android:label="@string/title_project_activity"
             android:parentActivityName=".MainActivity"
             android:configChanges="orientation|screenSize"
-            android:windowSoftInputMode="stateUnchanged">
-            <!-- Parent activity meta-data to support 4.0 and lower -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
-        </activity>
+            android:windowSoftInputMode="stateUnchanged" />
         <activity
             android:name=".TaskActivity"
             android:label="@string/title_task_activity"
             android:parentActivityName=".ProjectActivity"
             android:configChanges="orientation|screenSize"
-            android:windowSoftInputMode="stateUnchanged">
-            <!-- Parent activity meta-data to support 4.0 and lower -->
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ProjectActivity" />
-        </activity>
+            android:windowSoftInputMode="stateUnchanged" />
     </application>
 
 </manifest>
