@@ -309,21 +309,15 @@ public class TaskActivity extends AppCompatActivity implements PetDialogListener
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_settings:
-                // User chose the "Settings" item, show the app settings UI...
-                return true;
-
-            case R.id.action_save_task:
-                saveTask();
-                return true;
-
-            default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
-                return super.onOptionsItemSelected(item);
-
-        }
+        int itemId = item.getItemId();
+        if (itemId == R.id.action_settings) {// User chose the "Settings" item, show the app settings UI...
+            return true;
+        } else if (itemId == R.id.action_save_task) {
+            saveTask();
+            return true;
+        }// If we got here, the user's action was not recognized.
+        // Invoke the superclass to handle it.
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

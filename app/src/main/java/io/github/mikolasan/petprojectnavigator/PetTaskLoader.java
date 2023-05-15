@@ -1,5 +1,6 @@
 package io.github.mikolasan.petprojectnavigator;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.view.View;
@@ -22,17 +23,14 @@ class PetTaskLoader extends PetAnyLoader {
                 return petDatabase.dbTask.getAll();
             } else {
                 int criterion = super.getArgs().getInt("criterion", 0);
-                switch (criterion) {
-                    case R.id.criterion_name:
-                        return petDatabase.dbTask.getAllByName(query);
-                    case R.id.criterion_desc:
-                        return petDatabase.dbTask.getAllByDesc(query);
-                    case R.id.criterion_time:
-                        return petDatabase.dbTask.getAllByTime(query);
-                    case R.id.criterion_tech:
-                    default:
-                        return petDatabase.dbTask.getAllByTech(query);
+                if (criterion == R.id.criterion_name) {
+                    return petDatabase.dbTask.getAllByName(query);
+                } else if (criterion == R.id.criterion_desc) {
+                    return petDatabase.dbTask.getAllByDesc(query);
+                } else if (criterion == R.id.criterion_time) {
+                    return petDatabase.dbTask.getAllByTime(query);
                 }
+                return petDatabase.dbTask.getAllByTech(query);
             }
         } else {
             int projectId = super.getArgs().getInt("project_id", 0);
@@ -40,6 +38,7 @@ class PetTaskLoader extends PetAnyLoader {
         }
     }
 
+    @SuppressLint("Range")
     @Override
     protected void fillView(View view, Context context, Cursor cursor) {
         int totalTime = cursor.getInt(cursor.getColumnIndex(DBTask.COLUMN_TIME));

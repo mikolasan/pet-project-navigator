@@ -33,19 +33,19 @@ public class PetBottomNavigationView extends BottomNavigationView {
     }
 
     private void centerMenuIcon() {
-        BottomNavigationMenuView menuView = getBottomMenuView();
-        if (menuView != null) {
-            for (int i = 0; i < menuView.getChildCount(); i++) {
-                BottomNavigationItemView menuItemView = (BottomNavigationItemView) menuView.getChildAt(i);
-                TextView smallText = (TextView) menuItemView.findViewById(R.id.smallLabel);
-                smallText.setVisibility(View.INVISIBLE);
-                //TextView largeText = (TextView) menuItemView.findViewById(R.id.largeLabel);
-                ImageView icon = (ImageView) menuItemView.findViewById(R.id.icon);
-                FrameLayout.LayoutParams params = (LayoutParams) icon.getLayoutParams();
-                params.gravity = Gravity.CENTER;
-                //menuItemView.setShiftingMode(true);
-            }
-        }
+//        BottomNavigationMenuView menuView = getBottomMenuView();
+//        if (menuView != null) {
+//            for (int i = 0; i < menuView.getChildCount(); i++) {
+//                BottomNavigationItemView menuItemView = (BottomNavigationItemView) menuView.getChildAt(i);
+//                TextView smallText = (TextView) menuItemView.findViewById(R.id.smallLabel);
+//                smallText.setVisibility(View.INVISIBLE);
+//                //TextView largeText = (TextView) menuItemView.findViewById(R.id.largeLabel);
+//                ImageView icon = (ImageView) menuItemView.findViewById(R.id.icon);
+//                FrameLayout.LayoutParams params = (LayoutParams) icon.getLayoutParams();
+//                params.gravity = Gravity.CENTER;
+//                //menuItemView.setShiftingMode(true);
+//            }
+//        }
     }
 
     private BottomNavigationMenuView getBottomMenuView() {

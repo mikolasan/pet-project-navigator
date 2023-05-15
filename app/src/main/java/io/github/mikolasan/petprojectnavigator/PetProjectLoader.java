@@ -1,5 +1,6 @@
 package io.github.mikolasan.petprojectnavigator;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -29,20 +30,18 @@ class PetProjectLoader extends PetAnyLoader {
             return petDatabase.getAllProjects();
         } else {
             int criterion = super.getArgs().getInt("criterion", 0);
-            switch (criterion) {
-                case R.id.criterion_name:
-                    return petDatabase.getAllProjectsByName(query);
-                case R.id.criterion_desc:
-                    return petDatabase.getAllProjectsByDesc(query);
-                case R.id.criterion_time:
-                    return petDatabase.getAllProjectsByTime(query);
-                case R.id.criterion_tech:
-                default:
-                    return petDatabase.getAllProjectByTech(query);
+            if (criterion == R.id.criterion_name) {
+                return petDatabase.getAllProjectsByName(query);
+            } else if (criterion == R.id.criterion_desc) {
+                return petDatabase.getAllProjectsByDesc(query);
+            } else if (criterion == R.id.criterion_time) {
+                return petDatabase.getAllProjectsByTime(query);
             }
+            return petDatabase.getAllProjectByTech(query);
         }
     }
 
+    @SuppressLint("Range")
     @Override
     protected void fillView(View view, Context context, Cursor cursor) {
         int id = cursor.getColumnIndex(PetDatabase.COLUMN_ID);

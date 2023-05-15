@@ -76,16 +76,14 @@ public class PetPagerAdapter extends FragmentPagerAdapter {
     }
 
     public boolean onMenuItemActionCollapse(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_search:
-                clearSearch();
-                applyQuery(projectFragment, projectFragment.activityDataLoader, 0, "");
-                applyQuery(taskFragment, taskFragment.activityDataLoader, 0, "");
-                //applyQuery(bufferFragment, bufferFragment.activityDataLoader, 0, "");
-                return true;
-            default:
-                return false;
+        if (item.getItemId() == R.id.action_search) {
+            clearSearch();
+            applyQuery(projectFragment, projectFragment.activityDataLoader, 0, "");
+            applyQuery(taskFragment, taskFragment.activityDataLoader, 0, "");
+            //applyQuery(bufferFragment, bufferFragment.activityDataLoader, 0, "");
+            return true;
         }
+        return false;
     }
 
     private void clearSearch() {
@@ -96,13 +94,11 @@ public class PetPagerAdapter extends FragmentPagerAdapter {
     }
 
     public boolean onMenuItemActionExpand(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_search:
-                clearSearch();
-                return true;
-            default:
-                return false;
+        if (item.getItemId() == R.id.action_search) {
+            clearSearch();
+            return true;
         }
+        return false;
     }
 
     public String getSearchQuery(int page) {

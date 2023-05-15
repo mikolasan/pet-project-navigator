@@ -106,30 +106,20 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_settings:
-                // User chose the "Settings" item, show the app settings UI...
-                return true;
-
-            case R.id.action_add_project:
-                Intent intent = new Intent(getApplicationContext(), ProjectActivity.class);
-                intent.putExtra("status", ProjectActivity.STATUS_NEW);
-                startActivity(intent);
-                return true;
-
-            case R.id.criterion_tech:
-            case R.id.criterion_name:
-            case R.id.criterion_desc:
-            case R.id.criterion_time:
-                mainPager.setSearchCriterion(item.getItemId());
-                return true;
-
-            default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
-                return super.onOptionsItemSelected(item);
-
-        }
+        int itemId = item.getItemId();
+        if (itemId == R.id.action_settings) {// User chose the "Settings" item, show the app settings UI...
+            return true;
+        } else if (itemId == R.id.action_add_project) {
+            Intent intent = new Intent(getApplicationContext(), ProjectActivity.class);
+            intent.putExtra("status", ProjectActivity.STATUS_NEW);
+            startActivity(intent);
+            return true;
+        } else if (itemId == R.id.criterion_tech || itemId == R.id.criterion_name || itemId == R.id.criterion_desc || itemId == R.id.criterion_time) {
+            mainPager.setSearchCriterion(item.getItemId());
+            return true;
+        }// If we got here, the user's action was not recognized.
+        // Invoke the superclass to handle it.
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

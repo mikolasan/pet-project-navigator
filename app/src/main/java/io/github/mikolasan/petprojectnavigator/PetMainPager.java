@@ -26,6 +26,18 @@ class PetMainPager {
     private final int drawerOpenTasksPos = 1;
     private final int drawerOpenBufferPos = 2;
 
+    private boolean onNavigationItemSelected(MenuItem item) {
+        int itemId = item.getItemId();
+        if (itemId == R.id.action_projects) {
+            selectPage(PetPagerAdapter.PROJECTS_PAGE_ID, drawerOpenProjectsPos);
+        } else if (itemId == R.id.action_tasks) {
+            selectPage(PetPagerAdapter.TASKS_PAGE_ID, drawerOpenTasksPos);
+        } else if (itemId == R.id.action_buffer) {
+            selectPage(PetPagerAdapter.BUFFER_PAGE_ID, drawerOpenBufferPos);
+        }
+        return true;
+    }
+
     private class PetPageChangeListener implements ViewPager.OnPageChangeListener {
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -70,13 +82,11 @@ class PetMainPager {
         @Override
         public boolean onMenuItemActionCollapse(MenuItem item) {
             boolean result;
-            switch (item.getItemId()) {
-                case R.id.action_search:
-                    searchView.setQuery("", true);
-                    result = true;
-                    break;
-                default:
-                    result = false;
+            if (item.getItemId() == R.id.action_search) {
+                searchView.setQuery("", true);
+                result = true;
+            } else {
+                result = false;
             }
             return result && pagerAdapter.onMenuItemActionCollapse(item);
         }
@@ -139,22 +149,7 @@ class PetMainPager {
         bottomNavigationView = (BottomNavigationView)
                 activity.findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(
-                item -> {
-                    switch (item.getItemId()) {
-                        case R.id.action_projects:
-                            selectPage(PetPagerAdapter.PROJECTS_PAGE_ID, drawerOpenProjectsPos);
-                            break;
-                        case R.id.action_tasks:
-                            selectPage(PetPagerAdapter.TASKS_PAGE_ID, drawerOpenTasksPos);
-                            break;
-                        case R.id.action_buffer:
-                            selectPage(PetPagerAdapter.BUFFER_PAGE_ID, drawerOpenBufferPos);
-                            break;
-                        default:
-                            break;
-                    }
-                    return true;
-                });
+                this::onNavigationItemSelected);
     }
 
     public void selectPage(int pageId, int listItemId) {
