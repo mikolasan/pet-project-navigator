@@ -5,10 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import androidx.appcompat.app.ActionBar;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import android.view.Menu;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
+
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -42,8 +46,8 @@ public class MainActivity extends AppCompatActivity {
             mainPager.defineAction(position);
             switch (position) {
                 case drawerAddProjectPos:
-                    Intent intent = new Intent(getApplicationContext(), ProjectActivity.class);
-                    intent.putExtra("status", ProjectActivity.STATUS_NEW);
+                    Intent intent = new Intent(getApplicationContext(), ProjectFragment.class);
+                    intent.putExtra("status", ProjectFragment.STATUS_NEW);
                     startActivity(intent);
                     break;
                 case drawerBackupPos:
@@ -65,44 +69,44 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
         petDatabase = PetDatabase.getOpenedInstance();
         petDriveCommunicator = new PetDriveCommunicator(this);
-        setContentView(R.layout.activity_main);
+
         mainPager = new PetMainPager(this);
         mainPager.setButtonListeners(this);
         mainPager.setOnItemClickListener(new MainOnItemClickListener());
 
-        final Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(petToolbar);
-        // Get a support ActionBar corresponding to this toolbar
-        ActionBar ab = getSupportActionBar();
-        if (ab != null) {
-            ab.setDisplayHomeAsUpEnabled(true);
-        }
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        AppBarConfiguration appBarConfiguration =
+                new AppBarConfiguration.Builder(navController.getGraph()).build();
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        NavigationUI.setupWithNavController(
+                toolbar, navController, appBarConfiguration);
     }
 
-    private void createMenu(Menu menu) {
-        MenuItem combineItem = menu.findItem(R.id.combine_buffer);
-        combineItem.setOnMenuItemClickListener(item -> {
-            Intent intent = new Intent(this, ProjectActivity.class);
-            intent.putExtra("status", ProjectActivity.STATUS_BUFFER);
-            startActivity(intent);
-            return true;
-        });
-
-        MenuItem searchItem = menu.findItem(R.id.action_search);
-        mainPager.setupSearchItem(searchItem);
-    }
-
-    // Menu icons are inflated just as they were with actionbar
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.toolbar, menu);
-        createMenu(menu);
-        return super.onCreateOptionsMenu(menu);
-    }
+//    private void createMenu(Menu menu) {
+//        MenuItem combineItem = menu.findItem(R.id.combine_buffer);
+//        combineItem.setOnMenuItemClickListener(item -> {
+//            Intent intent = new Intent(this, ProjectActivity.class);
+//            intent.putExtra("status", ProjectActivity.STATUS_BUFFER);
+//            startActivity(intent);
+//            return true;
+//        });
+//
+//        MenuItem searchItem = menu.findItem(R.id.action_search);
+//        mainPager.setupSearchItem(searchItem);
+//    }
+//
+//    // Menu icons are inflated just as they were with actionbar
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        // Inflate the menu; this adds items to the action bar if it is present.
+//        getMenuInflater().inflate(R.menu.toolbar, menu);
+//        createMenu(menu);
+//        return super.onCreateOptionsMenu(menu);
+//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -110,8 +114,8 @@ public class MainActivity extends AppCompatActivity {
         if (itemId == R.id.action_settings) {// User chose the "Settings" item, show the app settings UI...
             return true;
         } else if (itemId == R.id.action_add_project) {
-            Intent intent = new Intent(getApplicationContext(), ProjectActivity.class);
-            intent.putExtra("status", ProjectActivity.STATUS_NEW);
+            Intent intent = new Intent(getApplicationContext(), ProjectFragment.class);
+            intent.putExtra("status", ProjectFragment.STATUS_NEW);
             startActivity(intent);
             return true;
         } else if (itemId == R.id.criterion_tech || itemId == R.id.criterion_name || itemId == R.id.criterion_desc || itemId == R.id.criterion_time) {

@@ -2,99 +2,184 @@ package io.github.mikolasan.petprojectnavigator;
 
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+
 import androidx.fragment.app.Fragment;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.Toast;
+import android.widget.EditText;
+import android.widget.ListView;
 
-import com.mobeta.android.dslv.DragSortListView;
+import java.net.URISyntaxException;
 
-import static io.github.mikolasan.petprojectnavigator.Tools.restartLoader;
-
-/**
- * Created by neupo on 4/25/2017.
- */
+import static io.github.mikolasan.petprojectnavigator.Tools.createTaskIntent;
 
 public class ProjectFragment extends Fragment {
+
+    public static final int STATUS_NEW = 0;
+    public static final int STATUS_EDIT = 1;
+    public static final int STATUS_BUFFER = 2;
+
     PetDatabase petDatabase;
-    public PetDataLoader<PetProjectLoader> activityDataLoader;
+    private PetDataLoader<PetTaskLoader> activityDataLoader;
+
+    EditText projectName;
+    EditText projectDesc;
+    Button btnDeleteProject;
+    ListView taskView;
+
+    private int status;
+    private int projectId;
 
     private void setButtonListeners(View v) {
-        final Button btn_add_project = (Button) v.findViewById(R.id.btn_add_project);
-        btn_add_project.setOnClickListener(v1 -> {
-            Intent intent = new Intent(getActivity(), ProjectActivity.class);
-            intent.putExtra("status", ProjectActivity.STATUS_NEW);
-            startActivity(intent);
+        final Button btn_add_task = (Button) v.findViewById(R.id.btn_add_task);
+        btn_add_task.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), TaskFragment.class);
+                intent.putExtra("status", TaskFragment.STATUS_NEW);
+                intent.putExtra("project_id", projectId);
+                startActivity(intent);
+            }
         });
+
+        final Button btn_add_project = (Button) v.findViewById(R.id.btn_add_project);
+        projectName = (EditText) v.findViewById(R.id.e_name);
+        projectDesc = (EditText) v.findViewById(R.id.e_desc);
+        btn_add_project.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String name = projectName.getText().toString();
+                String description = projectDesc.getText().toString();
+                switch (status) {
+                    case STATUS_NEW:
+                    {
+                        petDatabase.addProject(name, description);
+                        break;
+                    }
+                    case STATUS_EDIT:
+                    {
+                        petDatabase.saveProjectDetails(projectId, name, description);
+                        break;
+                    }
+                    case STATUS_BUFFER:
+                    {
+                        petDatabase.projectFromBuffer(name, description);
+                        break;
+                    }
+                }
+//                ProjectActivity.this.finish();
+            }
+        });
+
+        btnDeleteProject = (Button) v.findViewById(R.id.btn_delete_project);
+        btnDeleteProject.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                petDatabase.deleteProject(projectId);
+//                ProjectActivity.this.finish();
+            }
+        });
+
     }
 
-    private void initView(Context context, View v) {
-        final DragSortListView list = (DragSortListView) v.findViewById(R.id.project_view);
-        list.setOnItemClickListener((adapterView, view, i, l) -> {
-            Cursor c = (Cursor) list.getItemAtPosition(i);
-
-            int id_column = c.getColumnIndex(PetDatabase.COLUMN_ID);
-            int projectId = c.getInt(id_column);
-            int name_column = c.getColumnIndex(PetDatabase.COLUMN_NAME);
-            int desc_column = c.getColumnIndex(PetDatabase.COLUMN_DESC);
-
-            Intent intent = new Intent(context, ProjectActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.putExtra("status", ProjectActivity.STATUS_EDIT);
-            intent.putExtra("project_id", projectId);
-            intent.putExtra("title", c.getString(name_column));
-            intent.putExtra("description", c.getString(desc_column));
-            startActivity(intent);
+    private void initTaskView(View v) {
+        taskView = (ListView) v.findViewById(R.id.task_view);
+        taskView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = createTaskIntent(v.getContext(), taskView, i);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra("status", ProjectFragment.STATUS_EDIT);
+                intent.putExtra("project_id", projectId);
+                startActivity(intent);
+            }
         });
-
+        Context context = v.getContext();
         try {
-            activityDataLoader = new PetDataLoader<>(context, new PetProjectLoader(context, petDatabase), list);
-            getLoaderManager().initLoader(PetDataLoader.mainActivityId, null, activityDataLoader);
-            list.setDropListener((from, to) -> {
-                if (from != to) {
-                    activityDataLoader.onDropAction(from, to);
-                    Toast.makeText(getActivity(), "End - position: " + to, Toast.LENGTH_SHORT).show();
-                }
-            });
-
-            list.setRemoveListener(which -> {
-                activityDataLoader.onRemoveAction(which);
-                Toast.makeText(getActivity(), "Remove - position: " + which, Toast.LENGTH_SHORT).show();
-            });
-
+            activityDataLoader = new PetDataLoader<>(context, new PetTaskLoader(context, petDatabase), taskView);
+            Bundle args = new Bundle();
+            args.putBoolean("all_projects", false);
+            args.putInt("project_id", projectId);
+//            getSupportLoaderManager().initLoader(activityDataLoader.projectActivityId, args, activityDataLoader);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
     }
 
-    @Override
-    public void onAttach(Context context){
-        super.onAttach(context);
+    void updateTaskView() {
+        if (activityDataLoader != null) {
+            Bundle args = new Bundle();
+            args.putBoolean("all_projects", false);
+            args.putInt("project_id", projectId);
+//            getSupportLoaderManager().restartLoader(activityDataLoader.projectActivityId, args, activityDataLoader);
+        }
     }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        petDatabase = PetDatabase.getOpenedInstance();
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.activity_project_list, container, false);
-        initView(getActivity(), v);
+        View v = inflater.inflate(R.layout.project_fragment, container, false);
+
+        petDatabase = PetDatabase.getOpenedInstance();
         setButtonListeners(v);
+        initTaskView(v);
+
+        final BottomSheetBehavior bottomSheetBehavior;
+        final View view = v.findViewById(R.id.bottom_sheet_task);
+        bottomSheetBehavior = BottomSheetBehavior.from(view);
+        bottomSheetBehavior.setHideable(false);
+        bottomSheetBehavior.setPeekHeight(120);
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
         return v;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // TODO !!!
+        Intent intent = null;
+        try {
+            intent = Intent.getIntent("");
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+        status = intent.getIntExtra("status", STATUS_NEW);
+        switch  (status) {
+            case STATUS_NEW: {
+                btnDeleteProject.setVisibility(View.INVISIBLE);
+                break;
+            }
+            case STATUS_EDIT: {
+                btnDeleteProject.setVisibility(View.VISIBLE);
+                projectName.setText(intent.getStringExtra("title"));
+                projectDesc.setText(intent.getStringExtra("description"));
+                projectId = intent.getIntExtra("project_id", 0);
+                updateTaskView();
+                break;
+            }
+            case STATUS_BUFFER: {
+                btnDeleteProject.setVisibility(View.INVISIBLE);
+                projectName.setText(R.string.sample_buffer_title);
+                projectDesc.setText(R.string.sample_buffer_desc);
+                projectId = 0;
+                updateTaskView();
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        restartLoader(this, activityDataLoader, null);
+        updateTaskView();
     }
 }

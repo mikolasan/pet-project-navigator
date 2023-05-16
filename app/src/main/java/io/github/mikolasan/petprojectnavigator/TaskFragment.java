@@ -1,16 +1,10 @@
 package io.github.mikolasan.petprojectnavigator;
 
 import android.app.DialogFragment;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -19,9 +13,13 @@ import android.widget.EditText;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
+import java.net.URISyntaxException;
 import java.util.Locale;
 
-public class TaskActivity extends AppCompatActivity implements PetDialogListener {
+public class TaskFragment extends Fragment {
 
     public static final int STATUS_NEW = 0;
     public static final int STATUS_EDIT = 1;
@@ -53,14 +51,14 @@ public class TaskActivity extends AppCompatActivity implements PetDialogListener
     }
 
     private void hideDialog(String tag) {
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentTransaction = fragmentManager.beginTransaction();
-        Fragment prev = fragmentManager.findFragmentByTag(tag);
-        if (prev != null) {
-            ((DialogFragment)prev).dismiss();
-            fragmentTransaction.remove(prev);
-        }
-        fragmentTransaction.addToBackStack(null);
+//        FragmentManager fragmentManager = getFragmentManager();
+//        fragmentTransaction = fragmentManager.beginTransaction();
+//        Fragment prev = fragmentManager.findFragmentByTag(tag);
+//        if (prev != null) {
+//            ((DialogFragment)prev).dismiss();
+//            fragmentTransaction.remove(prev);
+//        }
+//        fragmentTransaction.addToBackStack(null);
     }
 
     private void openTechDialog() {
@@ -72,13 +70,13 @@ public class TaskActivity extends AppCompatActivity implements PetDialogListener
     }
 
     private void openDialog(String tag) {
-        if (tag.equals("TechNameDialogFragment")){
-            TechNameDialogFragment dialog = TechNameDialogFragment.newInstance(TaskActivity.this);
-            dialog.show(fragmentTransaction, tag);
-        } else {
-            TypeNameDialogFragment dialog = TypeNameDialogFragment.newInstance(TaskActivity.this);
-            dialog.show(fragmentTransaction, tag);
-        }
+//        if (tag.equals("TechNameDialogFragment")){
+//            TechNameDialogFragment dialog = TechNameDialogFragment.newInstance(TaskFragment.this);
+//            dialog.show(fragmentTransaction, tag);
+//        } else {
+//            TypeNameDialogFragment dialog = TypeNameDialogFragment.newInstance(TaskFragment.this);
+//            dialog.show(fragmentTransaction, tag);
+//        }
     }
 
     private void updateTechList() {
@@ -106,11 +104,11 @@ public class TaskActivity extends AppCompatActivity implements PetDialogListener
         }
     }
 
-    private SimpleCursorAdapter fillList(Spinner spinner, Cursor cursor) {
+    private SimpleCursorAdapter fillList(View v, Spinner spinner, Cursor cursor) {
         String[] from = new String[] { PetDatabase.COLUMN_NAME };
         int[] to = new int[] { android.R.id.text1 };
         int flags = 0;
-        SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,
+        SimpleCursorAdapter adapter = new SimpleCursorAdapter(v.getContext(),
                 android.R.layout.simple_spinner_item,
                 cursor,
                 from,
@@ -178,7 +176,7 @@ public class TaskActivity extends AppCompatActivity implements PetDialogListener
 
     private void saveTaskAndClose() {
         saveTask();
-        TaskActivity.this.finish();
+//        TaskFragment.this.finish();
     }
 
     private void completeTask() {
@@ -187,25 +185,25 @@ public class TaskActivity extends AppCompatActivity implements PetDialogListener
 
     private void deleteTask() {
         petDatabase.dbTask.delete(petTask.getTaskId());
-        TaskActivity.this.finish();
+//        TaskFragment.this.finish();
     }
 
     private void moveOutTask() {
         petDatabase.dbTask.moveToBuffer(petTask.getTaskId());
-        TaskActivity.this.finish();
+//        TaskFragment.this.finish();
     }
 
-    private void createTechControls() {
-        sTech = (Spinner) findViewById(R.id.s_tech);
-        techAdapter = fillList(sTech, petDatabase.getAllTech());
-        final Button btn_add_tech = (Button) findViewById(R.id.btn_add_tech);
-        btn_add_tech.setOnClickListener(v -> {
+    private void createTechControls(View v) {
+        sTech = (Spinner) v.findViewById(R.id.s_tech);
+        techAdapter = fillList(v, sTech, petDatabase.getAllTech());
+        final Button btn_add_tech = (Button) v.findViewById(R.id.btn_add_tech);
+        btn_add_tech.setOnClickListener(x -> {
             hideTechDialog();
             openTechDialog();
         });
 
-        final Button btn_delete_tech = (Button) findViewById(R.id.btn_delete_tech);
-        btn_delete_tech.setOnClickListener(v -> {
+        final Button btn_delete_tech = (Button) v.findViewById(R.id.btn_delete_tech);
+        btn_delete_tech.setOnClickListener(x -> {
             if (currentTechId != PetDatabase.TECH_UNDEFINED_ID) {
                 petDatabase.deleteTech(Integer.toString(currentTechId));
                 updateTechList();
@@ -214,49 +212,50 @@ public class TaskActivity extends AppCompatActivity implements PetDialogListener
         });
     }
 
-    private void createTypeControls() {
-        sType = (Spinner) findViewById(R.id.s_type);
-        typeAdapter = fillList(sType, petDatabase.getAllTypes());
+    private void createTypeControls(View v) {
+        sType = (Spinner) v.findViewById(R.id.s_type);
+        typeAdapter = fillList(v, sType, petDatabase.getAllTypes());
 
-        final Button btn_add_type = (Button) findViewById(R.id.btn_add_type);
-        btn_add_type.setOnClickListener(v -> {
+        final Button btn_add_type = (Button) v.findViewById(R.id.btn_add_type);
+        btn_add_type.setOnClickListener(x -> {
             hideTypeDialog();
             openTypeDialog();
         });
 
-        final Button btn_delete_type = (Button) findViewById(R.id.btn_delete_type);
-        btn_delete_type.setOnClickListener(v -> {
+        final Button btn_delete_type = (Button) v.findViewById(R.id.btn_delete_type);
+        btn_delete_type.setOnClickListener(x -> {
             // !TODO
             //petDatabase.deleteType(Integer.toString(currentTypeId));
         });
     }
 
-    private void createLabels() {
-        eName = (EditText) findViewById(R.id.e_name);
-        eDesc = (EditText) findViewById(R.id.e_desc);
-        eLinks = (EditText) findViewById(R.id.e_links);
-        eTime = (EditText) findViewById(R.id.e_time);
+    private void createLabels(View v) {
+        eName = (EditText) v.findViewById(R.id.e_name);
+        eDesc = (EditText) v.findViewById(R.id.e_desc);
+        eLinks = (EditText) v.findViewById(R.id.e_links);
+        eTime = (EditText) v.findViewById(R.id.e_time);
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_task);
+    public View onCreateView(LayoutInflater inflater,
+                             ViewGroup container,
+                             Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.task_fragment, container, false);
         petDatabase = PetDatabase.getOpenedInstance();
-        createTechControls();
-        createTypeControls();
-        createLabels();
-        findViewById(R.id.btn_complete_task).setOnClickListener(view -> completeTask());
-        findViewById(R.id.btn_delete_task).setOnClickListener(view -> deleteTask());
-        findViewById(R.id.btn_out_task).setOnClickListener(view -> moveOutTask());
-        findViewById(R.id.btn_save_task).setOnClickListener(view -> saveTaskAndClose());
-        setSupportActionBar(findViewById(R.id.toolbar));
-        // Enable the Up button
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        createTechControls(v);
+        createTypeControls(v);
+        createLabels(v);
+
+        v.findViewById(R.id.btn_complete_task).setOnClickListener(view -> completeTask());
+        v.findViewById(R.id.btn_delete_task).setOnClickListener(view -> deleteTask());
+        v.findViewById(R.id.btn_out_task).setOnClickListener(view -> moveOutTask());
+        v.findViewById(R.id.btn_save_task).setOnClickListener(view -> saveTaskAndClose());
+
+        return v;
     }
 
     @Override
-    protected void onStart() {
+    public void onStart() {
         super.onStart();
 
         sTech.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -293,47 +292,54 @@ public class TaskActivity extends AppCompatActivity implements PetDialogListener
 
         });
 
-        Intent intent = getIntent();
+        // TODO !!!
+        Intent intent = null;
+        try {
+            intent = Intent.getIntent("");
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
         int status = intent.getIntExtra("status", STATUS_NEW);
         fillTask(intent, status);
         fillLabels(petTask, status);
     }
 
-    // Menu icons are inflated just as they were with actionbar
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.task_toolbar, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int itemId = item.getItemId();
-        if (itemId == R.id.action_settings) {// User chose the "Settings" item, show the app settings UI...
-            return true;
-        } else if (itemId == R.id.action_save_task) {
-            saveTask();
-            return true;
-        }// If we got here, the user's action was not recognized.
-        // Invoke the superclass to handle it.
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void techCallback(View view, String result) {
-        petDatabase.addTech(result);
-        hideTechDialog();
-        updateTechList();
-        selectItem(result, sTech, techAdapter);
-    }
-
-    public void typeCallback(View view, String result) {
-        petDatabase.addType(result);
-        hideTypeDialog();
-        updateTypeList();
-        selectItem(result, sType, typeAdapter);
-    }
+//
+//    // Menu icons are inflated just as they were with actionbar
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        // Inflate the menu; this adds items to the action bar if it is present.
+//        getMenuInflater().inflate(R.menu.task_toolbar, menu);
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        int itemId = item.getItemId();
+//        if (itemId == R.id.action_settings) {// User chose the "Settings" item, show the app settings UI...
+//            return true;
+//        } else if (itemId == R.id.action_save_task) {
+//            saveTask();
+//            return true;
+//        }// If we got here, the user's action was not recognized.
+//        // Invoke the superclass to handle it.
+//        return super.onOptionsItemSelected(item);
+//    }
+//
+//    @Override
+//    public void techCallback(View view, String result) {
+//        petDatabase.addTech(result);
+//        hideTechDialog();
+//        updateTechList();
+//        selectItem(result, sTech, techAdapter);
+//    }
+//
+//    public void typeCallback(View view, String result) {
+//        petDatabase.addType(result);
+//        hideTypeDialog();
+//        updateTypeList();
+//        selectItem(result, sType, typeAdapter);
+//    }
 
 
     public static class TechNameDialogFragment extends DialogFragment {

@@ -22,7 +22,7 @@ public class TaskListActivity extends Fragment {
         list.setOnItemClickListener((adapterView, view, i, l) -> {
             Intent intent = createTaskIntent(context, list, i);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.putExtra("status", TaskActivity.STATUS_EDIT);
+            intent.putExtra("status", TaskFragment.STATUS_EDIT);
             startActivity(intent);
         });
         try {

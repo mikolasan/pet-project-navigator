@@ -37,15 +37,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ProjectActivity"
+            android:name=".ProjectFragment"
             android:label="@string/title_project_activity"
             android:parentActivityName=".MainActivity"
             android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="stateUnchanged" />
         <activity
-            android:name=".TaskActivity"
+            android:name=".TaskFragment"
             android:label="@string/title_task_activity"
-            android:parentActivityName=".ProjectActivity"
+            android:parentActivityName=".ProjectFragment"
             android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="stateUnchanged" />
     </application>

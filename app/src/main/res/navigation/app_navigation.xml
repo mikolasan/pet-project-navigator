@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/app_navigation"
+    app:startDestination="@id/project_fragment">
+    <fragment
+        android:id="@+id/task_fragment"
+        android:name="io.github.mikolasan.petprojectnavigator.TaskFragment"
+        tools:layout="@layout/task_fragment"
+        />
+    <fragment
+        android:id="@+id/project_fragment"
+        android:name="io.github.mikolasan.petprojectnavigator.ProjectFragment"
+        tools:layout="@layout/project_fragment"
+        />
+
+</navigation>

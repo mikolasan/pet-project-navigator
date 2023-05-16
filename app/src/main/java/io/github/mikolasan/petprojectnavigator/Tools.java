@@ -40,7 +40,7 @@ class Tools {
     }
 
     static Intent createTaskIntent(Context context, ListView view, int selectedItem) {
-        Intent intent = new Intent(context, TaskActivity.class);
+        Intent intent = new Intent(context, TaskFragment.class);
         Cursor c = (Cursor) view.getItemAtPosition(selectedItem);
         parseTaskItem(intent, c);
         return intent;

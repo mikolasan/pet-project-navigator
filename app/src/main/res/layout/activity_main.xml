@@ -19,10 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/panelBack"
-            android:elevation="4dp"
-            android:minHeight="?attr/actionBarSize"
-            app:menu="@menu/task_toolbar"
-            tools:targetApi="lollipop" />
+            app:menu="@menu/task_toolbar" />
 
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/pager"

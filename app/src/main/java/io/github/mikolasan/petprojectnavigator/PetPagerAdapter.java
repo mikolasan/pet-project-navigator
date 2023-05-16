@@ -15,7 +15,7 @@ import static io.github.mikolasan.petprojectnavigator.Tools.applyQuery;
 
 public class PetPagerAdapter extends FragmentPagerAdapter {
 
-    private ProjectFragment projectFragment;
+    private ProjectSmallFragment projectFragment;
     private TaskListActivity taskFragment;
     private BufferFragment bufferFragment;
 
@@ -28,7 +28,7 @@ public class PetPagerAdapter extends FragmentPagerAdapter {
 
     public PetPagerAdapter(FragmentManager manager) {
         super(manager);
-        projectFragment = new ProjectFragment();
+        projectFragment = new ProjectSmallFragment();
         taskFragment = new TaskListActivity();
         bufferFragment = new BufferFragment();
         searchPerPage = new ArrayList<>(N_PAGES);
