@@ -9,7 +9,9 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
@@ -27,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
     private PetDatabase petDatabase;
     private PetDriveCommunicator petDriveCommunicator;
-    private PetMainPager mainPager;
+//    private PetMainPager mainPager;
 
     public static final int REQUEST_CODE_CREATOR = 2;
     public static final int REQUEST_CODE_RESOLUTION = 3;
@@ -43,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            mainPager.defineAction(position);
+//            mainPager.defineAction(position);
             switch (position) {
                 case drawerAddProjectPos:
                     Intent intent = new Intent(getApplicationContext(), ProjectFragment.class);
@@ -69,16 +71,18 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.main_activity);
 
         petDatabase = PetDatabase.getOpenedInstance();
         petDriveCommunicator = new PetDriveCommunicator(this);
 
-        mainPager = new PetMainPager(this);
-        mainPager.setButtonListeners(this);
-        mainPager.setOnItemClickListener(new MainOnItemClickListener());
+//        mainPager = new PetMainPager(this);
+//        mainPager.setButtonListeners(this);
+//        mainPager.setOnItemClickListener(new MainOnItemClickListener());
 
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+//        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        NavController navController = navHostFragment.getNavController();
         AppBarConfiguration appBarConfiguration =
                 new AppBarConfiguration.Builder(navController.getGraph()).build();
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -114,12 +118,18 @@ public class MainActivity extends AppCompatActivity {
         if (itemId == R.id.action_settings) {// User chose the "Settings" item, show the app settings UI...
             return true;
         } else if (itemId == R.id.action_add_project) {
-            Intent intent = new Intent(getApplicationContext(), ProjectFragment.class);
-            intent.putExtra("status", ProjectFragment.STATUS_NEW);
-            startActivity(intent);
+            NavDirections directions = ProjectListFragmentDirections
+                    .actionProjectListFragmentToProjectFragment(
+                            0,
+                            "Add Project",
+                            "Some Description",
+                            ProjectFragment.STATUS_NEW
+                    );
+//            NavHostFragment.findNavController(this).navigate(directions);
+            Navigation.findNavController(this, R.id.nav_host_fragment).navigate(directions);
             return true;
         } else if (itemId == R.id.criterion_tech || itemId == R.id.criterion_name || itemId == R.id.criterion_desc || itemId == R.id.criterion_time) {
-            mainPager.setSearchCriterion(item.getItemId());
+//            mainPager.setSearchCriterion(item.getItemId());
             return true;
         }// If we got here, the user's action was not recognized.
         // Invoke the superclass to handle it.

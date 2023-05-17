@@ -15,8 +15,8 @@ import static io.github.mikolasan.petprojectnavigator.Tools.applyQuery;
 
 public class PetPagerAdapter extends FragmentPagerAdapter {
 
-    private ProjectSmallFragment projectFragment;
-    private TaskListActivity taskFragment;
+    private ProjectListFragment projectListFragment;
+    private TaskListFragment taskListFragment;
     private BufferFragment bufferFragment;
 
     public static final int PROJECTS_PAGE_ID = 0;
@@ -28,8 +28,8 @@ public class PetPagerAdapter extends FragmentPagerAdapter {
 
     public PetPagerAdapter(FragmentManager manager) {
         super(manager);
-        projectFragment = new ProjectSmallFragment();
-        taskFragment = new TaskListActivity();
+        projectListFragment = new ProjectListFragment();
+        taskListFragment = new TaskListFragment();
         bufferFragment = new BufferFragment();
         searchPerPage = new ArrayList<>(N_PAGES);
         clearSearch();
@@ -43,9 +43,9 @@ public class PetPagerAdapter extends FragmentPagerAdapter {
         // and not here (i.e. getItem() won't be called again).
         switch (position) {
             case PROJECTS_PAGE_ID:
-                return projectFragment;
+                return projectListFragment;
             case TASKS_PAGE_ID:
-                return taskFragment;
+                return taskListFragment;
             case BUFFER_PAGE_ID:
                 return bufferFragment;
             default:
@@ -63,10 +63,10 @@ public class PetPagerAdapter extends FragmentPagerAdapter {
         searchPerPage.set(page, newText);
         switch (page){
             case PROJECTS_PAGE_ID:
-                applyQuery(projectFragment, projectFragment.activityDataLoader, criterion, newText);
+                applyQuery(projectListFragment, projectListFragment.activityDataLoader, criterion, newText);
                 break;
             case TASKS_PAGE_ID:
-                applyQuery(taskFragment, taskFragment.activityDataLoader, criterion, newText);
+                applyQuery(taskListFragment, taskListFragment.activityDataLoader, criterion, newText);
                 break;
             case BUFFER_PAGE_ID:
                 //applyQuery(bufferFragment, bufferFragment.activityDataLoader, criterion, newText);
@@ -78,8 +78,8 @@ public class PetPagerAdapter extends FragmentPagerAdapter {
     public boolean onMenuItemActionCollapse(MenuItem item) {
         if (item.getItemId() == R.id.action_search) {
             clearSearch();
-            applyQuery(projectFragment, projectFragment.activityDataLoader, 0, "");
-            applyQuery(taskFragment, taskFragment.activityDataLoader, 0, "");
+            applyQuery(projectListFragment, projectListFragment.activityDataLoader, 0, "");
+            applyQuery(taskListFragment, taskListFragment.activityDataLoader, 0, "");
             //applyQuery(bufferFragment, bufferFragment.activityDataLoader, 0, "");
             return true;
         }

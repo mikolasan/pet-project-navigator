@@ -3,16 +3,89 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/app_navigation"
-    app:startDestination="@id/project_fragment">
+    app:startDestination="@id/projectListFragment">
     <fragment
-        android:id="@+id/task_fragment"
+        android:id="@+id/taskFragment"
         android:name="io.github.mikolasan.petprojectnavigator.TaskFragment"
-        tools:layout="@layout/task_fragment"
-        />
+        tools:layout="@layout/task_fragment">
+        <argument
+            android:name="task_id"
+            app:argType="integer" />
+        <argument
+            android:name="title"
+            app:argType="string" />
+        <argument
+            android:name="time"
+            app:argType="integer" />
+        <argument
+            android:name="tech_id"
+            app:argType="integer" />
+        <argument
+            android:name="type_id"
+            app:argType="integer" />
+        <argument
+            android:name="statement"
+            app:argType="string" />
+        <argument
+            android:name="links"
+            app:argType="string" />
+        <argument
+            android:name="status"
+            app:argType="integer" />
+    </fragment>
     <fragment
-        android:id="@+id/project_fragment"
+        android:id="@+id/projectFragment"
         android:name="io.github.mikolasan.petprojectnavigator.ProjectFragment"
-        tools:layout="@layout/project_fragment"
-        />
+        tools:layout="@layout/project_fragment">
+
+        <argument
+            android:name="project_id"
+            app:argType="integer" />
+        <argument
+            android:name="title"
+            app:argType="string" />
+        <argument
+            android:name="description"
+            app:argType="string" />
+        <argument
+            android:name="status"
+            app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/bufferFragment"
+        android:name="io.github.mikolasan.petprojectnavigator.BufferFragment"
+        android:label="BufferFragment"
+        tools:layout="@layout/buffer_fragment">
+        <action
+            android:id="@+id/action_bufferFragment_to_task_fragment"
+            app:destination="@id/taskFragment" />
+        <action
+            android:id="@+id/action_bufferFragment_to_project_fragment"
+            app:destination="@id/projectFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/projectListFragment"
+        android:name="io.github.mikolasan.petprojectnavigator.ProjectListFragment"
+        android:label="Projects"
+        tools:layout="@layout/project_list_fragment">
+        <action
+            android:id="@+id/action_projectListFragment_to_taskListFragment"
+            app:destination="@id/taskListFragment" />
+        <action
+            android:id="@+id/action_projectListFragment_to_project_fragment"
+            app:destination="@id/projectFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/taskListFragment"
+        android:name="io.github.mikolasan.petprojectnavigator.TaskListFragment"
+        android:label="TaskListFragment"
+        tools:layout="@layout/task_list_fragment">
+        <action
+            android:id="@+id/action_taskListFragment_to_bufferFragment"
+            app:destination="@id/bufferFragment" />
+        <action
+            android:id="@+id/action_taskListFragment_to_task_fragment"
+            app:destination="@id/taskFragment" />
+    </fragment>
 
 </navigation>

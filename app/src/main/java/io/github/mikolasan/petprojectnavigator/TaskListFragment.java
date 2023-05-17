@@ -13,7 +13,7 @@ import static io.github.mikolasan.petprojectnavigator.Tools.createTaskIntent;
 import static io.github.mikolasan.petprojectnavigator.Tools.initLoader;
 import static io.github.mikolasan.petprojectnavigator.Tools.restartLoader;
 
-public class TaskListActivity extends Fragment {
+public class TaskListFragment extends Fragment {
 
     public PetDataLoader<PetTaskLoader> activityDataLoader;
 
@@ -37,7 +37,7 @@ public class TaskListActivity extends Fragment {
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.activity_task_list, container, false);
+        View v = inflater.inflate(R.layout.task_list_fragment, container, false);
         initView(getActivity(), v);
         return v;
     }

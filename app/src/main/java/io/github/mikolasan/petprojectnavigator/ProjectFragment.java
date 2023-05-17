@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -21,6 +23,7 @@ import static io.github.mikolasan.petprojectnavigator.Tools.createTaskIntent;
 
 public class ProjectFragment extends Fragment {
 
+    ProjectFragmentArgs args;
     public static final int STATUS_NEW = 0;
     public static final int STATUS_EDIT = 1;
     public static final int STATUS_BUFFER = 2;
@@ -117,6 +120,14 @@ public class ProjectFragment extends Fragment {
 //            getSupportLoaderManager().restartLoader(activityDataLoader.projectActivityId, args, activityDataLoader);
         }
     }
+
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        args = ProjectFragmentArgs.fromBundle(requireArguments());
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
@@ -138,17 +149,9 @@ public class ProjectFragment extends Fragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-
-        // TODO !!!
-        Intent intent = null;
-        try {
-            intent = Intent.getIntent("");
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
-        status = intent.getIntExtra("status", STATUS_NEW);
+    public void onViewCreated(@NonNull View view,
+                              @Nullable Bundle savedInstanceState) {
+        status = args.getStatus();
         switch  (status) {
             case STATUS_NEW: {
                 btnDeleteProject.setVisibility(View.INVISIBLE);
@@ -156,9 +159,9 @@ public class ProjectFragment extends Fragment {
             }
             case STATUS_EDIT: {
                 btnDeleteProject.setVisibility(View.VISIBLE);
-                projectName.setText(intent.getStringExtra("title"));
-                projectDesc.setText(intent.getStringExtra("description"));
-                projectId = intent.getIntExtra("project_id", 0);
+                projectName.setText(args.getTitle());
+                projectDesc.setText(args.getDescription());
+                projectId = args.getProjectId();
                 updateTaskView();
                 break;
             }
@@ -174,7 +177,6 @@ public class ProjectFragment extends Fragment {
                 break;
             }
         }
-
     }
 
     @Override
@@ -182,4 +184,5 @@ public class ProjectFragment extends Fragment {
         super.onResume();
         updateTaskView();
     }
+
 }

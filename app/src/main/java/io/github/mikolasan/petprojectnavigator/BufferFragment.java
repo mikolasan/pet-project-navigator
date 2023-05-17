@@ -44,7 +44,7 @@ public class BufferFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_buffer, container, false);
+        View v = inflater.inflate(R.layout.buffer_fragment, container, false);
         initView(getActivity(), v);
         return v;
     }

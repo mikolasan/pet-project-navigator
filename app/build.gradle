@@ -1,4 +1,9 @@
-apply plugin: 'com.android.application'
+// the order of the following plugins is fucking important
+// don't you dare to change it!
+plugins {
+    id 'com.android.application'
+    id 'androidx.navigation.safeargs'
+}
 
 // Create a variable called keystorePropertiesFile, and initialize it to your
 // keystore.properties file, in the rootProject folder.
@@ -9,6 +14,7 @@ def keystoreProperties = new Properties()
 
 // Load your keystore.properties file into the keystoreProperties object.
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
 
 android {
     namespace 'io.github.mikolasan.petprojectnavigator'
@@ -52,6 +58,8 @@ dependencies {
     implementation project(path: ':drag-listview-library')
 
     implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.drawerlayout:drawerlayout:1.2.0'
     implementation 'androidx.fragment:fragment:1.5.7'
     implementation 'androidx.navigation:navigation-fragment:2.5.3'
     implementation 'androidx.navigation:navigation-ui:2.5.3'

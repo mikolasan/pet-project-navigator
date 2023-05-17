@@ -4,7 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavDirections;
+import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,16 +25,21 @@ import static io.github.mikolasan.petprojectnavigator.Tools.restartLoader;
  * Created by neupo on 4/25/2017.
  */
 
-public class ProjectSmallFragment extends Fragment {
+public class ProjectListFragment extends Fragment {
     PetDatabase petDatabase;
     public PetDataLoader<PetProjectLoader> activityDataLoader;
 
     private void setButtonListeners(View v) {
         final Button btn_add_project = (Button) v.findViewById(R.id.btn_add_project);
         btn_add_project.setOnClickListener(v1 -> {
-            Intent intent = new Intent(getActivity(), ProjectFragment.class);
-            intent.putExtra("status", ProjectFragment.STATUS_NEW);
-            startActivity(intent);
+            NavDirections directions = ProjectListFragmentDirections
+                    .actionProjectListFragmentToProjectFragment(
+                            0,
+                            "Add Project",
+                            "Some Description",
+                            ProjectFragment.STATUS_NEW
+                    );
+            NavHostFragment.findNavController(this).navigate(directions);
         });
     }
 
@@ -42,13 +53,14 @@ public class ProjectSmallFragment extends Fragment {
             int name_column = c.getColumnIndex(PetDatabase.COLUMN_NAME);
             int desc_column = c.getColumnIndex(PetDatabase.COLUMN_DESC);
 
-            Intent intent = new Intent(context, ProjectFragment.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.putExtra("status", ProjectFragment.STATUS_EDIT);
-            intent.putExtra("project_id", projectId);
-            intent.putExtra("title", c.getString(name_column));
-            intent.putExtra("description", c.getString(desc_column));
-            startActivity(intent);
+            NavDirections directions = ProjectListFragmentDirections
+                    .actionProjectListFragmentToProjectFragment(
+                            projectId,
+                            c.getString(name_column),
+                            c.getString(desc_column),
+                            ProjectFragment.STATUS_EDIT
+                    );
+            NavHostFragment.findNavController(this).navigate(directions);
         });
 
         try {
@@ -86,7 +98,7 @@ public class ProjectSmallFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.activity_project_list, container, false);
+        View v = inflater.inflate(R.layout.project_list_fragment, container, false);
         initView(getActivity(), v);
         setButtonListeners(v);
         return v;
